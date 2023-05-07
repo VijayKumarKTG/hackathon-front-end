@@ -3,7 +3,7 @@ import Link from 'next/link';
 /* eslint-disable @next/next/no-img-element */
 const Footer = () => {
   return (
-    <div className='bg-midnightblue flex flex-col pt-[56px] px-[133px] pb-[32px] box-border items-start justify-start'>
+    <footer className='bg-midnightblue flex flex-col pt-[56px] px-[133px] pb-[32px] box-border items-start justify-start'>
       <div className='w-full flex flex-row items-center justify-between mb-[92px]'>
         <div className='flex flex-row'>
           <img className='w-[154px] h-[30px]' alt='' src='/group-1.svg' />
@@ -77,7 +77,7 @@ const Footer = () => {
       <div className='text-[16px] leading-[26px] text-center text-white'>
         All rights reserved
       </div>
-    </div>
+    </footer>
   );
 };
 

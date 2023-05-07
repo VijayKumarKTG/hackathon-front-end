@@ -24,17 +24,17 @@ const Navigation = () => {
           </Link>
         </li>
         <li>
-          <Link href='/' className='text-white no-underline'>
+          <Link href='/questions' className='text-white no-underline'>
             About
           </Link>
         </li>
         <li>
-          <Link href='/' className='text-white no-underline'>
+          <Link href='/question' className='text-white no-underline'>
             Community
           </Link>
         </li>
         <li>
-          <Link href='/' className='text-white no-underline'>
+          <Link href='/tags' className='text-white no-underline'>
             Login
           </Link>
         </li>
