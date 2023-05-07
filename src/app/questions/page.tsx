@@ -20,7 +20,7 @@ const Questions: NextPage = () => {
               Questions tagged hardhat
             </h1>
             <Link
-              href='/'
+              href='/askQuestion'
               className='cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center'>
               <b className='text-[16px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold'>
                 Ask A Question
