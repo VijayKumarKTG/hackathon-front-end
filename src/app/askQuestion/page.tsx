@@ -66,6 +66,8 @@ const AskQuestion = () => {
             type='text'
             id='title'
             name='title'
+            required
+            aria-required
             placeholder='Enter your question title in a single statement'
             className='block bg-gray-500 rounded-sm px-6 py-4 text-lg text-white'
           />
@@ -84,6 +86,7 @@ const AskQuestion = () => {
           <MdEditor
             id='details'
             name='details'
+            aria-required
             className='h-[300px] border-none bg-darkblue rounded-sm'
             shortcuts={true}
             renderHTML={renderHTML}
@@ -102,6 +105,7 @@ const AskQuestion = () => {
           <MdEditor
             id='solutions'
             name='solutions'
+            aria-required
             className='h-[300px] border-none bg-darkblue rounded-sm'
             shortcuts={true}
             renderHTML={renderHTML}
@@ -114,14 +118,18 @@ const AskQuestion = () => {
           <label
             htmlFor='tags'
             className='text-white text-base leading-5 block mb-[14px]'>
-            Title*{' '}
-            <span className='text-gray-200'>(Must be relevant to topic)</span>
+            Add question tags*{' '}
+            <span className='text-gray-200'>
+              (Get more reach and visibility, max upto 8)
+            </span>
           </label>
           <input
             type='text'
             id='tags'
             name='tags'
-            placeholder='Enter your question title in a single statement'
+            required
+            aria-required
+            placeholder='Type your tags and hit comma ( , )'
             className='block bg-gray-500 rounded-sm px-6 py-4 text-lg text-white'
           />
         </div>
