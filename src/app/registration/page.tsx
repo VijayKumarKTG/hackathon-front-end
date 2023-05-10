@@ -55,13 +55,13 @@ const Registration = () => {
   return (
     <>
       <div className="bg-darkblue py-20 px-48">
-        <h1 className="flex text-40 text-white">
-          Register now and be
-          <br /> a part of Web3 dApp
-          <br /> community 🚀
-        </h1>
-        <div className="flex flex-row items-stretch gap-x-16 mt-12 rounded-24">
-          <div className="basis-1/2">
+        <div className="flex flex-row justify-center items-stretch gap-x-16 mt-12 rounded-24">
+          <div className="">
+                  <h1 className="flex text-40 text-white">
+                    Register now and be
+                    <br /> a part of Web3 dApp
+                    <br /> community 🚀
+                  </h1>
             <img
               className="w-[453px] h-[609px] mix-blend-luminosity"
               alt="Login Image"
