@@ -5,9 +5,11 @@ import { useState } from 'react';
 import Stats from '@/components/stats';
 import Achievements from '@/components/achievement';
 import Setting from '@/components/setting';
+import { useAccount } from 'wagmi';
 
 const Profile = () => {
   const [active, set_active] = useState<string>('Stats');
+  const { address } = useAccount();
 
   return (
     <div className='relative w-full bg-darkblue'>
@@ -84,7 +86,7 @@ const Profile = () => {
       </div>
       <div className='mt-20 px-8 pb-14'>
         <h1 className='m-0 mb-2 text-white'>John Doe</h1>
-        <p className='m-0 mb-10 text-lg text-gray-200'>johndoe@gmail.com</p>
+        <p className='m-0 mb-10 text-lg text-gray-200'>{address}</p>
         <ul className='m-0 mb-10 p-0 flex items-center gap-x-8 list-none'>
           <li className='p-0 m-0'>
             <button

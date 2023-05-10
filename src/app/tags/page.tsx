@@ -20,7 +20,7 @@ const Tags: NextPage = () => {
           <div className="flex flex-row items-center justify-between text-[32px] text-white mb-7">
             <h1 className="text-[32px] leading-10 m-0">Tags</h1>
             <Link
-              href="/askQuestion"
+              href="/ask-question"
               className="cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center"
             >
               <b className="text-[16px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold">

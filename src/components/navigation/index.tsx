@@ -4,11 +4,9 @@
 import Link from 'next/link';
 import { useAccount, useDisconnect } from 'wagmi';
 
-import { truncate } from '@/utils/truncate';
-
 const Navigation = () => {
   const { address, isConnected } = useAccount();
-  const { disconnect, isSuccess } = useDisconnect();
+  const { disconnect } = useDisconnect();
 
   return (
     <>
@@ -57,30 +55,43 @@ const Navigation = () => {
           </li>
         </ul>
         {isConnected ? (
-          <div className='flex gap-x-4'>
+          <div className='flex items-center gap-x-4'>
             <Link
               href='/profile'
-              className='cursor-pointer outline-none text-white flex flex-row box-border items-center justify-center'>
+              className='no-underline cursor-pointer outline-none bg-white text-darkblue flex flex-row gap-x-2 box-border items-center justify-center py-[11px] px-[32px] rounded-61xl h-[max-content]'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
                 viewBox='0 0 24 24'
                 strokeWidth={1.5}
                 stroke='currentColor'
-                className='w-10 h-10'>
+                className='w-8 h-8'>
                 <path
                   strokeLinecap='round'
                   strokeLinejoin='round'
                   d='M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z'
                 />
               </svg>
+              <span className='no-underline'>
+                {address?.substring(0, 6)}...{address?.substring(38)}
+              </span>
             </Link>
             <button
               onClick={() => disconnect()}
-              className='cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center'>
-              <b className='text-[16px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold'>
-                DISCONNECT
-              </b>
+              className='cursor-pointer outline-none [border:none] py-[18px] px-[32px] bg-blue text-white rounded-61xl flex flex-row box-border items-center justify-center'>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                strokeWidth={1.5}
+                stroke='currentColor'
+                className='w-6 h-6'>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  d='M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9'
+                />
+              </svg>
             </button>
           </div>
         ) : (
