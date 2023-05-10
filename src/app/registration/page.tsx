@@ -57,11 +57,11 @@ const Registration = () => {
       <div className="bg-darkblue pt-20 pb-40 px-48">
         <div className="flex flex-row justify-center items-stretch gap-x-16 rounded-24">
           <div className="">
-                  <h1 className="flex text-40 text-white">
-                    Register now and be
-                    <br /> a part of Web3 dApp
-                    <br /> community 🚀
-                  </h1>
+            <h1 className="flex text-40 text-white">
+              Register now and be
+              <br /> a part of Web3 dApp
+              <br /> community 🚀
+            </h1>
             <img
               className="w-[453px] h-[609px] mix-blend-luminosity"
               alt="Login Image"
