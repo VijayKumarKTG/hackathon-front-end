@@ -1,16 +1,16 @@
-"use client";
-import Navigation from "@/components/navigation";
-import { DM_Sans } from "next/font/google";
-import { WagmiConfig, configureChains, createConfig } from "wagmi";
-import { mainnet, polygon, polygonMumbai, sepolia } from "wagmi/chains";
-import { alchemyProvider } from "wagmi/providers/alchemy";
-import { publicProvider } from "wagmi/providers/public";
-import { MetaMaskConnector } from "wagmi/connectors/metaMask";
-import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet";
+'use client';
+import Navigation from '@/components/navigation';
+import { DM_Sans } from 'next/font/google';
+import { WagmiConfig, configureChains, createConfig } from 'wagmi';
+import { mainnet, polygon, polygonMumbai, sepolia } from 'wagmi/chains';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
 // import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
-import "./globals.css";
-import Footer from "@/components/footer";
+import './globals.css';
+import Footer from '@/components/footer';
 
 // -------------- WAGMI CONFIG STARTS ----------------
 
@@ -29,9 +29,9 @@ const config = createConfig({
     new CoinbaseWalletConnector({
       chains,
       options: {
-        appName: "Hackathon",
+        appName: 'Hackathon',
         jsonRpcUrl:
-          "https://eth-mainnet.g.alchemy.com/v2/5j7hyZzXJirxp1CV2MjzPNB5YM8y3oA8",
+          'https://eth-mainnet.g.alchemy.com/v2/5j7hyZzXJirxp1CV2MjzPNB5YM8y3oA8',
       },
     }),
     // new WalletConnectConnector({
@@ -47,7 +47,7 @@ const config = createConfig({
 
 // -------------- WAGMI CONFIG ENDS ----------------
 
-const dm_sans = DM_Sans({ weight: ["400", "500", "700"], subsets: ["latin"] });
+const dm_sans = DM_Sans({ weight: ['400', '500', '700'], subsets: ['latin'] });
 
 export default function RootLayout({
   children,
@@ -55,8 +55,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={dm_sans.className}>
+    <html lang='en'>
+      <body className={`${dm_sans.className} w-screen overflow-x-hidden`}>
         <WagmiConfig config={config}>
           <Navigation />
           {children}
