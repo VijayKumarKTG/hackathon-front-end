@@ -56,7 +56,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <body className={dm_sans.className}>
+      <body className={`${dm_sans.className} w-screen overflow-x-hidden`}>
         <WagmiConfig config={config}>
           <Navigation />
           {children}
