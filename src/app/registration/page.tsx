@@ -54,8 +54,8 @@ const Registration = () => {
 
   return (
     <>
-      <div className="bg-darkblue py-20 px-48">
-        <div className="flex flex-row justify-center items-stretch gap-x-16 mt-12 rounded-24">
+      <div className="bg-darkblue pt-20 pb-40 px-48">
+        <div className="flex flex-row justify-center items-stretch gap-x-16 rounded-24">
           <div className="">
                   <h1 className="flex text-40 text-white">
                     Register now and be
