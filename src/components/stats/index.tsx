@@ -131,7 +131,7 @@ const Stats = () => {
           />
         </div>
       </div>
-      <div className='mb-12'>
+      <div className=''>
         <h2 className='m-0 mb-6 text-[28px]'>
           Answers <span className='text-silver-100 text-base'>(3 Answers)</span>
         </h2>

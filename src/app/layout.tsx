@@ -55,8 +55,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en'>
-      <body className={`${dm_sans.className} w-screen overflow-x-hidden`}>
+    <html lang="en">
+      <body
+        className={`${dm_sans.className} w-screen overflow-x-hidden bg-darkblue`}
+      >
         <WagmiConfig config={config}>
           <Navigation />
           {children}
