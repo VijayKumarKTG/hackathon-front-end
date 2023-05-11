@@ -108,13 +108,19 @@ const Profile = () => {
         </ul>
       </div>
       <div className="mt-20 px-8 pb-14 w-9/12">
+        <div className="flex flex-col justify-center items-start w-1/3">
         <div className="flex flex-row gap-4 items-center">
           <h1 className="m-0 mb-2 text-white">John Doe</h1>
           <h1 className="m-0 mb-2 text-blue font-normal text-[1.5rem]">
             @johndoe
           </h1>
         </div>
-        <p className="m-0 mb-10 text-lg text-gray-200">{address}</p>
+        <p className="m-0 mb-2 text-lg text-gray-200">{address}</p>
+        <p className="m-0 mb-10 text-lg text-gray-50">
+          Aspiring blockchain developer. Answered more than 500 questions
+          on ethereum and javascript. Season ranking #2 in #ethereum thread
+        </p>
+        </div>
         <ul className="m-0 mb-10 p-0 flex items-center gap-x-8 list-none">
           <li className="p-0 m-0">
             <button
