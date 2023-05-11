@@ -49,8 +49,8 @@ function renderHTML(text: string) {
 
 const AskQuestion = () => {
   return (
-    <div className='bg-darkblue py-14 px-36'>
-      <form className='bg-gray-100 py-11 px-9 rounded-3xl'>
+    <div className='bg-darkblue py-14 px-2 md:px-20 xl:px-36'>
+      <form className='bg-gray-100 py-11 px-4 md:px-9 rounded-3xl'>
         <h1 className='text-bold text-[32px] leading-10 text-white m-0 mb-10'>
           Ask a Question
         </h1>
@@ -183,7 +183,7 @@ const AskQuestion = () => {
 
         <button
           onClick={(e) => e.preventDefault()}
-          className='cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center'>
+          className='w-full min-[400px]:w-max cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center'>
           <b className='text-[16px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold'>
             Post Question
           </b>

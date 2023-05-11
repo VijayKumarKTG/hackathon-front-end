@@ -2,22 +2,70 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
 
 const Navigation = () => {
+  const [toggle, set_toggle] = useState<boolean>(false);
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
+  const pathname = usePathname();
 
   return (
-    <>
-      <header className='w-[100%] h-[max-content] flex flex-row py-[16px] px-[60px] box-border justify-between items-center bg-darkblue'>
+    <header className='py-0 px-0 lg:py-[16px] xl:px-[60px] xl:flex xl:justify-between'>
+      <div className='flex justify-between w-full py-4 px-6 xl:py-0 xl:px-0'>
         <Link
           href='/'
-          className='flex flex-row gap-x-2 items-center justify-center w-[max-content]'>
-          <img className='overflow-hidden' alt='' src='/logo_icon.svg' />
-          <div className='text-white'>Web3dApp</div>
+          className='flex flex-row gap-x-2 items-center justify-center w-[max-content] no-underline'>
+          <img className='w-8 xl:w-10' alt='w-8' src='/logo_icon.svg' />
+          <div className='text-white xl:text-lg'>Web3dApp</div>
         </Link>
-        <div className='rounded-11xl bg-gray-100 w-[390px] py-[0px] px-[24px] box-border flex gap-2 items-center justify-start'>
+        {toggle ? (
+          <button
+            onClick={() => set_toggle(false)}
+            className='cursor-pointer border-none bg-transparent flex items-center justify-center text-white xl:hidden'
+            aria-label='Close Menu'>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              strokeWidth={1.5}
+              stroke='currentColor'
+              className='w-6 h-6'>
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M6 18L18 6M6 6l12 12'
+              />
+            </svg>
+          </button>
+        ) : (
+          <button
+            onClick={() => set_toggle(true)}
+            className='cursor-pointer border-none bg-transparent flex items-center justify-center text-white xl:hidden'
+            aria-label='Open Menu'>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              strokeWidth={1.5}
+              stroke='currentColor'
+              className='w-6 h-6'>
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5'
+              />
+            </svg>
+          </button>
+        )}
+      </div>
+      <div
+        className={`${
+          toggle ? 'flex' : 'hidden'
+        } xl:flex bg-gray-100 p-6 flex-col items-center gap-y-10 lg:flex-row lg:justify-between xl:gap-x-10 xl:bg-transparent xl:p-0 xl:w-full xl:min-w-max`}>
+        <div className='w-full max-w-[390px] rounded-11xl bg-darkblue xl:bg-gray-100 text-white py-[0px] px-[24px] box-border flex gap-2 items-center justify-start'>
           <svg
             xmlns='http://www.w3.org/2000/svg'
             fill='none'
@@ -37,20 +85,38 @@ const Navigation = () => {
             placeholder='Search'
           />
         </div>
-        <ul className='flex flex-row items-center justify-start gap-[24px] text-base leading-[16px] font-medium'>
-          <li>
-            <Link href='/' className='text-white no-underline'>
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link href='/questions' className='text-white no-underline'>
+        <ul className='list-none flex flex-row items-center justify-center gap-[24px] text-base leading-[16px] font-medium p-0 m-0'>
+          <li className='w-max'>
+            <Link
+              href='/questions'
+              className={`text-white px-4 py-2 text-sm xl:text-lg ${
+                pathname.includes('questions')
+                  ? 'underline underline-offset-8'
+                  : 'no-underline'
+              }`}>
               Questions
             </Link>
           </li>
-          <li>
-            <Link href='/tags' className='text-white no-underline'>
+          <li className='w-max'>
+            <Link
+              href='/tags'
+              className={`text-white px-4 py-2 text-sm xl:text-lg ${
+                pathname.includes('tags')
+                  ? 'underline underline-offset-8'
+                  : 'no-underline'
+              }`}>
               Tags
+            </Link>
+          </li>
+          <li className='w-max'>
+            <Link
+              href='/about'
+              className={`text-white px-4 py-2 text-sm xl:text-lg ${
+                pathname.includes('about')
+                  ? 'underline underline-offset-8'
+                  : 'no-underline'
+              }`}>
+              About Us
             </Link>
           </li>
         </ul>
@@ -95,18 +161,18 @@ const Navigation = () => {
             </button>
           </div>
         ) : (
-          <div>
+          <div className='w-max'>
             <Link
               href='/connect-wallet'
-              className='cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center'>
+              className='no-underline w-max cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center'>
               <b className='text-[16px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold'>
                 CONNECT WALLET
               </b>
             </Link>
           </div>
         )}
-      </header>
-    </>
+      </div>
+    </header>
   );
 };
 
