@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<h1 align="center" style="font-size: 36px;">Stackoverflow 3.0 dApp</h1>
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/75990868/236770254-ada36433-481e-4f43-8a74-c995010ee4a0.png" alt="Stackoverflow 3.0 dApp">
+</p>
 
 ## Getting Started
 

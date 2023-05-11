@@ -1,0 +1,161 @@
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import QuestionCardLarge from '../cards/questionLarge';
+
+const data = [
+  {
+    name: 'Page A',
+    uv: 4000,
+    pv: 2400,
+    amt: 2400,
+  },
+  {
+    name: 'Page B',
+    uv: 3000,
+    pv: 1398,
+    amt: 2210,
+  },
+  {
+    name: 'Page C',
+    uv: 2000,
+    pv: 9800,
+    amt: 2290,
+  },
+  {
+    name: 'Page D',
+    uv: 2780,
+    pv: 3908,
+    amt: 2000,
+  },
+  {
+    name: 'Page E',
+    uv: 1890,
+    pv: 4800,
+    amt: 2181,
+  },
+  {
+    name: 'Page F',
+    uv: 2390,
+    pv: 3800,
+    amt: 2500,
+  },
+  {
+    name: 'Page G',
+    uv: 3490,
+    pv: 4300,
+    amt: 2100,
+  },
+];
+
+const Stats = () => {
+  return (
+    <div className='bg-gray-100 rounded-xl p-10 text-white'>
+      <div className='mb-12'>
+        <h2 className='m-0 mb-6 text-[28px]'>Total Upvotes</h2>
+        <div>
+          <AreaChart
+            width={730}
+            height={250}
+            data={data}
+            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id='colorUv' x1='0' y1='0' x2='0' y2='1'>
+                <stop offset='5%' stopColor='#8884d8' stopOpacity={0.8} />
+                <stop offset='95%' stopColor='#8884d8' stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id='colorPv' x1='0' y1='0' x2='0' y2='1'>
+                <stop offset='5%' stopColor='#82ca9d' stopOpacity={0.8} />
+                <stop offset='95%' stopColor='#82ca9d' stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <XAxis dataKey='name' />
+            <YAxis />
+            <CartesianGrid strokeDasharray='3 3' />
+            <Tooltip />
+            <Area
+              type='monotone'
+              dataKey='uv'
+              stroke='#8884d8'
+              fillOpacity={1}
+              fill='url(#colorUv)'
+            />
+            <Area
+              type='monotone'
+              dataKey='pv'
+              stroke='#82ca9d'
+              fillOpacity={1}
+              fill='url(#colorPv)'
+            />
+          </AreaChart>
+        </div>
+      </div>
+      <div className='mb-12'>
+        <h2 className='m-0 mb-6 text-[28px]'>
+          Questions Asked{' '}
+          <span className='text-silver-100 text-base'>(5 Questions)</span>
+        </h2>
+        <div className='m-0 mb-3'>
+          <QuestionCardLarge
+            question='How can I anchor my absolute button to the end of a div/container so that when I scroll that div/container to right it will remain in the same place'
+            voteCount={-5}
+          />
+        </div>
+        <div className='m-0 mb-3'>
+          <QuestionCardLarge
+            question='How can I anchor my absolute button to the end of a div/container so that when I scroll that div/container to right it will remain in the same place'
+            voteCount={-5}
+          />
+        </div>
+        <div className='m-0 mb-3'>
+          <QuestionCardLarge
+            question='How can I anchor my absolute button to the end of a div/container so that when I scroll that div/container to right it will remain in the same place'
+            voteCount={-5}
+          />
+        </div>
+        <div className='m-0 mb-3'>
+          <QuestionCardLarge
+            question='How can I anchor my absolute button to the end of a div/container so that when I scroll that div/container to right it will remain in the same place'
+            voteCount={-5}
+          />
+        </div>
+        <div className='m-0 mb-3'>
+          <QuestionCardLarge
+            question='How can I anchor my absolute button to the end of a div/container so that when I scroll that div/container to right it will remain in the same place'
+            voteCount={-5}
+          />
+        </div>
+      </div>
+      <div className=''>
+        <h2 className='m-0 mb-6 text-[28px]'>
+          Answers <span className='text-silver-100 text-base'>(3 Answers)</span>
+        </h2>
+        <div className='m-0 mb-3'>
+          <QuestionCardLarge
+            question='How can I anchor my absolute button to the end of a div/container so that when I scroll that div/container to right it will remain in the same place'
+            voteCount={-5}
+          />
+        </div>
+        <div className='m-0 mb-3'>
+          <QuestionCardLarge
+            question='How can I anchor my absolute button to the end of a div/container so that when I scroll that div/container to right it will remain in the same place'
+            voteCount={-5}
+          />
+        </div>
+        <div className='m-0 mb-3'>
+          <QuestionCardLarge
+            question='How can I anchor my absolute button to the end of a div/container so that when I scroll that div/container to right it will remain in the same place'
+            voteCount={-5}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Stats;
