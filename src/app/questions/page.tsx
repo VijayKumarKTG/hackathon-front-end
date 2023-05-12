@@ -8,20 +8,20 @@ import QuestionCardLarge from '@/components/cards/questionLarge';
 
 const Questions: NextPage = () => {
   return (
-    <div className='bg-darkblue p-[56px]'>
+    <div className='bg-darkblue px-6 py-14 xl:p-[56px]'>
       <div className='grid grid-cols-12 gap-x-6 items-start justify-start'>
-        <div className='col-span-3 flex flex-col gap-y-6'>
+        <div className='hidden lg:flex col-span-3 flex-col gap-y-6'>
           <TrendingTags />
           <RelatedQuestions />
         </div>
-        <div className='col-span-9 rounded-3xl bg-gray-100 p-9'>
-          <div className='flex flex-row items-center justify-between text-[32px] text-white mb-7'>
-            <h1 className='text-[32px] leading-10 m-0'>
+        <div className='col-span-12 lg:col-span-9 rounded-3xl bg-gray-100 p-9'>
+          <div className='flex flex-col md:flex-row gap-y-6 items-center justify-between text-[32px] text-white mb-16 md:mb-7'>
+            <h1 className='text-[32px] leading-10 text-center xl:text-left m-0'>
               Questions tagged hardhat
             </h1>
             <Link
               href='/ask-question'
-              className='cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center'>
+              className='no-underline w-full md:w-max cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center'>
               <b className='text-[16px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold'>
                 Ask A Question
               </b>

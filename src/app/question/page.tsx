@@ -8,15 +8,15 @@ import ContentCard from '@/components/cards/content';
 
 const Question: NextPage = () => {
   return (
-    <div className='bg-darkblue p-[56px]'>
+    <div className='bg-darkblue px-6 py-14 xl:p-[56px]'>
       <div className='grid grid-cols-12 gap-x-6 items-start justify-start'>
-        <div className='col-span-3 flex flex-col gap-y-6'>
+        <div className='hidden lg:flex col-span-3 flex-col gap-y-6'>
           <TrendingTags />
           <RelatedQuestions />
         </div>
-        <div className='col-span-9 rounded-3xl bg-gray-100 p-9'>
-          <div className='flex flex-col items-start justify-start gap-[8px] text-[32px] text-white'>
-            <h1 className='text-[32px] leading-10 m-0 mb-2'>
+        <div className='col-span-12 lg:col-span-9 rounded-3xl bg-gray-100 p-6 xl:p-9'>
+          <div className='flex flex-col items-start justify-start gap-[8px] text-[32px] text-white mb-7'>
+            <h1 className='text-[32px] leading-10 m-0'>
               Truffle init not creating .sol files
             </h1>
             <div className='flex flex-row items-center justify-start gap-4 text-xs text-silver-100 mb-2'>

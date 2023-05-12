@@ -13,9 +13,9 @@ Truffle v5.5.31 (core: 5.5.31) Ganache v7.4.3 Solidity - 0.8.17 (solc-js) Node v
 
 const ContentCard = () => {
   return (
-    <div className='rounded-xl bg-gray-500 p-8 flex flex-row items-start gap-x-4'>
+    <div className='rounded-xl bg-gray-500 px-4 py-6 xl:p-8 flex flex-row items-start gap-x-4'>
       <div className='flex flex-col items-center gap-y-2 justify-center text-silver-100'>
-        <button className='bg-transparent w-[max-content] h-[max-content] flex m-0 p-0 cursor-pointer'>
+        <button className='border-none bg-transparent w-[max-content] h-[max-content] flex m-0 p-0 cursor-pointer'>
           <img
             className='relative w-8 h-[19px]'
             alt='Upvote'
@@ -23,7 +23,7 @@ const ContentCard = () => {
           />
         </button>
         <div className='relative font-medium'>10</div>
-        <button className='bg-transparent w-[max-content] h-[max-content] flex m-0 p-0 cursor-pointer'>
+        <button className='border-none bg-transparent w-[max-content] h-[max-content] flex m-0 p-0 cursor-pointer'>
           <img
             className='relative w-8 h-[19px]'
             alt='Downvote'
