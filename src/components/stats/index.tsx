@@ -55,13 +55,14 @@ const data = [
 
 const Stats = () => {
   return (
-    <div className='bg-gray-100 rounded-xl p-10 text-white'>
+    <div className='bg-gray-100 rounded-xl p-6 lg:p-10 text-white'>
       <div className='mb-12'>
         <h2 className='m-0 mb-6 text-[28px]'>Total Upvotes</h2>
-        <div>
+        <div className='w-full overflow-auto overflow-y-hidden'>
           <AreaChart
-            width={730}
+            width={600}
             height={250}
+            className='max-w-full'
             data={data}
             margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
             <defs>
@@ -96,7 +97,7 @@ const Stats = () => {
         </div>
       </div>
       <div className='mb-12'>
-        <h2 className='m-0 mb-6 text-[28px]'>
+        <h2 className='m-0 mb-6 text-[28px] flex flex-col lg:flex-row gap-y-10'>
           Questions Asked{' '}
           <span className='text-silver-100 text-base'>(5 Questions)</span>
         </h2>
@@ -132,7 +133,7 @@ const Stats = () => {
         </div>
       </div>
       <div className=''>
-        <h2 className='m-0 mb-6 text-[28px]'>
+        <h2 className='m-0 mb-6 text-[28px] flex flex-col lg:flex-row gap-y-10'>
           Answers <span className='text-silver-100 text-base'>(3 Answers)</span>
         </h2>
         <div className='m-0 mb-3'>

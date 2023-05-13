@@ -17,3 +17,25 @@ body {
   padding: 0;
   overflow-x: hidden;
 }
+
+/* width and height for the scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/* Track (background) of the scrollbar */
+::-webkit-scrollbar-track {
+  background: #010725;
+}
+
+/* Thumb (the moving part) of the scrollbar */
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 5px;
+}
+
+/* On hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
