@@ -64,142 +64,129 @@ const Registration = () => {
           src='/registeration-img.png'
         />
       </div>
-      <form className='w-full flex flex-col gap-4 lg:basis-1/2'>
-        <div className='flex flex-row gap-x-8 w-full'>
-          <div className='flex flex-col gap-y-2'>
-            <label
-              className='text-[20px] text-white font-medium w-full'
-              htmlFor='profile'>
-              Profile
-            </label>
-            <div className='relative w-20 h-20 border-none overflow-hidden rounded-lg bg-white text-gray-100 flex items-center justify-center'>
-              <input
-                className='absolute w-full h-full opacity-0'
-                type='file'
-                accept='images/*'
-                id='profile'
-                name='profile'
-                placeholder='Enter your profile'
-                onChange={(event) =>
-                  changeProfile(
-                    event.target.files ? event.target.files[0] : null
-                  )
-                }
-              />
-              {profile ? (
-                <img
-                  src={getPreviewImage(profile)}
-                  alt='Profile'
-                  className='object-cover w-full h-full'
+      <form className='w-full flex flex-col gap-y-8 gap-4 lg:basis-1/2'>
+        <div>
+          <label className='block text-sm font-medium text-gray-50'>
+            Profile photo
+          </label>
+          <div className='mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue flex flex-col justify-center items-center w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue'>
+            <div className='space-y-1 text-center'>
+              <svg
+                className='mx-auto h-12 w-12 text-white'
+                stroke='currentColor'
+                fill='none'
+                viewBox='0 0 48 48'
+                aria-hidden='true'>
+                <path
+                  d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
+                  strokeWidth={2}
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
                 />
-              ) : (
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
-                  className='w-6 h-6'>
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'
+              </svg>
+              <div className='flex text-sm text-white'>
+                <label
+                  htmlFor='file-upload'
+                  className='relative flex flex-col items-center justify-center cursor-pointer rounded-md bg-transparent font-medium text-blue focus-within:outline-none focus-within:ring-2'>
+                  <span>Upload a file</span>
+                  <input
+                    id='file-upload'
+                    name='file-upload'
+                    type='file'
+                    className='sr-only'
                   />
-                </svg>
-              )}
-            </div>
-          </div>
-
-          <div className='flex flex-col gap-y-2 w-full box-border'>
-            <label
-              className='text-[20px] text-white font-medium w-full'
-              htmlFor='banner'>
-              Banner
-            </label>
-            <div className='relative box-border w-full h-20 border-none rounded-lg bg-white text-gray-100 flex items-center justify-center'>
-              <input
-                className='absolute w-full h-full opacity-0'
-                type='file'
-                accept='images/*'
-                id='banner'
-                name='banner'
-                placeholder='Enter your banner'
-                onChange={(event) =>
-                  changeBanner(
-                    event.target.files ? event.target.files[0] : null
-                  )
-                }
-              />
-              {banner ? (
-                <img
-                  src={getPreviewImage(banner)}
-                  alt='Banner'
-                  className='object-cover w-full h-full'
-                />
-              ) : (
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
-                  className='w-6 h-6'>
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z'
-                  />
-                </svg>
-              )}
+                </label>
+                <p className='pl-1'>or drag and drop</p>
+              </div>
+              <p className='text-xs text-white'>PNG, JPG, GIF up to 10MB</p>
             </div>
           </div>
         </div>
 
-        <div className='flex flex-col gap-y-2'>
+        <div>
+          <label className='block text-sm font-medium text-gray-50'>
+            Cover photo
+          </label>
+          <div className='mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue flex flex-col justify-center items-center w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue'>
+            <div className='space-y-1 text-center'>
+              <svg
+                className='mx-auto h-12 w-12 text-white'
+                stroke='currentColor'
+                fill='none'
+                viewBox='0 0 48 48'
+                aria-hidden='true'>
+                <path
+                  d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
+                  strokeWidth={2}
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                />
+              </svg>
+              <div className='flex text-sm text-white'>
+                <label
+                  htmlFor='file-upload'
+                  className='relative flex flex-col items-center justify-center cursor-pointer rounded-md bg-transparent font-medium text-blue focus-within:outline-none focus-within:ring-2'>
+                  <span>Upload a file</span>
+                  <input
+                    id='file-upload'
+                    name='file-upload'
+                    type='file'
+                    className='sr-only'
+                  />
+                </label>
+                <p className='pl-1'>or drag and drop</p>
+              </div>
+              <p className='text-xs text-white'>PNG, JPG, GIF up to 10MB</p>
+            </div>
+          </div>
+        </div>
+
+        <div className='col-span-6 sm:col-span-4'>
           <label
-            className='text-[20px] text-white font-medium w-full'
-            htmlFor='name'>
+            htmlFor='first-name'
+            className='block text-sm font-medium text-white'>
             Name
           </label>
           <input
-            className='w-full box-border border-none px-5 py-4 rounded-lg bg-white text-black text-lg leading-6'
             type='text'
-            id='name'
-            name='name'
+            name='first-name'
+            id='first-name'
+            autoComplete='given-name'
             placeholder='Enter your name'
-            onChange={(event) => changeName(event.target.value)}
+            className='mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue'
           />
         </div>
 
-        <div className='flex flex-col gap-y-2'>
+        <div className='col-span-6 sm:col-span-4'>
           <label
-            className='text-[20px] text-white font-medium w-full'
-            htmlFor='email'>
-            Email
+            htmlFor='email-address'
+            className='block text-sm font-medium text-white'>
+            Email address
           </label>
           <input
-            className='w-full box-border border-none px-5 py-4 rounded-lg bg-white text-black text-lg leading-6'
-            type='mail'
-            id='email'
-            name='email'
-            placeholder='Enter your email'
-            onChange={(event) => changeEmail(event.target.value)}
+            type='text'
+            name='email-address'
+            id='email-address'
+            autoComplete='email'
+            placeholder='Enter your email address'
+            className='mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue'
           />
         </div>
 
-        <div className='flex flex-col gap-y-2'>
-          <label
-            className='text-[20px] text-white font-medium w-full'
-            htmlFor='bio'>
+        <div className='col-span-6 sm:col-span-4'>
+          <label htmlFor='bio' className='block text-sm font-medium text-white'>
             Bio
           </label>
-          <textarea
-            className='w-full box-border border-none px-5 py-4 rounded-lg bg-white text-black text-lg leading-6'
-            id='bio'
-            name='bio'
-            rows={5}
-            placeholder='Enter your bio'
-            onChange={(event) => changeBio(event.target.value)}></textarea>
+          <div className='mt-1'>
+            <textarea
+              rows={4}
+              name='comment'
+              id='bio'
+              placeholder='Enter your bio'
+              className='mt-1 block w-full border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-gray-50 border rounded-md text-gray-900 text-sm focus:ring-blue focus:border-blue dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue resize-y'
+              defaultValue={''}
+            />
+          </div>
         </div>
 
         <button

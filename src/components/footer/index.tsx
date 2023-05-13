@@ -79,7 +79,7 @@ const Footer = () => {
               />
             </svg>
             <input
-              className='border-none bg-transparent outline-none block w-full h-full py-[12px] text-white text-lg'
+              className='placeholder-silver-100 border-none bg-transparent outline-none block w-full h-full py-[12px] text-white text-lg'
               type='search'
               placeholder='Search'
             />
