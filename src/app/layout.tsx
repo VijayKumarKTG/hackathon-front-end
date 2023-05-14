@@ -2,11 +2,12 @@
 import Navigation from '@/components/navigation';
 import { DM_Sans } from 'next/font/google';
 import { WagmiConfig, configureChains, createConfig } from 'wagmi';
-import { mainnet, polygon, polygonMumbai, sepolia } from 'wagmi/chains';
+import { goerli, mainnet, polygon, polygonMumbai, sepolia } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 // import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
 import './globals.css';
@@ -15,10 +16,15 @@ import Footer from '@/components/footer';
 // -------------- WAGMI CONFIG STARTS ----------------
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet, polygon, polygonMumbai, sepolia],
+  [mainnet, polygon, polygonMumbai, sepolia, goerli],
   [
     alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY! }),
     publicProvider(),
+    jsonRpcProvider({
+      rpc: (chain) => ({
+        http: `http://127.0.0.1:8545/`,
+      }),
+    }),
   ]
 );
 

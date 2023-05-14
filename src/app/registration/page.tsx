@@ -1,7 +1,18 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import { get_user_by_address_abi, register_user_abi } from '@/abi/user';
+import { Address } from '@/types';
 import { getPreviewImage } from '@/utils';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import {
+  useAccount,
+  useContractRead,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+} from 'wagmi';
 import { create } from 'zustand';
 
 type State = {
@@ -49,6 +60,48 @@ const Registration = () => {
     changeEmail,
     changeBio,
   } = useCountStore((state) => state);
+
+  const { isConnected, address } = useAccount();
+  const router = useRouter();
+
+  const { config: register_user_config } = usePrepareContractWrite({
+    address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+    abi: register_user_abi,
+    functionName: 'registerUser',
+    args: ['uri/post/', process.env.NEXT_PUBLIC_HASH_SECRET],
+  });
+
+  const { write: register_user } = useContractWrite({
+    ...register_user_config,
+    onError(error) {
+      console.log(error);
+    },
+    async onSuccess(data) {
+      console.log(data.hash);
+
+      router.push('/questions');
+    },
+  });
+
+  useContractRead({
+    address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+    abi: get_user_by_address_abi,
+    functionName: 'getUserByAddress',
+    args: [address],
+    onError(error) {
+      console.log(error.cause);
+      register_user?.();
+    },
+    onSuccess(data) {
+      console.log(data);
+    },
+  });
+
+  useEffect(() => {
+    if (!isConnected) {
+      router.push('/connect-wallet');
+    }
+  }, [isConnected]);
 
   return (
     <div className='bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48'>

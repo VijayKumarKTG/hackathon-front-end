@@ -1,56 +1,122 @@
 /* eslint-disable react/no-children-prop */
 'use client';
 
-import React, { useState } from 'react';
+import { FormEvent } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
+import { create } from 'zustand';
+import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import './editor.css';
 
-function handleEditorChange({ html, text }: any) {
-  console.log(html, text);
-}
+import { uploadFileToPinata, uploadJSONToPinata } from '@/utils';
+import { post_question_abi } from '@/abi/social';
+import { register_user_abi } from '@/abi/user';
 
-function handleImageUpload(file: File, callback: any) {
-  console.log(file, callback);
-}
+type State = {
+  title: string;
+  question: string;
+  solution: string;
+  tags: string;
+  metadata: string;
+};
 
-function renderHTML(text: string) {
-  return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      components={{
-        code({ node, inline, className, children, ...props }) {
-          const match = /language-(\w+)/.exec(className || '');
-          return !inline && match ? (
-            <SyntaxHighlighter
-              {...props}
-              children={String(children).replace(/\n$/, '')}
-              style={materialOceanic}
-              language={match[1]}
-              PreTag='div'
-            />
-          ) : (
-            <code {...props} className={className}>
-              {children}
-            </code>
-          );
-        },
-        h1: (props: any) => <h1 className='m-0 text-white' {...props} />,
-      }}>
-      {text}
-    </ReactMarkdown>
-  );
-}
+type Actions = {
+  changeTitle: (title: string) => void;
+  changeQuestion: (question: string) => void;
+  changeSolution: (solution: string) => void;
+  changeTags: (tags: string) => void;
+  changeMetadata: (metadata: string) => void;
+};
+
+const useCountStore = create<State & Actions>((set) => ({
+  title: '',
+  question: '',
+  solution: '',
+  tags: '',
+  metadata: '',
+  changeTitle: (title: string) => set((state: State) => ({ ...state, title })),
+  changeQuestion: (question: string) =>
+    set((state: State) => ({ ...state, question })),
+  changeSolution: (solution: string) =>
+    set((state: State) => ({ ...state, solution })),
+  changeTags: (tags: string) => set((state: State) => ({ ...state, tags })),
+  changeMetadata: (metadata: string) =>
+    set((state: State) => ({ ...state, metadata })),
+}));
 
 const AskQuestion = () => {
+  const {
+    title,
+    question,
+    solution,
+    tags,
+    metadata,
+    // functions
+    changeTitle,
+    changeQuestion,
+    changeSolution,
+    changeTags,
+    changeMetadata,
+  } = useCountStore((state) => state);
+
+  const { config: post_question_config } = usePrepareContractWrite({
+    address: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+    abi: post_question_abi,
+    functionName: 'postQuestion',
+    args: [[1], metadata, process.env.NEXT_PUBLIC_HASH_SECRET],
+  });
+
+  const { write: post_question } = useContractWrite({
+    ...post_question_config,
+    onError(error) {
+      console.log(error);
+    },
+    async onSuccess(data) {
+      console.log(data.hash);
+    },
+  });
+
+  const handleQuestionChange = ({ html }: any) => {
+    changeQuestion(html);
+  };
+
+  const handleSolutionChange = ({ html }: any) => {
+    changeSolution(html);
+  };
+
+  const handleImageUpload = async (file: File, callback: any) => {
+    const url: string = await uploadFileToPinata(file);
+    callback(url);
+  };
+
+  const onSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+
+    const metadata = {
+      title,
+      question,
+      solution,
+      tags,
+    };
+
+    const url = await uploadJSONToPinata(metadata);
+    changeMetadata(url);
+
+    console.log(url);
+
+    post_question?.();
+  };
+
   return (
     <div className='bg-darkblue py-14 px-2 md:px-20 xl:px-36'>
-      <form className='bg-gray-100 py-11 px-4 md:px-9 rounded-3xl'>
+      <form
+        onSubmit={onSubmit}
+        className='bg-gray-100 py-11 px-4 md:px-9 rounded-3xl'>
         <h1 className='text-bold text-[32px] leading-10 text-white m-0 mb-10'>
           Ask a Question
         </h1>
@@ -70,6 +136,7 @@ const AskQuestion = () => {
             aria-required
             placeholder='Enter your question title in a single statement'
             className='block bg-gray-500 rounded-sm px-6 py-4 text-lg text-white'
+            onChange={(event) => changeTitle(event.target.value)}
           />
         </div>
 
@@ -90,7 +157,7 @@ const AskQuestion = () => {
             className='h-[300px] border-none bg-darkblue rounded-sm'
             shortcuts={true}
             renderHTML={renderHTML}
-            onChange={handleEditorChange}
+            onChange={handleQuestionChange}
             onImageUpload={handleImageUpload}
           />
         </div>
@@ -109,7 +176,7 @@ const AskQuestion = () => {
             className='h-[300px] border-none bg-darkblue rounded-sm'
             shortcuts={true}
             renderHTML={renderHTML}
-            onChange={handleEditorChange}
+            onChange={handleSolutionChange}
             onImageUpload={handleImageUpload}
           />
         </div>
@@ -131,6 +198,7 @@ const AskQuestion = () => {
             aria-required
             placeholder='Type your tags and hit comma ( , )'
             className='block bg-gray-500 rounded-sm px-6 py-4 text-lg text-white'
+            onChange={(event) => changeTags(event.target.value)}
           />
         </div>
 
@@ -182,7 +250,8 @@ const AskQuestion = () => {
         </div>
 
         <button
-          onClick={(e) => e.preventDefault()}
+          type='submit'
+          disabled={title === '' || question === '' || tags === ''}
           className='w-full min-[400px]:w-max cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center'>
           <b className='text-[16px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold'>
             Post Question
@@ -194,3 +263,40 @@ const AskQuestion = () => {
 };
 
 export default AskQuestion;
+
+function renderHTML(text: string) {
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      components={{
+        code({ node, inline, className, children, ...props }) {
+          const match = /language-(\w+)/.exec(className || '');
+          return !inline && match ? (
+            <SyntaxHighlighter
+              {...props}
+              children={String(children).replace(/\n$/, '')}
+              style={materialOceanic}
+              language={match[1]}
+              PreTag='div'
+            />
+          ) : (
+            <code {...props} className={className}>
+              {children}
+            </code>
+          );
+        },
+        h1: (props: any) => <h1 className='m-0 text-white' {...props} />,
+        h2: (props: any) => <h2 className='m-0 text-white' {...props} />,
+        h3: (props: any) => <h3 className='m-0 text-white' {...props} />,
+        h4: (props: any) => <h4 className='m-0 text-white' {...props} />,
+        h5: (props: any) => <h5 className='m-0 text-white' {...props} />,
+        h6: (props: any) => <h6 className='m-0 text-white' {...props} />,
+        p: (props: any) => <p className='m-0 text-white' {...props} />,
+        ul: (props: any) => <ul className='m-0 text-white' {...props} />,
+        ol: (props: any) => <ol className='m-0 text-white' {...props} />,
+        td: (props: any) => <td className='m-0 text-white' {...props} />,
+      }}>
+      {text}
+    </ReactMarkdown>
+  );
+}

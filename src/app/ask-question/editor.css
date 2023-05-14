@@ -23,3 +23,13 @@
 .rc-md-editor .editor-container > .section:last-child {
   border: none;
 }
+
+.custom-html-style code,
+.custom-html-style pre {
+  background: #24293f;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
