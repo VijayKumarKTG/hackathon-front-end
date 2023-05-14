@@ -28,8 +28,3 @@
 .custom-html-style pre {
   background: #24293f;
 }
-
-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}

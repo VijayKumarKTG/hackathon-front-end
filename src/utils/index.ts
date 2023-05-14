@@ -11,9 +11,9 @@ export const getPreviewImage = (file: File): string | undefined => {
   return;
 };
 
-const PINATA_KEY = process.env.VITE__PINATA_API_KEY;
-const PINATA_SECRET = process.env.VITE__PINATA_API_SECRET;
-const IPFS_LINK = process.env.VITE__IPFS_LINK;
+const PINATA_KEY = process.env.NEXT_PUBLIC_PINATA_API_KEY;
+const PINATA_SECRET = process.env.NEXT_PUBLIC_PINATA_API_SECRET;
+const IPFS_LINK = process.env.NEXT_PUBLIC_IPFS_LINK;
 
 const pinFileToIPFS = async (file: File, description: string) => {
   const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;

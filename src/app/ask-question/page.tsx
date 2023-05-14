@@ -16,13 +16,14 @@ import './editor.css';
 import { uploadFileToPinata, uploadJSONToPinata } from '@/utils';
 import { post_question_abi } from '@/abi/social';
 import { register_user_abi } from '@/abi/user';
+import { Address } from '@/types';
 
 type State = {
   title: string;
   question: string;
   solution: string;
   tags: string;
-  metadata: string;
+  url: string;
 };
 
 type Actions = {
@@ -30,7 +31,7 @@ type Actions = {
   changeQuestion: (question: string) => void;
   changeSolution: (solution: string) => void;
   changeTags: (tags: string) => void;
-  changeMetadata: (metadata: string) => void;
+  changeUrl: (url: string) => void;
 };
 
 const useCountStore = create<State & Actions>((set) => ({
@@ -38,15 +39,14 @@ const useCountStore = create<State & Actions>((set) => ({
   question: '',
   solution: '',
   tags: '',
-  metadata: '',
+  url: '',
   changeTitle: (title: string) => set((state: State) => ({ ...state, title })),
   changeQuestion: (question: string) =>
     set((state: State) => ({ ...state, question })),
   changeSolution: (solution: string) =>
     set((state: State) => ({ ...state, solution })),
   changeTags: (tags: string) => set((state: State) => ({ ...state, tags })),
-  changeMetadata: (metadata: string) =>
-    set((state: State) => ({ ...state, metadata })),
+  changeUrl: (url: string) => set((state: State) => ({ ...state, url })),
 }));
 
 const AskQuestion = () => {
@@ -55,20 +55,20 @@ const AskQuestion = () => {
     question,
     solution,
     tags,
-    metadata,
+    url,
     // functions
     changeTitle,
     changeQuestion,
     changeSolution,
     changeTags,
-    changeMetadata,
+    changeUrl,
   } = useCountStore((state) => state);
 
   const { config: post_question_config } = usePrepareContractWrite({
-    address: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+    address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
     abi: post_question_abi,
     functionName: 'postQuestion',
-    args: [[1], metadata, process.env.NEXT_PUBLIC_HASH_SECRET],
+    args: [[1], url, process.env.NEXT_PUBLIC_HASH_SECRET],
   });
 
   const { write: post_question } = useContractWrite({
@@ -105,7 +105,7 @@ const AskQuestion = () => {
     };
 
     const url = await uploadJSONToPinata(metadata);
-    changeMetadata(url);
+    changeUrl(url);
 
     console.log(url);
 
