@@ -1,7 +1,7 @@
 /* eslint-disable react/no-children-prop */
 'use client';
 
-import { FormEvent } from 'react';
+import { FormEvent, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -81,6 +81,13 @@ const AskQuestion = () => {
     },
   });
 
+  useEffect(() => {
+    if (url) {
+      console.log(url, post_question);
+      post_question?.();
+    }
+  }, [url]);
+
   const handleQuestionChange = ({ html }: any) => {
     changeQuestion(html);
   };
@@ -104,12 +111,8 @@ const AskQuestion = () => {
       tags,
     };
 
-    const url = await uploadJSONToPinata(metadata);
-    changeUrl(url);
-
-    console.log(url);
-
-    post_question?.();
+    const temp_url = await uploadJSONToPinata(metadata);
+    changeUrl(temp_url);
   };
 
   return (
