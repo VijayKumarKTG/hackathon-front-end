@@ -1,155 +1,162 @@
 /* eslint-disable @next/next/no-img-element */
-'use client';
-import { get_user_by_address_abi, register_user_abi } from '@/abi/user';
-import { Address } from '@/types';
-import { uploadJSONToPinata } from '@/utils';
-import { useRouter } from 'next/navigation';
-import { FormEvent, useEffect } from 'react';
+"use client";
+import { get_user_by_address_abi, register_user_abi } from "@/abi/user";
+import { Address } from "@/types";
+import { uploadJSONToPinata } from "@/utils";
+import { useRouter } from "next/navigation";
+import { FormEvent, useEffect } from "react";
 import {
-  useAccount,
-  useContractRead,
-  useContractWrite,
-  useNetwork,
-  usePrepareContractWrite,
-} from 'wagmi';
-import { create } from 'zustand';
+    useAccount,
+    useContractRead,
+    useContractWrite,
+    useNetwork,
+    usePrepareContractWrite,
+} from "wagmi";
+import { create } from "zustand";
 
 type State = {
-  profile: File | null;
-  banner: File | null;
-  name: string;
-  email: string;
-  bio: string;
-  url: string;
+    profile: File | null;
+    banner: File | null;
+    name: string;
+    email: string;
+    bio: string;
+    url: string;
 };
 
 type Actions = {
-  changeProfile: (profile: File | null) => void;
-  changeBanner: (banner: File | null) => void;
-  changeName: (name: string) => void;
-  changeEmail: (email: string) => void;
-  changeBio: (bio: string) => void;
-  changeUrl: (url: string) => void;
+    changeProfile: (profile: File | null) => void;
+    changeBanner: (banner: File | null) => void;
+    changeName: (name: string) => void;
+    changeEmail: (email: string) => void;
+    changeBio: (bio: string) => void;
+    changeUrl: (url: string) => void;
 };
 
 const useCountStore = create<State & Actions>((set) => ({
-  profile: null,
-  banner: null,
-  name: '',
-  email: '',
-  bio: '',
-  url: '',
-  changeProfile: (profile: File | null) =>
-    set((state: State) => ({ ...state, profile })),
-  changeBanner: (banner: File | null) =>
-    set((state: State) => ({ ...state, banner })),
-  changeName: (name: string) => set((state: State) => ({ ...state, name })),
-  changeEmail: (email: string) => set((state: State) => ({ ...state, email })),
-  changeBio: (bio: string) => set((state: State) => ({ ...state, bio })),
-  changeUrl: (url: string) => set((state: State) => ({ ...state, url })),
+    profile: null,
+    banner: null,
+    name: "",
+    email: "",
+    bio: "",
+    url: "",
+    changeProfile: (profile: File | null) =>
+        set((state: State) => ({ ...state, profile })),
+    changeBanner: (banner: File | null) =>
+        set((state: State) => ({ ...state, banner })),
+    changeName: (name: string) => set((state: State) => ({ ...state, name })),
+    changeEmail: (email: string) =>
+        set((state: State) => ({ ...state, email })),
+    changeBio: (bio: string) => set((state: State) => ({ ...state, bio })),
+    changeUrl: (url: string) => set((state: State) => ({ ...state, url })),
 }));
 
 const Registration = () => {
-  const {
-    profile,
-    banner,
-    name,
-    email,
-    bio,
-    url,
-    // functions
-    changeProfile,
-    changeBanner,
-    changeName,
-    changeEmail,
-    changeBio,
-    changeUrl,
-  } = useCountStore((state) => state);
-
-  const { isConnected, address } = useAccount();
-  const { chain } = useNetwork();
-  const router = useRouter();
-
-  const { config: register_user_config } = usePrepareContractWrite({
-    address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-    abi: register_user_abi,
-    functionName: 'registerUser',
-    chainId: chain?.id,
-    args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
-  });
-
-  const { write: register_user } = useContractWrite({
-    ...register_user_config,
-    onError(error: Error) {
-      console.log(error);
-    },
-    async onSuccess(data) {
-      await data.wait();
-
-      router.push('/profile');
-    },
-  });
-
-  const { data, error, isError } = useContractRead({
-    address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-    abi: get_user_by_address_abi,
-    functionName: 'getUserByAddress',
-    chainId: chain?.id,
-    args: [address],
-    onError(error: Error) {
-      console.log(error);
-    },
-  });
-
-  useEffect(() => {
-    if (!isConnected) {
-      router.push('/connect-wallet');
-    }
-  }, [isConnected]);
-
-  const onSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-
-    if (
-      isError &&
-      data === undefined &&
-      error?.message.includes('"Stack3: User not registered"')
-    ) {
-      const new_user = {
+    const {
+        profile,
+        banner,
         name,
         email,
         bio,
-      };
+        url,
+        // functions
+        changeProfile,
+        changeBanner,
+        changeName,
+        changeEmail,
+        changeBio,
+        changeUrl,
+    } = useCountStore((state) => state);
 
-      const url = await uploadJSONToPinata(new_user);
-      changeUrl(url);
+    const { isConnected, address } = useAccount();
+    const { chain } = useNetwork();
+    const router = useRouter();
 
-      console.log(register_user);
+    const { config: register_user_config } = usePrepareContractWrite({
+        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+        abi: register_user_abi,
+        functionName: "registerUser",
+        chainId: chain?.id,
+        args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
+    });
 
-      register_user?.();
-    } else {
-      router.push('/profile');
-    }
-  };
+    const { write: register_user } = useContractWrite({
+        ...register_user_config,
+        onError(error: Error) {
+            console.log(error);
+        },
+        async onSuccess(data) {
+            await data.wait();
+            router.push("/profile");
+        },
+    });
 
-  return (
-    <div className='bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48'>
-      <div className='w-full mb-14 lg:basis-1/2'>
-        <h1 className='text-[30px] text-center lg:text-left lg:text-40 text-white m-0 mb-10'>
-          Register now and be
-          <br className='hidden lg:block' /> a part of Web3 dApp
-          <br className='hidden lg:block' /> community 🚀
-        </h1>
-        <img
-          className='w-full object-contain mix-blend-luminosity'
-          alt='Login Image'
-          src='/registeration-img.png'
-        />
-      </div>
-      <form
-        onSubmit={onSubmit}
-        className='w-full flex flex-col gap-y-8 gap-4 lg:basis-1/2'>
-        {/* <div>
+    const { data, error, isError } = useContractRead({
+        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+        abi: get_user_by_address_abi,
+        functionName: "getUserByAddress",
+        chainId: chain?.id,
+        args: [address],
+        onError(error: Error) {
+            console.log(error.message);
+        },
+    });
+
+    console.log(data);
+
+    useEffect(() => {
+        if (!isConnected) {
+            router.push("/connect-wallet");
+        }
+    }, [isConnected]);
+
+    const onSubmit = async (event: FormEvent) => {
+        event.preventDefault();
+
+        console.log(
+            error,
+            data,
+            error?.message.includes('"Stack3: User not registered"')
+        );
+
+        if (
+            isError &&
+            data === undefined &&
+            error?.message.includes('"Stack3: User not registered"')
+        ) {
+            const new_user = {
+                name,
+                email,
+                bio,
+            };
+
+            const url = await uploadJSONToPinata(new_user);
+            changeUrl(url);
+            console.log(register_user);
+
+            register_user?.();
+        } else {
+            // router.push("/profile");
+        }
+    };
+
+    return (
+        <div className="bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48">
+            <div className="w-full mb-14 lg:basis-1/2">
+                <h1 className="text-[30px] text-center lg:text-left lg:text-40 text-white m-0 mb-10">
+                    Register now and be
+                    <br className="hidden lg:block" /> a part of Web3 dApp
+                    <br className="hidden lg:block" /> community 🚀
+                </h1>
+                <img
+                    className="w-full object-contain mix-blend-luminosity"
+                    alt="Login Image"
+                    src="/registeration-img.png"
+                />
+            </div>
+            <form
+                onSubmit={onSubmit}
+                className="w-full flex flex-col gap-y-8 gap-4 lg:basis-1/2">
+                {/* <div>
           <label className='block text-sm font-medium text-gray-50'>
             Profile photo
           </label>
@@ -225,68 +232,70 @@ const Registration = () => {
           </div>
         </div> */}
 
-        <div className='col-span-6 sm:col-span-4'>
-          <label
-            htmlFor='first-name'
-            className='block text-sm font-medium text-white'>
-            Name
-          </label>
-          <input
-            onChange={(event) => changeName(event.target.value)}
-            defaultValue={name}
-            type='text'
-            name='first-name'
-            id='first-name'
-            autoComplete='given-name'
-            placeholder='Enter your name'
-            className='mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue'
-          />
-        </div>
+                <div className="col-span-6 sm:col-span-4">
+                    <label
+                        htmlFor="first-name"
+                        className="block text-sm font-medium text-white">
+                        Name
+                    </label>
+                    <input
+                        onChange={(event) => changeName(event.target.value)}
+                        defaultValue={name}
+                        type="text"
+                        name="first-name"
+                        id="first-name"
+                        autoComplete="given-name"
+                        placeholder="Enter your name"
+                        className="mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue"
+                    />
+                </div>
 
-        <div className='col-span-6 sm:col-span-4'>
-          <label
-            htmlFor='email-address'
-            className='block text-sm font-medium text-white'>
-            Email address
-          </label>
-          <input
-            onChange={(event) => changeEmail(event.target.value)}
-            defaultValue={email}
-            type='text'
-            name='email-address'
-            id='email-address'
-            autoComplete='email'
-            placeholder='Enter your email address'
-            className='mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue'
-          />
-        </div>
+                <div className="col-span-6 sm:col-span-4">
+                    <label
+                        htmlFor="email-address"
+                        className="block text-sm font-medium text-white">
+                        Email address
+                    </label>
+                    <input
+                        onChange={(event) => changeEmail(event.target.value)}
+                        defaultValue={email}
+                        type="text"
+                        name="email-address"
+                        id="email-address"
+                        autoComplete="email"
+                        placeholder="Enter your email address"
+                        className="mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue"
+                    />
+                </div>
 
-        <div className='col-span-6 sm:col-span-4'>
-          <label htmlFor='bio' className='block text-sm font-medium text-white'>
-            Bio
-          </label>
-          <div className='mt-1'>
-            <textarea
-              onChange={(event) => changeBio(event.target.value)}
-              rows={4}
-              name='comment'
-              id='bio'
-              placeholder='Enter your bio'
-              className='mt-1 block w-full border-gray-300 shadow-sm focus:ring-indigo-500 sm:text-sm bg-gray-50 border rounded-md text-gray-900 text-sm focus:border-blue dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue resize-y'
-              defaultValue={bio}
-            />
-          </div>
-        </div>
+                <div className="col-span-6 sm:col-span-4">
+                    <label
+                        htmlFor="bio"
+                        className="block text-sm font-medium text-white">
+                        Bio
+                    </label>
+                    <div className="mt-1">
+                        <textarea
+                            onChange={(event) => changeBio(event.target.value)}
+                            rows={4}
+                            name="comment"
+                            id="bio"
+                            placeholder="Enter your bio"
+                            className="mt-1 block w-full border-gray-300 shadow-sm focus:ring-indigo-500 sm:text-sm bg-gray-50 border rounded-md text-gray-900 text-sm focus:border-blue dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue resize-y"
+                            defaultValue={bio}
+                        />
+                    </div>
+                </div>
 
-        <button
-          disabled={name === '' || email === '' || bio === ''}
-          type='submit'
-          className='cursor-pointer border-none flex items-center justify-center py-4 rounded-11xl w-full bg-blue text-white font-medium text-lg leading-6'>
-          Register
-        </button>
-      </form>
-    </div>
-  );
+                <button
+                    disabled={name === "" || email === "" || bio === ""}
+                    type="submit"
+                    className="cursor-pointer border-none flex items-center justify-center py-4 rounded-11xl w-full bg-blue text-white font-medium text-lg leading-6">
+                    Register
+                </button>
+            </form>
+        </div>
+    );
 };
 
 export default Registration;
