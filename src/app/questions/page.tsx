@@ -12,7 +12,7 @@ import {
   get_all_questions_by_id,
   get_all_questions_by_user_address,
 } from '@/abi/social';
-import { Address } from '@/types';
+import { Address, Question } from '@/types';
 
 const Questions: NextPage = () => {
   const { address } = useAccount();
@@ -46,21 +46,58 @@ const Questions: NextPage = () => {
     enabled: false,
   });
 
+  let questions_list: Question[] = questions as Question[];
+
   useEffect(() => {
     if (id_list.length > 0) {
       refetch();
     }
   }, [id_list]);
 
-  console.log(
-    ids,
-    isIdsLoading,
-    isIdsError,
-    questions,
-    isQuestionsLoading,
-    isQuestionsError
-  );
+  if (isIdsLoading || isQuestionsLoading) {
+    return (
+      <Wrapper>
+        <div>Loading...</div>
+      </Wrapper>
+    );
+  }
 
+  if (isIdsError || isQuestionsError) {
+    return (
+      <Wrapper>
+        <div>Something went wrong.</div>
+      </Wrapper>
+    );
+  }
+
+  if (id_list.length === 0 || questions_list?.length === 0) {
+    return (
+      <Wrapper>
+        <div>No questions to show.</div>
+      </Wrapper>
+    );
+  }
+
+  return (
+    <Wrapper>
+      <>
+        <div className='text-[24px] leading-6 mb-4 font-medium text-silver-100'>
+          {id_list?.length} Questions
+        </div>
+
+        {questions_list?.map((question: Question) => (
+          <div className='m-0 mb-3' key={question?.id.toString()}>
+            <QuestionCardLarge {...question} />
+          </div>
+        ))}
+      </>
+    </Wrapper>
+  );
+};
+
+export default Questions;
+
+const Wrapper = ({ children }: { children: JSX.Element }) => {
   return (
     <div className='bg-darkblue px-6 py-14 xl:p-[56px]'>
       <div className='grid grid-cols-12 gap-x-6 items-start justify-start'>
@@ -81,91 +118,9 @@ const Questions: NextPage = () => {
               </b>
             </Link>
           </div>
-
-          <div className='text-[24px] leading-6 mb-4 font-medium text-silver-100'>
-            {id_list?.length} Questions
-          </div>
-
-          <div className='m-0 mb-3'>
-            <QuestionCardLarge
-              question="Javascript I wrote isn't working for for my html [closed]"
-              voteCount={23}
-            />
-          </div>
-
-          <div className='m-0 mb-3'>
-            <QuestionCardLarge
-              question='How can I anchor my absolute button to the end of a div/container so that when I scroll that div/container to right it will remain in the same place'
-              voteCount={-5}
-            />
-          </div>
-
-          <div className='m-0 mb-3'>
-            <QuestionCardLarge
-              question='How can I anchor my absolute button to the end of a div/container so that when I scroll'
-              voteCount={234}
-            />
-          </div>
-
-          <div className='m-0 mb-3'>
-            <QuestionCardLarge
-              question="Javascript I wrote isn't working for for my html [closed]"
-              voteCount={23}
-            />
-          </div>
-
-          <div className='m-0 mb-3'>
-            <QuestionCardLarge
-              question="Javascript I wrote isn't working for for my html [closed]"
-              voteCount={23}
-            />
-          </div>
-
-          <div className='m-0 mb-3'>
-            <QuestionCardLarge
-              question="Javascript I wrote isn't working for for my html [closed]"
-              voteCount={23}
-            />
-          </div>
-
-          <div className='m-0 mb-3'>
-            <QuestionCardLarge
-              question="Javascript I wrote isn't working for for my html [closed]"
-              voteCount={23}
-            />
-          </div>
-
-          <div className='m-0 mb-3'>
-            <QuestionCardLarge
-              question="Javascript I wrote isn't working for for my html [closed]"
-              voteCount={23}
-            />
-          </div>
-
-          <div className='m-0 mb-3'>
-            <QuestionCardLarge
-              question="Javascript I wrote isn't working for for my html [closed]"
-              voteCount={23}
-            />
-          </div>
-
-          <div className='m-0 mb-3'>
-            <QuestionCardLarge
-              question="Javascript I wrote isn't working for for my html [closed]"
-              voteCount={23}
-            />
-          </div>
-
-          <div className='m-0 mb-3'>
-            <QuestionCardLarge
-              question="Javascript I wrote isn't working for for my html [closed]"
-              voteCount={23}
-            />
-          </div>
+          {children}
         </div>
       </div>
     </div>
   );
 };
-
-export default Questions;
