@@ -7,13 +7,15 @@ const QuestionCardLarge = (props: Question) => {
   const { id, downvotes, upvotes, uri } = props;
 
   const { data, isError, isLoading } = useQuery(
-    ['get-question-metadata', id.toString()],
+    ['get-question-metadata', id?.toString()],
     () => axios.get(uri)
   );
 
   if (isLoading) {
     return (
-      <Wrapper id={id.toString()} voteCount={upvotes.sub(downvotes).toNumber()}>
+      <Wrapper
+        id={id?.toString()}
+        voteCount={upvotes?.sub(downvotes).toNumber()}>
         <div>Loading...</div>
       </Wrapper>
     );
@@ -21,7 +23,9 @@ const QuestionCardLarge = (props: Question) => {
 
   if (isError) {
     return (
-      <Wrapper id={id.toString()} voteCount={upvotes.sub(downvotes).toNumber()}>
+      <Wrapper
+        id={id?.toString()}
+        voteCount={upvotes?.sub(downvotes).toNumber()}>
         <div>Something went wrong!</div>
       </Wrapper>
     );
@@ -29,7 +33,9 @@ const QuestionCardLarge = (props: Question) => {
 
   if (!data) {
     return (
-      <Wrapper id={id.toString()} voteCount={upvotes.sub(downvotes).toNumber()}>
+      <Wrapper
+        id={id?.toString()}
+        voteCount={upvotes?.sub(downvotes).toNumber()}>
         <div>No data found.</div>
       </Wrapper>
     );
@@ -39,10 +45,10 @@ const QuestionCardLarge = (props: Question) => {
 
   return (
     <Link
-      href={`/${id.toString()}`}
+      href={`/${id?.toString()}`}
       className='cursor-pointer [border:none] p-6 bg-gray-500 rounded-xl w-full gap-x-8 flex flex-row box-border items-center justify-start text-white no-underline'>
       <div className='text-sm leading-5 text-silver-100'>
-        {upvotes.sub(downvotes).toString()} Votes
+        {upvotes?.sub(downvotes).toString()} Votes
       </div>
       <p className='text-base leading-6 text-gainsboro'>{metadata?.title}</p>
     </Link>
@@ -62,7 +68,7 @@ const Wrapper = ({
 }) => {
   return (
     <Link
-      href={`/${id.toString()}`}
+      href={`/${id?.toString()}`}
       className='cursor-pointer [border:none] p-6 bg-gray-500 rounded-xl w-full gap-x-8 flex flex-row box-border items-center justify-start text-white no-underline'>
       <div className='text-sm leading-5 text-silver-100'>{voteCount} Votes</div>
       {children}

@@ -15,7 +15,6 @@ import './editor.css';
 
 import { uploadFileToPinata, uploadJSONToPinata } from '@/utils';
 import { post_question_abi } from '@/abi/social';
-import { register_user_abi } from '@/abi/user';
 import { Address } from '@/types';
 
 type State = {
