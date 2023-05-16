@@ -1,6 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { get_user_by_address_abi, register_user_abi } from "@/abi/user";
+import {
+    get_user_by_address_abi,
+    register_user_abi,
+    set_user_uri_by_address_abi,
+} from "@/abi/user";
 import { Address } from "@/types";
 import { uploadJSONToPinata } from "@/utils";
 import { useRouter } from "next/navigation";
@@ -35,9 +39,9 @@ type Actions = {
 const useCountStore = create<State & Actions>((set) => ({
     profile: null,
     banner: null,
-    name: "",
-    email: "",
-    bio: "",
+    name: "Ayush I",
+    email: "ayushiyankan007@gmail.com",
+    bio: "Software Engineer",
     url: "",
     changeProfile: (profile: File | null) =>
         set((state: State) => ({ ...state, profile })),
@@ -67,6 +71,8 @@ const Registration = () => {
         changeUrl,
     } = useCountStore((state) => state);
 
+    console.log({ url });
+
     const { isConnected, address } = useAccount();
     const { chain } = useNetwork();
     const router = useRouter();
@@ -79,14 +85,38 @@ const Registration = () => {
         args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
     });
 
+    const { config: set_uri_user_config } = usePrepareContractWrite({
+        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+        abi: set_user_uri_by_address_abi,
+        functionName: "setUserURI",
+        chainId: chain?.id,
+        args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
+    });
+
+    console.log(url);
+
     const { write: register_user } = useContractWrite({
         ...register_user_config,
         onError(error: Error) {
             console.log(error);
         },
         async onSuccess(data) {
+            console.log({ data });
             await data.wait();
-            router.push("/profile");
+            console.log({ data });
+            // router.push("/profile");
+        },
+    });
+
+    const { write: set_user_uri } = useContractWrite({
+        ...set_uri_user_config,
+        onError(error: Error) {
+            console.log(error);
+        },
+        async onSuccess(data) {
+            await data.wait();
+            console.log({ data });
+            // router.push("/profile");
         },
     });
 
@@ -101,7 +131,7 @@ const Registration = () => {
         },
     });
 
-    console.log(data);
+    // console.log(data);
 
     useEffect(() => {
         if (!isConnected) {
@@ -112,32 +142,49 @@ const Registration = () => {
     const onSubmit = async (event: FormEvent) => {
         event.preventDefault();
 
-        console.log(
-            error,
-            data,
-            error?.message.includes('"Stack3: User not registered"')
-        );
+        console.log(isError);
 
-        if (
-            isError &&
-            data === undefined &&
-            error?.message.includes('"Stack3: User not registered"')
-        ) {
-            const new_user = {
-                name,
-                email,
-                bio,
-            };
+        // if (
+        //     isError &&
+        //     error?.message.includes('"Stack3: User not registered"')
+        // ) {
+        const new_user = {
+            name,
+            email,
+            bio,
+        };
 
-            const url = await uploadJSONToPinata(new_user);
-            changeUrl(url);
-            console.log(register_user);
+        await uploadJSONToPinata(new_user)
+            .then((url) => {
+                if (url) {
+                    changeUrl(url);
+                } else {
+                    throw new Error("Unable to generate pinata uri");
+                }
 
-            register_user?.();
-        } else {
-            // router.push("/profile");
-        }
+                console.log(url);
+            })
+            .then(() => {
+                if (data && data?.userAddress && data?.uri === "") {
+                    console.log("hi");
+                    set_user_uri?.();
+                } else {
+                    register_user?.();
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        // changeUrl(url);
+        console.log(url);
+
+        // } else {
+        //     console.log(name, email, bio);
+        //     // router.push("/profile");
+        // }
     };
+
+    console.log(data);
 
     return (
         <div className="bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48">
@@ -157,80 +204,84 @@ const Registration = () => {
                 onSubmit={onSubmit}
                 className="w-full flex flex-col gap-y-8 gap-4 lg:basis-1/2">
                 {/* <div>
-          <label className='block text-sm font-medium text-gray-50'>
-            Profile photo
-          </label>
-          <div className='mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue flex flex-col justify-center items-center w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue'>
-            <div className='space-y-1 text-center'>
-              <svg
-                className='mx-auto h-12 w-12 text-white'
-                stroke='currentColor'
-                fill='none'
-                viewBox='0 0 48 48'
-                aria-hidden='true'>
-                <path
-                  d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
-                  strokeWidth={2}
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                />
-              </svg>
-              <div className='flex text-sm text-white'>
-                <label
-                  htmlFor='file-upload'
-                  className='relative flex flex-col items-center justify-center cursor-pointer rounded-md bg-transparent font-medium text-blue focus-within:outline-none focus-within:ring-2'>
-                  <span>Upload a file</span>
-                  <input
-                    id='file-upload'
-                    name='file-upload'
-                    type='file'
-                    className='sr-only'
-                  />
-                </label>
-                <p className='pl-1'>or drag and drop</p>
-              </div>
-              <p className='text-xs text-white'>PNG, JPG, GIF up to 10MB</p>
-            </div>
-          </div>
-        </div>
+                    <label className="block text-sm font-medium text-gray-50">
+                        Profile photo
+                    </label>
+                    <div className="mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue flex flex-col justify-center items-center w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue">
+                        <div className="space-y-1 text-center">
+                            <svg
+                                className="mx-auto h-12 w-12 text-white"
+                                stroke="currentColor"
+                                fill="none"
+                                viewBox="0 0 48 48"
+                                aria-hidden="true">
+                                <path
+                                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                            <div className="flex text-sm text-white">
+                                <label
+                                    htmlFor="file-upload"
+                                    className="relative flex flex-col items-center justify-center cursor-pointer rounded-md bg-transparent font-medium text-blue focus-within:outline-none focus-within:ring-2">
+                                    <span>Upload a file</span>
+                                    <input
+                                        id="file-upload"
+                                        name="file-upload"
+                                        type="file"
+                                        className="sr-only"
+                                    />
+                                </label>
+                                <p className="pl-1">or drag and drop</p>
+                            </div>
+                            <p className="text-xs text-white">
+                                PNG, JPG, GIF up to 10MB
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-        <div>
-          <label className='block text-sm font-medium text-gray-50'>
-            Cover photo
-          </label>
-          <div className='mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue flex flex-col justify-center items-center w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue'>
-            <div className='space-y-1 text-center'>
-              <svg
-                className='mx-auto h-12 w-12 text-white'
-                stroke='currentColor'
-                fill='none'
-                viewBox='0 0 48 48'
-                aria-hidden='true'>
-                <path
-                  d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
-                  strokeWidth={2}
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                />
-              </svg>
-              <div className='flex text-sm text-white'>
-                <label
-                  htmlFor='file-upload'
-                  className='relative flex flex-col items-center justify-center cursor-pointer rounded-md bg-transparent font-medium text-blue focus-within:outline-none focus-within:ring-2'>
-                  <span>Upload a file</span>
-                  <input
-                    id='file-upload'
-                    name='file-upload'
-                    type='file'
-                    className='sr-only'
-                  />
-                </label>
-                <p className='pl-1'>or drag and drop</p>
-              </div>
-              <p className='text-xs text-white'>PNG, JPG, GIF up to 10MB</p>
-            </div>
-          </div>
-        </div> */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-50">
+                        Cover photo
+                    </label>
+                    <div className="mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue flex flex-col justify-center items-center w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue">
+                        <div className="space-y-1 text-center">
+                            <svg
+                                className="mx-auto h-12 w-12 text-white"
+                                stroke="currentColor"
+                                fill="none"
+                                viewBox="0 0 48 48"
+                                aria-hidden="true">
+                                <path
+                                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                            <div className="flex text-sm text-white">
+                                <label
+                                    htmlFor="file-upload"
+                                    className="relative flex flex-col items-center justify-center cursor-pointer rounded-md bg-transparent font-medium text-blue focus-within:outline-none focus-within:ring-2">
+                                    <span>Upload a file</span>
+                                    <input
+                                        id="file-upload"
+                                        name="file-upload"
+                                        type="file"
+                                        className="sr-only"
+                                    />
+                                </label>
+                                <p className="pl-1">or drag and drop</p>
+                            </div>
+                            <p className="text-xs text-white">
+                                PNG, JPG, GIF up to 10MB
+                            </p>
+                        </div>
+                    </div>
+                </div> */}
 
                 <div className="col-span-6 sm:col-span-4">
                     <label
