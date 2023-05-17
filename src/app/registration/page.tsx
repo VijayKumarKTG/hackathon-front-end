@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect } from 'react';
 import { create } from 'zustand';
@@ -81,15 +82,18 @@ const Registration = () => {
     functionName: 'registerUser',
     chainId: chain?.id,
     args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
-  });
+    onError(error) {
+      console.log(error);
 
-  //   const { config: set_uri_user_config } = usePrepareContractWrite({
-  //     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-  //     abi: set_user_uri_by_address_abi,
-  //     functionName: 'setUserURI',
-  //     chainId: chain?.id,
-  //     args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
-  //   });
+      if (
+        error.message.includes(
+          `reason="execution reverted: Stack3: User already registered"`
+        )
+      ) {
+        router.push('/profile');
+      }
+    },
+  });
 
   const { write: register_user } = useContractWrite({
     ...register_user_config,
@@ -102,18 +106,6 @@ const Registration = () => {
       router.push('/profile');
     },
   });
-
-  //   const { write: set_user_uri } = useContractWrite({
-  //     ...set_uri_user_config,
-  //     onError(error: Error) {
-  //       console.log(error);
-  //     },
-  //     async onSuccess(data) {
-  //       await data.wait();
-  //       console.log({ data });
-  //       // router.push("/profile");
-  //     },
-  //   });
 
   const { data, error, isError } = useContractRead({
     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
@@ -139,51 +131,6 @@ const Registration = () => {
       register_user?.();
     }
   }, [url]);
-
-  //   const onSubmit = async (event: FormEvent) => {
-  //     event.preventDefault();
-
-  //     console.log(isError);
-
-  //     // if (
-  //     //     isError &&
-  //     //     error?.message.includes('"Stack3: User not registered"')
-  //     // ) {
-  //     const new_user = {
-  //       name,
-  //       email,
-  //       bio,
-  //     };
-
-  //     await uploadJSONToPinata(new_user)
-  //       .then((url) => {
-  //         if (url) {
-  //           changeUrl(url);
-  //         } else {
-  //           throw new Error('Unable to generate pinata uri');
-  //         }
-
-  //         console.log(url);
-  //       })
-  //       .then(() => {
-  //         if (data && data?.userAddress && data?.uri === '') {
-  //           console.log('hi');
-  //           set_user_uri?.();
-  //         } else {
-
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //     // changeUrl(url);
-  //     console.log(url);
-
-  //     // } else {
-  //     //     console.log(name, email, bio);
-  //     //     // router.push("/profile");
-  //     // }
-  //   };
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();

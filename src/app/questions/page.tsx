@@ -3,32 +3,78 @@
 import { useEffect } from 'react';
 import type { NextPage } from 'next';
 import Link from 'next/link';
+import { useContractRead, useContractReads } from 'wagmi';
+import { BigNumber } from 'ethers';
 
 import RelatedQuestions from '@/components/relatedQuestions';
 import TrendingTags from '@/components/trendingTags';
 import QuestionCardLarge from '@/components/cards/questionLarge';
-import { useAccount, useContractRead, useContractReads } from 'wagmi';
-import {
-  get_all_questions_by_id,
-  get_all_questions_by_user_address,
-} from '@/abi/social';
+import { get_all_questions_by_id, get_total_counts } from '@/abi/social';
 import { Address, Question } from '@/types';
+import usePaginationStore from '@/store/pagination';
 
 const Questions: NextPage = () => {
-  const { address } = useAccount();
+  const {
+    currentPage,
+    totalItems,
+    pageSize,
+    totalPages,
+    items,
+    setCurrentPage,
+    setTotalItems,
+    setTotalPages,
+    setItems,
+  } = usePaginationStore();
 
   const {
-    data: ids,
-    isLoading: isIdsLoading,
-    isError: isIdsError,
+    data: totalCounts,
+    isLoading: isCountLoading,
+    isError: isCountError,
+    refetch: refetchCount,
   } = useContractRead({
     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-    abi: get_all_questions_by_user_address,
-    functionName: 'getQuestionsByUserAddress',
-    args: [address],
+    abi: get_total_counts,
+    functionName: 'getTotalCounts',
+    enabled: false,
   });
 
-  let id_list: any[] = ids as any[];
+  useEffect(() => {
+    refetchCount();
+  }, []);
+
+  useEffect(() => {
+    if (totalCounts && !isCountLoading && !isCountError) {
+      const count_list: BigNumber[] = totalCounts as BigNumber[];
+      const temp_count = count_list[1].toNumber();
+
+      setTotalItems(temp_count);
+      setTotalPages(
+        temp_count < pageSize ? 1 : Math.ceil(temp_count / pageSize)
+      );
+    }
+  }, [totalCounts]);
+
+  useEffect(() => {
+    if (totalItems > 0) {
+      let startIndex = 0;
+      let endIndex = 0;
+      const items_list: number[] = [];
+
+      if (totalPages === 1) {
+        startIndex = 0;
+        endIndex = totalItems;
+      } else {
+        startIndex = (totalPages - currentPage) * 10;
+        endIndex = startIndex + 10;
+      }
+
+      for (let i = endIndex; i > startIndex; i--) {
+        items_list.push(i);
+      }
+
+      setItems(items_list);
+    }
+  }, [totalItems, currentPage]);
 
   const contract = {
     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
@@ -40,21 +86,21 @@ const Questions: NextPage = () => {
     data: questions,
     isLoading: isQuestionsLoading,
     isError: isQuestionsError,
-    refetch,
+    refetch: refetchQuestions,
   } = useContractReads({
-    contracts: id_list?.map((id: any) => ({ ...contract, args: [id] })) as any,
+    contracts: items?.map((id: number) => ({ ...contract, args: [id] })) as any,
     enabled: false,
   });
 
   let questions_list: Question[] = questions as Question[];
 
   useEffect(() => {
-    if (id_list.length > 0) {
-      refetch();
+    if (items.length > 0) {
+      refetchQuestions();
     }
-  }, [id_list]);
+  }, [items]);
 
-  if (isIdsLoading || isQuestionsLoading) {
+  if (isCountLoading || isQuestionsLoading) {
     return (
       <Wrapper>
         <div>Loading...</div>
@@ -62,7 +108,7 @@ const Questions: NextPage = () => {
     );
   }
 
-  if (isIdsError || isQuestionsError) {
+  if (isCountError || isQuestionsError) {
     return (
       <Wrapper>
         <div>Something went wrong.</div>
@@ -70,7 +116,7 @@ const Questions: NextPage = () => {
     );
   }
 
-  if (id_list.length === 0 || questions_list?.length === 0) {
+  if (items.length === 0 || questions_list?.length === 0) {
     return (
       <Wrapper>
         <div>No questions to show.</div>
@@ -82,7 +128,7 @@ const Questions: NextPage = () => {
     <Wrapper>
       <>
         <div className='text-[24px] leading-6 mb-4 font-medium text-silver-100'>
-          {id_list?.length} Questions
+          {totalItems} Questions
         </div>
 
         {questions_list?.map((question: Question) => (

@@ -1,7 +1,7 @@
 /* eslint-disable react/no-children-prop */
 'use client';
 
-import { FormEvent, useEffect } from 'react';
+import { FormEvent, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -63,11 +63,13 @@ const AskQuestion = () => {
     changeUrl,
   } = useCountStore((state) => state);
 
+  const checkIfSubmitting = useRef<boolean>(false);
+
   const { config: post_question_config } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
     abi: post_question_abi,
     functionName: 'postQuestion',
-    args: [[1], url, process.env.NEXT_PUBLIC_HASH_SECRET],
+    args: [[1, 2, 3], url, process.env.NEXT_PUBLIC_HASH_SECRET],
   });
 
   const { write: post_question } = useContractWrite({
@@ -76,19 +78,19 @@ const AskQuestion = () => {
       console.log(error);
     },
     async onSuccess(data) {
-      console.log(data.hash);
+      await data.wait();
+      alert('Question Posted Successfully!');
+      changeUrl('');
     },
   });
 
-  useEffect(() => {
-    if (url) {
-      console.log(url, post_question);
-      post_question?.();
-    }
-  }, [url]);
+  if (url && post_question && checkIfSubmitting.current) {
+    post_question?.();
+    checkIfSubmitting.current = false;
+  }
 
-  const handleQuestionChange = ({ html }: any) => {
-    changeQuestion(html);
+  const handleQuestionChange = ({ _, text }: any) => {
+    changeQuestion(text);
   };
 
   const handleSolutionChange = ({ html }: any) => {
@@ -112,6 +114,7 @@ const AskQuestion = () => {
 
     const temp_url = await uploadJSONToPinata(metadata);
     changeUrl(temp_url);
+    checkIfSubmitting.current = true;
   };
 
   return (
