@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import {
   Address,
@@ -15,13 +15,18 @@ import Stats from '@/components/stats';
 import Achievements from '@/components/achievement';
 import Setting from '@/components/setting';
 import { get_user_by_address_abi } from '@/abi/user';
+import { UserContract, UserMetadata } from '@/types';
 
 const Profile = () => {
   const [active, set_active] = useState<string>('Stats');
   const { address } = useAccount();
   const { chain } = useNetwork();
 
-  const { data, isLoading, isError } = useContractRead({
+  const {
+    data,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useContractRead({
     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
     abi: get_user_by_address_abi,
     functionName: 'getUserByAddress',
@@ -32,7 +37,7 @@ const Profile = () => {
     },
   });
 
-  const profile_contract = data as any;
+  const profile_contract = data as UserContract;
 
   const {
     data: profile,
@@ -42,19 +47,19 @@ const Profile = () => {
     axios.get(profile_contract?.uri)
   );
 
-  console.log(profile);
+  const user = profile?.data as UserMetadata;
 
-  const user = profile?.data;
+  if (isUserLoading || isProfileLoading) {
+    return <div>Loading...</div>;
+  }
 
-  useEffect(() => {
-    // async function fetchJSONfromURI() {
-    //     const data111 = await fetchPinataURItoJSON(
-    //         "https://hackathon.mypinata.cloud/ipfs/QmbFfA3BYb59wwFSod3Zk6cMzo7wBbLixEoFk8YYWfVVE5"
-    //     );
-    //     console.log(data111);
-    // }
-    // fetchJSONfromURI();
-  }, []);
+  if (isUserError || isProfileError) {
+    return <div>Something went wrong</div>;
+  }
+
+  if (!profile_contract || !user) {
+    return <div>No data found regarding user.</div>;
+  }
 
   return (
     <div className='relative w-full flex flex-col items-center bg-darkblue'>
@@ -73,7 +78,7 @@ const Profile = () => {
           <img
             className='object-cover w-full h-full'
             src={
-              user.profile ||
+              user?.profile ||
               'https://images.unsplash.com/photo-1542190891-2093d38760f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4MTU2NzA5NQ&ixlib=rb-4.0.3&q=80&w=1080'
             }
             alt='Profile picture'

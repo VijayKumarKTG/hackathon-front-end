@@ -2,7 +2,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { FormEvent, useEffect } from 'react';
+import { FormEvent, useEffect, useRef } from 'react';
 import { create } from 'zustand';
 import {
   useAccount,
@@ -72,6 +72,8 @@ const Registration = () => {
     changeUrl,
   } = useCountStore((state) => state);
 
+  const checkIfSubmitting = useRef<boolean>(false);
+
   const { isConnected, address } = useAccount();
   const { chain } = useNetwork();
   const router = useRouter();
@@ -124,13 +126,10 @@ const Registration = () => {
     }
   }, [isConnected]);
 
-  useEffect(() => {
-    if (url) {
-      console.log(url);
-      console.log(register_user);
-      register_user?.();
-    }
-  }, [url]);
+  if (url && register_user && checkIfSubmitting.current) {
+    register_user?.();
+    checkIfSubmitting.current = false;
+  }
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -153,6 +152,7 @@ const Registration = () => {
 
       const url = await uploadJSONToPinata(new_user);
       changeUrl(url);
+      checkIfSubmitting.current = true;
     } else {
       router.push('/profile');
     }
