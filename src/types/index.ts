@@ -13,3 +13,23 @@ export interface Question {
   upvotes: BigNumber;
   uri: string;
 }
+
+export interface UserContract {
+  aUpvotes: BigNumber;
+  answers: [];
+  bestAnswerCount: BigNumber;
+  comments: BigNumber[];
+  id: BigNumber;
+  qUpvotes: BigNumber;
+  questions: BigNumber[];
+  uri: string;
+  userAddress: Address;
+}
+
+export interface UserMetadata {
+  banner: string;
+  bio: string;
+  email: string;
+  name: string;
+  profile: string;
+}

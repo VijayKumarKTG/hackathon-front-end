@@ -54,8 +54,6 @@ const Question = ({ params }: { params: { id: string } }) => {
     );
   }
 
-  console.log(question, metadata);
-
   return (
     <Wrapper>
       <>
@@ -88,28 +86,14 @@ const Question = ({ params }: { params: { id: string } }) => {
           <ContentCard
             voteCount={qn?.upvotes.sub(qn?.downvotes).toNumber()}
             content={metadata?.data?.question}
+            comments={qn?.comments}
+            authorAddress={qn?.author}
           />
         </div>
 
         <div className='text-[24px] leading-6 mb-3 font-medium text-silver-100'>
           {qn?.answers?.length} Answers
         </div>
-
-        {/* <div className='m-0 mb-6'>
-          <ContentCard />
-        </div>
-
-        <div className='m-0 mb-6'>
-          <ContentCard />
-        </div>
-
-        <div className='m-0 mb-6'>
-          <ContentCard />
-        </div>
-
-        <div className='m-0 mb-6'>
-          <ContentCard />
-        </div> */}
       </>
     </Wrapper>
   );

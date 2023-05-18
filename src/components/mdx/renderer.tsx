@@ -9,11 +9,11 @@ import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
 const components = {
   // Add your custom components here
   p: (props: any) => (
-    <p className='m-0 text-white text-[16px] leading-6' {...props} />
+    <p className='m-0 mb-4 text-white text-[16px] leading-6' {...props} />
   ),
   a: (props: any) => (
     <a
-      className='m-0 mb-4 text-white text-[16px] leading-6 underline font-semibold'
+      className='m-0 text-white text-[16px] leading-6 underline font-semibold'
       {...props}
     />
   ),
@@ -33,6 +33,7 @@ const components = {
       </code>
     );
   },
+  pre: (props: any) => <pre className='my-8 rounded-sm' {...props} />,
 };
 
 interface Props {
