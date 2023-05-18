@@ -108,3 +108,47 @@ export const get_user_by_address_abi = [
         type: "function",
     },
 ];
+
+export const get_answers_by_user_address = [
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "_user",
+                type: "address",
+            },
+        ],
+        name: "getAnswersByUserAddress",
+        outputs: [
+            {
+                internalType: "uint256[]",
+                name: "",
+                type: "uint256[]",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+];
+
+export const get_questions_by_user_address = [
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "_user",
+                type: "address",
+            },
+        ],
+        name: "getQuestionsByUserAddress",
+        outputs: [
+            {
+                internalType: "uint256[]",
+                name: "",
+                type: "uint256[]",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+];

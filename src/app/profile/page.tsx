@@ -7,6 +7,7 @@ import {
     Address,
     useAccount,
     useContractRead,
+    useContractReads,
     useNetwork,
     useQuery,
 } from "wagmi";
@@ -19,14 +20,18 @@ import {
     get_questions_by_user_address,
     get_user_by_address_abi,
 } from "@/abi/user";
-import { UserContract, UserMetadata } from "@/types";
+import { Question, UserContract, UserMetadata } from "@/types";
 import { create } from "zustand";
+import { BigNumber } from "ethers";
+import { get_all_questions_by_id } from "@/abi/social";
 
 type State = {
     user: UserMetadata;
     address: string;
     socials: Array<Object>;
+    questionsIds: Array<Object>;
     questions: Array<Object>;
+    answersIds: Array<Object>;
     answers: Array<Object>;
 };
 
@@ -34,7 +39,9 @@ type Actions = {
     changeUser: (user: UserMetadata) => void;
     changeAddress: (address: string) => void;
     changeSocials: (socials: Array<Object>) => void;
+    changeAnswersIds: (answersIds: Array<Number>) => void;
     changeAnswers: (answers: Array<Object>) => void;
+    changeQuestionsIds: (questionIds: Array<Number>) => void;
     changeQuestions: (questions: Array<Object>) => void;
 };
 
@@ -48,7 +55,9 @@ const useProfileStore = create<State & Actions>((set) => ({
     },
     address: "",
     socials: [],
+    questionsIds: [],
     questions: [],
+    answersIds: [],
     answers: [],
     //functions
     changeUser: (user: UserMetadata) =>
@@ -59,8 +68,12 @@ const useProfileStore = create<State & Actions>((set) => ({
         set((state: State) => ({ ...state, socials })),
     changeAnswers: (answers: Array<Object>) =>
         set((state: State) => ({ ...state, answers })),
+    changeAnswersIds: (answersIds: Array<Number>) =>
+        set((state: State) => ({ ...state, answersIds })),
     changeQuestions: (questions: Array<Object>) =>
         set((state: State) => ({ ...state, questions })),
+    changeQuestionsIds: (questionsIds: Array<Number>) =>
+        set((state: State) => ({ ...state, questionsIds })),
 }));
 
 const Profile = () => {
@@ -69,12 +82,16 @@ const Profile = () => {
         address: state_address,
         socials,
         questions,
+        questionsIds,
         answers,
+        answersIds,
         changeUser,
         changeAddress,
         changeSocials,
         changeAnswers,
         changeQuestions,
+        changeAnswersIds,
+        changeQuestionsIds,
     } = useProfileStore((state) => state);
 
     const [active, set_active] = useState<string>("Stats");
@@ -97,7 +114,7 @@ const Profile = () => {
     });
 
     const {
-        data: user_answers_data,
+        data: user_answers_ids_data,
         isLoading: isUserAnswersLoading,
         isError: isUserAnswersError,
     } = useContractRead({
@@ -112,7 +129,7 @@ const Profile = () => {
     });
 
     const {
-        data: user_questions_data,
+        data: user_questions_ids_data,
         isLoading: isUserQuestionsLoading,
         isError: isUserQuestionsError,
     } = useContractRead({
@@ -147,19 +164,90 @@ const Profile = () => {
     }, [address, user, changeAddress, changeUser]);
 
     useEffect(() => {
-        changeQuestions(user_questions_data as Array<Object> | []);
-        changeAnswers(user_answers_data as Array<Object> | []);
+        if (
+            user_questions_ids_data &&
+            !isUserQuestionsLoading &&
+            !isUserQuestionsError
+        ) {
+            let ids_list_as_number: number[] = Array.isArray(
+                user_questions_ids_data
+            )
+                ? user_questions_ids_data.map((id: any) => Number(id._hex))
+                : [];
+
+            ids_list_as_number = ids_list_as_number
+                ?.slice(0, 3)
+                .sort((a: number, b: number) => {
+                    return b - a;
+                });
+
+            changeQuestionsIds(ids_list_as_number);
+        }
+
+        if (
+            user_answers_ids_data &&
+            !isUserAnswersLoading &&
+            !isUserAnswersError
+        ) {
+            let ids_list_as_number: number[] = Array.isArray(
+                user_questions_ids_data
+            )
+                ? user_questions_ids_data.map((id: any) => Number(id._hex))
+                : [];
+
+            ids_list_as_number = ids_list_as_number
+                ?.slice(0, 3)
+                .sort((a: number, b: number) => {
+                    return b - a;
+                });
+
+            changeAnswersIds(ids_list_as_number);
+        }
     }, [
-        user_questions_data,
-        user_answers_data,
-        changeQuestions,
-        changeAnswers,
+        user_questions_ids_data,
+        user_answers_ids_data,
+        changeQuestionsIds,
+        changeAnswersIds,
+        isUserQuestionsLoading,
+        isUserQuestionsError,
+        isUserAnswersLoading,
+        isUserAnswersError,
     ]);
 
-    console.log({
-        questions,
-        answers,
+    console.log(questionsIds);
+
+    const contract = {
+        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+        abi: get_all_questions_by_id,
+        functionName: "getQuestionById",
+    };
+
+    // console.log(questionsIds);
+
+    const {
+        data: questions_data,
+        isLoading: isQuestionsLoading,
+        isError: isQuestionsError,
+        refetch: refetchQuestions,
+    } = useContractReads({
+        contracts: questionsIds?.map((questionId: any) => ({
+            ...contract,
+            args: [questionId],
+        })) as any,
+        enabled: false,
     });
+
+    useEffect(() => {
+        if (questionsIds.length > 0) {
+            refetchQuestions();
+        }
+    }, [questionsIds, refetchQuestions]);
+
+    useEffect(() => {
+        if ((questions_data?.length as number) > 0) {
+            changeQuestions(questions_data as Question[]);
+        }
+    }, [changeQuestions, questions_data]);
 
     if (isUserLoading || isProfileLoading) {
         return <div>Loading...</div>;
@@ -397,7 +485,7 @@ const Profile = () => {
                     </li>
                 </ul>
                 {active === "Stats" ? (
-                    <Stats />
+                    <Stats questions={questions} />
                 ) : active === "Achievements" ? (
                     <Achievements />
                 ) : active === "Setting" ? (
