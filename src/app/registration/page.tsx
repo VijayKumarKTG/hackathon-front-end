@@ -160,7 +160,7 @@ const Registration = () => {
 
   return (
     <div className='bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48'>
-      <div className='w-full mb-14 lg:basis-1/2'>
+      <div className='w-full mb-14 lg:basis-1/2 max-w-[430px]'>
         <h1 className='text-[30px] text-center lg:text-left lg:text-40 text-white m-0 mb-10'>
           Register now and be
           <br className='hidden lg:block' /> a part of Web3 dApp
