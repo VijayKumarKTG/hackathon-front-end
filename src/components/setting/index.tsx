@@ -9,7 +9,7 @@ import {
 } from "@/utils";
 import axios, { AxiosResponse } from "axios";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import {
     Address,
     useAccount,
@@ -21,8 +21,10 @@ import {
 import { create } from "zustand";
 
 type State = {
-    profile: File | string | null;
-    banner: File | string | null;
+    profile: string | null;
+    profileFile: File | null;
+    banner: string | null;
+    bannerFile: File | null;
     personalWebsite: string | null;
     linkedin: string | null;
     github: string | null;
@@ -34,8 +36,10 @@ type State = {
 };
 
 type Actions = {
-    changeProfile: (profile: File | null) => void;
-    changeBanner: (banner: File | null) => void;
+    changeProfile: (profile: string | null) => void;
+    changeProfileFile: (profileFile: File | null) => void;
+    changeBanner: (banner: string | null) => void;
+    changeBannerFile: (bannerFile: File | null) => void;
     changePersonalWebsite: (personalWebsite: string | null) => void;
     changeLinkedin: (linkedin: string | null) => void;
     changeGithub: (github: string | null) => void;
@@ -47,8 +51,10 @@ type Actions = {
 };
 
 const useSettingStore = create<State & Actions>((set) => ({
-    profile: null,
-    banner: null,
+    profile: "",
+    profileFile: null,
+    banner: "",
+    bannerFile: null,
     personalWebsite: "",
     linkedin: "",
     github: "",
@@ -57,10 +63,14 @@ const useSettingStore = create<State & Actions>((set) => ({
     email: "",
     bio: "",
     url: "",
-    changeProfile: (profile: File | null) =>
+    changeProfile: (profile: string | null) =>
         set((state: State) => ({ ...state, profile })),
-    changeBanner: (banner: File | null) =>
+    changeProfileFile: (profileFile: File | null) =>
+        set((state: State) => ({ ...state, profileFile })),
+    changeBanner: (banner: string | null) =>
         set((state: State) => ({ ...state, banner })),
+    changeBannerFile: (bannerFile: File | null) =>
+        set((state: State) => ({ ...state, bannerFile })),
     changePersonalWebsite: (personalWebsite: string | null) =>
         set((state: State) => ({ ...state, personalWebsite })),
     changeLinkedin: (linkedin: string | null) =>
@@ -79,7 +89,9 @@ const useSettingStore = create<State & Actions>((set) => ({
 const Setting = () => {
     const {
         profile,
+        profileFile,
         banner,
+        bannerFile,
         personalWebsite,
         linkedin,
         github,
@@ -90,7 +102,9 @@ const Setting = () => {
         url,
         // functions
         changeProfile,
+        changeProfileFile,
         changeBanner,
+        changeBannerFile,
         changePersonalWebsite,
         changeLinkedin,
         changeGithub,
@@ -103,6 +117,7 @@ const Setting = () => {
     const [isDraggingOverProfile, setIsDraggingOverProfile] = useState(false);
     const [isDraggingOverBanner, setIsDraggingOverBanner] = useState(false);
     const router = useRouter();
+    const checkIfUrlGenerated = useRef<boolean>(false);
 
     /**
      * @get hooks from wagmi
@@ -119,12 +134,12 @@ const Setting = () => {
         functionName: "setUserURI",
         chainId: chain?.id,
         args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
-        onError(error) {
+        onError: (error: any) => {
             console.log(error);
         },
     });
 
-    const { write: set_user_uri } = useContractWrite({
+    const { write: set_user_uri, variables } = useContractWrite({
         ...set_user_uri_config,
         onError(error: Error) {
             console.log(error);
@@ -169,6 +184,10 @@ const Setting = () => {
                         const {
                             banner: banner_res,
                             bio: bio_res,
+                            personalWebsite: personalWebsite_res,
+                            linkedin: linkedin_res,
+                            github: github_res,
+                            twitter: twitter_res,
                             email: email_res,
                             name: name_res,
                             profile: profile_res,
@@ -176,6 +195,10 @@ const Setting = () => {
 
                         changeProfile(profile_res);
                         changeBanner(banner_res);
+                        changePersonalWebsite(personalWebsite_res);
+                        changeLinkedin(linkedin_res);
+                        changeGithub(github_res);
+                        changeTwitter(twitter_res);
                         changeName(name_res);
                         changeEmail(email_res);
                         changeBio(bio_res);
@@ -183,7 +206,6 @@ const Setting = () => {
                     .catch((error) => {
                         if (error.message === "User not registered") {
                             router.push("/register");
-                        } else {
                             console.log(error.message);
                         }
                     });
@@ -193,24 +215,42 @@ const Setting = () => {
         }
     }, [data]);
 
+    useEffect(() => {
+        console.log({
+            url,
+            set_user_uri,
+            checkIfUrlGenerated,
+        });
+        if (url && set_user_uri && checkIfUrlGenerated.current) {
+            set_user_uri?.();
+            checkIfUrlGenerated.current = false;
+        }
+    }, [url, set_user_uri, checkIfUrlGenerated]);
+
     const onSubmitProfile = async (event: FormEvent) => {
         event.preventDefault();
 
-        const profile_url = await uploadFileToPinata(profile);
-        const banner_url = await uploadFileToPinata(banner);
+        try {
+            const updated_user = {
+                profile,
+                banner,
+                personalWebsite,
+                linkedin,
+                github,
+                twitter,
+                name,
+                email,
+                bio,
+            };
 
-        const updated_user = {
-            profile: profile_url,
-            banner: banner_url,
-            personalWebsite,
-            linkedin,
-            name,
-            email,
-            bio,
-        };
-
-        const url = await uploadJSONToPinata(new_user);
-        changeUrl(url);
+            const updated_url = await uploadJSONToPinata(updated_user);
+            // console.log(url);
+            changeUrl(updated_url);
+            console.log(updated_url);
+            checkIfUrlGenerated.current = true;
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const handleDragOverProfile = (event: any) => {
@@ -231,18 +271,46 @@ const Setting = () => {
         setIsDraggingOverBanner(false);
     };
 
-    const handleDropProfile = (event: React.DragEvent<HTMLDivElement>) => {
+    const handleDropProfile = async (
+        event: React.DragEvent<HTMLDivElement>
+    ) => {
         event.preventDefault();
         setIsDraggingOverProfile(false);
         const file = event.dataTransfer.files[0];
-        changeProfile(file);
+        changeProfileFile(file);
+        const profile_url = await uploadFileToPinata(file);
+        changeProfile(profile_url);
     };
 
-    const handleDropBanner = (event: React.DragEvent<HTMLDivElement>) => {
+    const handleDropBanner = async (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         setIsDraggingOverBanner(false);
         const file = event!.dataTransfer!.files[0];
-        changeBanner(file);
+        changeBannerFile(file);
+        const banner_url = await uploadFileToPinata(file);
+        changeBanner(banner_url);
+    };
+
+    const handleProfileUpload = async (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            changeProfileFile(file as File);
+            const profile_url = await uploadFileToPinata(file);
+            changeProfile(profile_url);
+        }
+    };
+
+    const handleBannerUpload = async (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            changeBannerFile(file as File);
+            const banner_url = await uploadFileToPinata(file);
+            changeBanner(banner_url);
+        }
     };
 
     return (
@@ -322,14 +390,8 @@ const Setting = () => {
                                                                     onChange={(
                                                                         event
                                                                     ) =>
-                                                                        changeProfile(
+                                                                        handleProfileUpload(
                                                                             event
-                                                                                .target
-                                                                                .files
-                                                                                ? event
-                                                                                      .target
-                                                                                      .files[0]
-                                                                                : null
                                                                         )
                                                                     }
                                                                 />
@@ -338,12 +400,12 @@ const Setting = () => {
                                                                 or drag and drop
                                                             </p>
                                                         </div>
-                                                        {profile && (
+                                                        {profileFile && (
                                                             <p className="text-sm text-[#6B7280]">
                                                                 File chosen:{" "}
                                                                 <span className="text-[#f1f1f1]">
                                                                     {
-                                                                        profile?.name
+                                                                        profileFile?.name
                                                                     }
                                                                 </span>
                                                             </p>
@@ -409,14 +471,8 @@ const Setting = () => {
                                                                     onChange={(
                                                                         event
                                                                     ) =>
-                                                                        changeBanner(
+                                                                        handleBannerUpload(
                                                                             event
-                                                                                .target
-                                                                                .files
-                                                                                ? event
-                                                                                      .target
-                                                                                      .files[0]
-                                                                                : null
                                                                         )
                                                                     }
                                                                 />
@@ -425,12 +481,12 @@ const Setting = () => {
                                                                 or drag and drop
                                                             </p>
                                                         </div>
-                                                        {banner && (
+                                                        {bannerFile && (
                                                             <p className="text-sm text-[#6B7280]">
                                                                 File chosen:{" "}
                                                                 <span className="text-[#f1f1f1]">
                                                                     {
-                                                                        banner?.name
+                                                                        bannerFile?.name
                                                                     }
                                                                 </span>
                                                             </p>
