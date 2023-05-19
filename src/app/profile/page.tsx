@@ -20,7 +20,7 @@ import {
     get_questions_by_user_address,
     get_user_by_address_abi,
 } from "@/abi/user";
-import { Question, UserContract, UserMetadata } from "@/types";
+import { Answer, Question, UserContract, UserMetadata } from "@/types";
 import { create } from "zustand";
 import { BigNumber } from "ethers";
 import { get_all_questions_by_id } from "@/abi/social";
@@ -29,10 +29,10 @@ type State = {
     user: UserMetadata;
     address: string;
     socials: Array<Object>;
-    questionsIds: Array<Object>;
-    questions: Array<Object>;
-    answersIds: Array<Object>;
-    answers: Array<Object>;
+    questionsIds: Array<Number>;
+    questions: Array<Question>;
+    answersIds: Array<Number>;
+    answers: Array<Answer>;
 };
 
 type Actions = {
@@ -40,9 +40,9 @@ type Actions = {
     changeAddress: (address: string) => void;
     changeSocials: (socials: Array<Object>) => void;
     changeAnswersIds: (answersIds: Array<Number>) => void;
-    changeAnswers: (answers: Array<Object>) => void;
+    changeAnswers: (answers: Array<Answer>) => void;
     changeQuestionsIds: (questionIds: Array<Number>) => void;
-    changeQuestions: (questions: Array<Object>) => void;
+    changeQuestions: (questions: Array<Question>) => void;
 };
 
 const useProfileStore = create<State & Actions>((set) => ({
@@ -66,11 +66,11 @@ const useProfileStore = create<State & Actions>((set) => ({
         set((state: State) => ({ ...state, address })),
     changeSocials: (socials: Array<Object>) =>
         set((state: State) => ({ ...state, socials })),
-    changeAnswers: (answers: Array<Object>) =>
+    changeAnswers: (answers: Array<Answer>) =>
         set((state: State) => ({ ...state, answers })),
     changeAnswersIds: (answersIds: Array<Number>) =>
         set((state: State) => ({ ...state, answersIds })),
-    changeQuestions: (questions: Array<Object>) =>
+    changeQuestions: (questions: Array<Question>) =>
         set((state: State) => ({ ...state, questions })),
     changeQuestionsIds: (questionsIds: Array<Number>) =>
         set((state: State) => ({ ...state, questionsIds })),
@@ -93,6 +93,8 @@ const Profile = () => {
         changeAnswersIds,
         changeQuestionsIds,
     } = useProfileStore((state) => state);
+
+    console.log({ answersIds });
 
     const [active, set_active] = useState<string>("Stats");
     const { address } = useAccount();
@@ -156,7 +158,8 @@ const Profile = () => {
     const user = profile?.data as UserMetadata;
 
     /**
-     * @calls UseEffect calls for setting state address, user, questions and answers
+     * @calls UseEffect calls for setting state address, user, questions, questionIds, answerIds
+     * and answers
      */
     useEffect(() => {
         changeUser(user);
@@ -190,9 +193,9 @@ const Profile = () => {
             !isUserAnswersError
         ) {
             let ids_list_as_number: number[] = Array.isArray(
-                user_questions_ids_data
+                user_answers_ids_data
             )
-                ? user_questions_ids_data.map((id: any) => Number(id._hex))
+                ? user_answers_ids_data.map((id: any) => Number(id._hex))
                 : [];
 
             ids_list_as_number = ids_list_as_number
@@ -214,15 +217,14 @@ const Profile = () => {
         isUserAnswersError,
     ]);
 
-    console.log(questionsIds);
-
+    /**
+     * @method call contract, extract questions, answers from questionIds and answerIds
+     */
     const contract = {
         address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
         abi: get_all_questions_by_id,
         functionName: "getQuestionById",
     };
-
-    // console.log(questionsIds);
 
     const {
         data: questions_data,
@@ -249,6 +251,34 @@ const Profile = () => {
         }
     }, [changeQuestions, questions_data]);
 
+    const {
+        data: answers_data,
+        isLoading: isAnswersLoading,
+        isError: isAnswersError,
+        refetch: refetchAnswers,
+    } = useContractReads({
+        contracts: answersIds?.map((answerId: any) => ({
+            ...contract,
+            args: [answerId],
+        })) as any,
+        enabled: false,
+    });
+
+    useEffect(() => {
+        if (answersIds.length > 0) {
+            refetchAnswers();
+        }
+    }, [answersIds.length, refetchAnswers]);
+
+    useEffect(() => {
+        if ((answers_data?.length as number) > 0) {
+            changeAnswers(answers_data as Answer[]);
+        }
+    }, [answers_data, changeAnswers]);
+
+    /**
+     * @returns component based on fetch state
+     */
     if (isUserLoading || isProfileLoading) {
         return <div>Loading...</div>;
     }
@@ -485,7 +515,7 @@ const Profile = () => {
                     </li>
                 </ul>
                 {active === "Stats" ? (
-                    <Stats questions={questions} />
+                    <Stats questions={questions} answers={answers} />
                 ) : active === "Achievements" ? (
                     <Achievements />
                 ) : active === "Setting" ? (

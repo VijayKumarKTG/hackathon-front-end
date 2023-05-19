@@ -152,3 +152,24 @@ export const get_questions_by_user_address = [
         type: "function",
     },
 ];
+
+export const set_user_uri_abi = [
+    {
+        inputs: [
+            {
+                internalType: "string",
+                name: "_newUri",
+                type: "string",
+            },
+            {
+                internalType: "bytes32",
+                name: "_secret",
+                type: "bytes32",
+            },
+        ],
+        name: "setUserURI",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+];
