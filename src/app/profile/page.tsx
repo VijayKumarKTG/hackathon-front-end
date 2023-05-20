@@ -24,6 +24,7 @@ import { Answer, Question, UserContract, UserMetadata } from "@/types";
 import { create } from "zustand";
 import { BigNumber } from "ethers";
 import { get_all_questions_by_id } from "@/abi/social";
+import LoadingModal from "@/components/modals/loader";
 
 type State = {
     user: UserMetadata;
@@ -104,6 +105,7 @@ const Profile = () => {
         data: user_data,
         isLoading: isUserLoading,
         isError: isUserError,
+        isFetching,
     } = useContractRead({
         address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
         abi: get_user_by_address_abi,
@@ -291,8 +293,16 @@ const Profile = () => {
         return <div>No data found regarding user.</div>;
     }
 
+    console.log(profile);
+
     return (
         <div className="relative w-full flex flex-col items-center bg-darkblue">
+            {isFetching && (
+                <LoadingModal
+                    loadingTitle="Fetching Smart Contract"
+                    loadingMessage=""
+                />
+            )}
             <div className="w-full h-40">
                 <img
                     className="object-cover w-full h-full"

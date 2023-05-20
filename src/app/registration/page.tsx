@@ -19,6 +19,7 @@ import {
     uploadJSONToPinata,
 } from "@/utils";
 import { Address } from "@/types";
+import LoadingModal from "@/components/modals/loader";
 
 type State = {
     profile: File | null;
@@ -79,24 +80,25 @@ const Registration = () => {
     const { chain } = useNetwork();
     const router = useRouter();
 
-    const { config: register_user_config } = usePrepareContractWrite({
-        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-        abi: register_user_abi,
-        functionName: "registerUser",
-        chainId: chain?.id,
-        args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
-        onError(error) {
-            console.log(error);
+    const { config: register_user_config, isFetching } =
+        usePrepareContractWrite({
+            address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+            abi: register_user_abi,
+            functionName: "registerUser",
+            chainId: chain?.id,
+            args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
+            onError(error) {
+                console.log(error);
 
-            if (
-                error.message.includes(
-                    `reason="execution reverted: Stack3: User already registered"`
-                )
-            ) {
-                router.push("/profile");
-            }
-        },
-    });
+                if (
+                    error.message.includes(
+                        `reason="execution reverted: Stack3: User already registered"`
+                    )
+                ) {
+                    router.push("/profile");
+                }
+            },
+        });
 
     const { write: register_user } = useContractWrite({
         ...register_user_config,
@@ -165,6 +167,12 @@ const Registration = () => {
 
     return (
         <div className="bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48">
+            {isFetching && (
+                <LoadingModal
+                    loadingTitle="Fetching Smart Contract"
+                    loadingMessage=""
+                />
+            )}
             <div className="w-full mb-14 lg:basis-1/2 max-w-[430px]">
                 <h1 className="text-[30px] text-center lg:text-left lg:text-40 text-white m-0 mb-10">
                     Register now and be
