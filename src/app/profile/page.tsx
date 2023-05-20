@@ -293,7 +293,7 @@ const Profile = () => {
         return <div>No data found regarding user.</div>;
     }
 
-    console.log(profile);
+    console.log(user);
 
     return (
         <div className="relative w-full flex flex-col items-center bg-darkblue">
@@ -326,48 +326,68 @@ const Profile = () => {
                 </div>
                 <ul className="list-none flex flex-row gap-x-4 m-0 p-0">
                     <li>
-                        <a className="text-white">
+                        <a
+                            className="text-white"
+                            href={`mailto:${user?.email}`}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
+                                width="28"
+                                height="28"
+                                viewBox="0 0 28 28"
                                 fill="none"
-                                stroke="currentColor"
+                                stroke={
+                                    user?.email ? "currentColor" : "#899499"
+                                }
                                 strokeWidth="2"
                                 strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="feather feather-github">
-                                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                                strokeLinejoin="round">
+                                <g id="style=linear">
+                                    <g id="email">
+                                        <path
+                                            id="vector"
+                                            d="M17 20.5H7C4 20.5 2 19 2 15.5V8.5C2 5 4 3.5 7 3.5H17C20 3.5 22 5 22 8.5V15.5C22 19 20 20.5 17 20.5Z"
+                                            stroke={
+                                                user?.email
+                                                    ? "currentColor"
+                                                    : "#899499"
+                                            }
+                                            stroke-width="1.5"
+                                            stroke-miterlimit="10"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        />
+                                        <path
+                                            id="vector_2"
+                                            d="M18.7698 7.7688L13.2228 12.0551C12.5025 12.6116 11.4973 12.6116 10.777 12.0551L5.22998 7.7688"
+                                            stroke={
+                                                user?.email
+                                                    ? "currentColor"
+                                                    : "#899499"
+                                            }
+                                            stroke-width="1.5"
+                                            stroke-linecap="round"
+                                        />
+                                    </g>
+                                </g>
                             </svg>
                         </a>
                     </li>
                     <li>
-                        <a className="text-white">
+                        <a
+                            className="text-white"
+                            target="_blank"
+                            href={user?.personalWebsite}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
                                 height="24"
                                 viewBox="0 0 24 24"
                                 fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="feather feather-twitter">
-                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
-                            </svg>
-                        </a>
-                    </li>
-                    <li>
-                        <a className="text-white">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
+                                stroke={
+                                    user?.personalWebsite
+                                        ? "currentColor"
+                                        : "#899499"
+                                }
                                 strokeWidth="2"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
@@ -378,15 +398,21 @@ const Profile = () => {
                             </svg>
                         </a>
                     </li>
+
                     <li>
-                        <a className="text-white">
+                        <a
+                            className="text-white"
+                            target="_blank"
+                            href={user?.linkedin}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
                                 height="24"
                                 viewBox="0 0 24 24"
                                 fill="none"
-                                stroke="currentColor"
+                                stroke={
+                                    user?.linkedin ? "currentColor" : "#899499"
+                                }
                                 strokeWidth="2"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
@@ -394,6 +420,50 @@ const Profile = () => {
                                 <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
                                 <rect x="2" y="9" width="4" height="12"></rect>
                                 <circle cx="4" cy="4" r="2"></circle>
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            className="text-white"
+                            target="_blank"
+                            href={user?.github}>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke={
+                                    user?.github ? "currentColor" : "#899499"
+                                }
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="feather feather-github">
+                                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            className="text-white"
+                            target="_blank"
+                            href={user?.twitter}>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke={
+                                    user?.twitter ? "currentColor" : "#899499"
+                                }
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="feather feather-twitter">
+                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
                             </svg>
                         </a>
                     </li>

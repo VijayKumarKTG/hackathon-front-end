@@ -166,13 +166,15 @@ const Setting = () => {
             await data.wait();
             await setLoadingTitle("");
             await setLoadingMessage("");
-            setErrorTitle("");
-            setErrorMessage("");
+            await setErrorTitle("");
+            await setErrorMessage("");
             await setSuccessTitle("Profile updated successfully");
 
             console.log(data);
         },
     });
+
+    console.log(set_user_uri);
 
     /**
      * @config to read user data with address
@@ -245,12 +247,12 @@ const Setting = () => {
     }, [data]);
 
     useEffect(() => {
-        console.log({
-            url,
-            set_user_uri,
-            checkIfUrlGenerated,
-        });
         if (url && checkIfUrlGenerated.current) {
+            console.log({
+                url,
+                set_user_uri,
+                checkIfUrlGenerated,
+            });
             set_user_uri?.();
             checkIfUrlGenerated.current = false;
         }
@@ -293,9 +295,7 @@ const Setting = () => {
             };
 
             const updated_url = await uploadJSONToPinata(updated_user);
-            // console.log(url);
             changeUrl(updated_url);
-            console.log(updated_url);
             checkIfUrlGenerated.current = true;
         } catch (error) {
             console.log(error);
@@ -328,42 +328,88 @@ const Setting = () => {
     const handleDropProfile = async (
         event: React.DragEvent<HTMLDivElement>
     ) => {
-        event.preventDefault();
-        setIsDraggingOverProfile(false);
-        const file = event.dataTransfer.files[0];
-        changeProfileFile(file);
-        const profile_url = await uploadFileToPinata(file);
-        changeProfile(profile_url);
+        try {
+            setLoadingTitle("Uploading profile image");
+            event.preventDefault();
+            setIsDraggingOverProfile(false);
+            const file = event.dataTransfer.files[0];
+            changeProfileFile(file);
+            const profile_url = await uploadFileToPinata(file);
+            changeProfile(profile_url);
+            setSuccessTitle("Uploaded profile image");
+            setLoadingTitle("");
+        } catch (error) {
+            await setSuccessTitle("");
+            await setSuccessMessage("");
+            await setLoadingTitle("");
+            await setLoadingMessage("");
+            await setErrorTitle("Failed to upload profile image");
+        }
     };
 
     const handleDropBanner = async (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        setIsDraggingOverBanner(false);
-        const file = event!.dataTransfer!.files[0];
-        changeBannerFile(file);
-        const banner_url = await uploadFileToPinata(file);
-        changeBanner(banner_url);
+        try {
+            setLoadingTitle("Uploading banner image");
+            event.preventDefault();
+            setIsDraggingOverBanner(false);
+            const file = event!.dataTransfer!.files[0];
+            changeBannerFile(file);
+            const banner_url = await uploadFileToPinata(file);
+            changeBanner(banner_url);
+            setSuccessTitle("Uploaded banner image");
+            setLoadingTitle("");
+        } catch (error) {
+            await setSuccessTitle("");
+            await setSuccessMessage("");
+            await setLoadingTitle("");
+            await setLoadingMessage("");
+            await setErrorTitle("Failed to upload banner image");
+        }
     };
 
     const handleProfileUpload = async (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            changeProfileFile(file as File);
-            const profile_url = await uploadFileToPinata(file);
-            changeProfile(profile_url);
+        try {
+            setLoadingTitle("Uploading profile image");
+            const file = event.target.files?.[0];
+            if (file) {
+                changeProfileFile(file as File);
+                const profile_url = await uploadFileToPinata(file);
+                changeProfile(profile_url);
+                setSuccessTitle("Uploaded profile image");
+            }
+            setLoadingTitle("");
+        } catch (error) {
+            console.log(error);
+            await setSuccessTitle("");
+            await setSuccessMessage("");
+            await setLoadingTitle("");
+            await setLoadingMessage("");
+            await setErrorTitle("Failed to upload profile image");
         }
     };
 
     const handleBannerUpload = async (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            changeBannerFile(file as File);
-            const banner_url = await uploadFileToPinata(file);
-            changeBanner(banner_url);
+        try {
+            setLoadingTitle("Uploading banner image");
+            const file = event.target.files?.[0];
+            if (file) {
+                changeBannerFile(file as File);
+                const banner_url = await uploadFileToPinata(file);
+                changeBanner(banner_url);
+                setSuccessTitle("Uploaded banner image");
+            }
+            setLoadingTitle("");
+        } catch (error) {
+            console.log(error);
+            await setSuccessTitle("");
+            await setSuccessMessage("");
+            await setLoadingTitle("");
+            await setLoadingMessage("");
+            await setErrorTitle("Failed to upload banner image");
         }
     };
 
@@ -438,7 +484,7 @@ const Setting = () => {
                     successTitle={successTitle}
                     successMessage={successMessage}
                     needSuccessButtonRight={true}
-                    successButtonRightText="Okay, Cool"
+                    successButtonRightText="Done"
                 />
             )}
             <div className="mb-12">
