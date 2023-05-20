@@ -19,6 +19,9 @@ import {
     usePrepareContractWrite,
 } from "wagmi";
 import { create } from "zustand";
+import ErrorModal from "../modals/error";
+import SuccessModal from "../modals/success";
+import LoadingModal from "../modals/loader";
 
 type State = {
     profile: string | null;
@@ -116,6 +119,15 @@ const Setting = () => {
     } = useSettingStore((state) => state);
     const [isDraggingOverProfile, setIsDraggingOverProfile] = useState(false);
     const [isDraggingOverBanner, setIsDraggingOverBanner] = useState(false);
+    const [triggerUpdate, setTriggerUpdate] = useState(false);
+
+    const [errorTitle, setErrorTitle] = useState<string>("");
+    const [errorMessage, setErrorMessage] = useState<string>("");
+    const [successTitle, setSuccessTitle] = useState<string>("");
+    const [successMessage, setSuccessMessage] = useState<string>("");
+    const [loadingTitle, setLoadingTitle] = useState<string>("");
+    const [loadingMessage, setLoadingMessage] = useState<string>("");
+
     const router = useRouter();
     const checkIfUrlGenerated = useRef<boolean>(false);
 
@@ -136,16 +148,27 @@ const Setting = () => {
         args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
         onError: (error: any) => {
             console.log(error);
+            setErrorTitle(error.message);
         },
     });
 
-    const { write: set_user_uri, variables } = useContractWrite({
+    const { write: set_user_uri } = useContractWrite({
         ...set_user_uri_config,
         onError(error: Error) {
             console.log(error);
+            setLoadingTitle("");
+            setLoadingMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
+            setErrorTitle(error.message);
         },
         async onSuccess(data) {
             await data.wait();
+            await setLoadingTitle("");
+            await setLoadingMessage("");
+            setErrorTitle("");
+            setErrorMessage("");
+            await setSuccessTitle("Profile updated successfully");
 
             console.log(data);
         },
@@ -162,6 +185,11 @@ const Setting = () => {
         args: [address],
         onError(error: Error) {
             console.log(error.message);
+            setLoadingTitle("");
+            setLoadingMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
+            setErrorTitle(error.message);
         },
     });
 
@@ -203,8 +231,9 @@ const Setting = () => {
                         changeEmail(email_res);
                         changeBio(bio_res);
                     })
-                    .catch((error) => {
+                    .catch(async (error) => {
                         if (error.message === "User not registered") {
+                            await setErrorTitle("User not registered");
                             router.push("/register");
                             console.log(error.message);
                         }
@@ -221,16 +250,36 @@ const Setting = () => {
             set_user_uri,
             checkIfUrlGenerated,
         });
-        if (url && set_user_uri && checkIfUrlGenerated.current) {
+        if (url && checkIfUrlGenerated.current) {
             set_user_uri?.();
             checkIfUrlGenerated.current = false;
         }
     }, [url, set_user_uri, checkIfUrlGenerated]);
 
+    /**
+     * @section to handle profile details update
+     * @param event
+     */
     const onSubmitProfile = async (event: FormEvent) => {
         event.preventDefault();
 
+        console.log({
+            profile,
+            banner,
+            personalWebsite,
+            linkedin,
+            github,
+            twitter,
+            name,
+            email,
+            bio,
+        });
+
         try {
+            await setErrorTitle("");
+            await setErrorMessage("");
+            await setLoadingTitle("Profile details are updating..");
+            await setLoadingMessage("Please wait for a few minutes");
             const updated_user = {
                 profile,
                 banner,
@@ -250,6 +299,11 @@ const Setting = () => {
             checkIfUrlGenerated.current = true;
         } catch (error) {
             console.log(error);
+            await setSuccessTitle("");
+            await setSuccessMessage("");
+            await setLoadingTitle("");
+            await setLoadingMessage("");
+            await setErrorTitle(error.message as any);
         }
     };
 
@@ -313,8 +367,80 @@ const Setting = () => {
         }
     };
 
+    /**
+     * @section to handle personal details update
+     * @param event
+     */
+    const onSubmitPersonal = async (event: FormEvent) => {
+        event.preventDefault();
+
+        console.log({
+            profile,
+            banner,
+            personalWebsite,
+            linkedin,
+            github,
+            twitter,
+            name,
+            email,
+            bio,
+        });
+
+        try {
+            await setErrorTitle("");
+            await setErrorMessage("");
+            await setLoadingTitle("Personal details are updating..");
+            await setLoadingMessage("Please wait for a few minutes");
+            const updated_user = {
+                profile,
+                banner,
+                personalWebsite,
+                linkedin,
+                github,
+                twitter,
+                name,
+                email,
+                bio,
+            };
+
+            const updated_url = await uploadJSONToPinata(updated_user);
+            changeUrl(updated_url);
+            console.log(updated_url);
+            checkIfUrlGenerated.current = true;
+        } catch (error) {
+            console.log(error);
+            await setSuccessTitle("");
+            await setSuccessMessage("");
+            await setLoadingTitle("");
+            await setLoadingMessage("");
+            await setErrorTitle(error.message as any);
+        }
+    };
+
     return (
         <div className="bg-gray-100 rounded-xl p-6 lg:p-10 text-white">
+            {loadingTitle && (
+                <LoadingModal
+                    loadingTitle={loadingTitle}
+                    loadingMessage={loadingMessage}
+                />
+            )}
+            {errorTitle && (
+                <ErrorModal
+                    errorTitle={errorTitle}
+                    errorMessage={errorMessage}
+                    needErrorButtonRight={true}
+                    errorButtonRightText="Close"
+                />
+            )}
+            {successTitle && (
+                <SuccessModal
+                    successTitle={successTitle}
+                    successMessage={successMessage}
+                    needSuccessButtonRight={true}
+                    successButtonRightText="Okay, Cool"
+                />
+            )}
             <div className="mb-12">
                 <h2 className="m-0 mb-6 text-[28px]">
                     Change Your Profile Details
@@ -330,6 +456,9 @@ const Setting = () => {
                                     <p className="mt-[-0.85rem] text-sm text-[#9CA3AF]">
                                         This information will be displayed
                                         publicly so be careful what you share.
+                                        It may take longer to update details to
+                                        blockchain, please check back later once
+                                        updated.
                                     </p>
                                 </div>
                             </div>
@@ -648,7 +777,7 @@ const Setting = () => {
                                 </div>
                             </div>
                             <div className="mt-5 md:col-span-2 md:mt-0">
-                                <form action="#" method="POST">
+                                <form onSubmit={onSubmitPersonal}>
                                     <div className="overflow-hidden shadow sm:rounded-md">
                                         <div className="bg-gray-500 px-4 py-5 sm:p-6">
                                             <div className="grid grid-cols-6 gap-6">
@@ -668,6 +797,12 @@ const Setting = () => {
                                                         autoComplete="given-name"
                                                         placeholder="Enter your name"
                                                         className="mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue"
+                                                        onChange={(event) =>
+                                                            changeName(
+                                                                event.target
+                                                                    .value
+                                                            )
+                                                        }
                                                     />
                                                 </div>
 
@@ -687,6 +822,12 @@ const Setting = () => {
                                                         autoComplete="email"
                                                         placeholder="Enter your email address"
                                                         className="mt-1 bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue"
+                                                        onChange={(event) =>
+                                                            changeEmail(
+                                                                event.target
+                                                                    .value
+                                                            )
+                                                        }
                                                     />
                                                 </div>
 
@@ -706,6 +847,12 @@ const Setting = () => {
                                                             }
                                                             placeholder="Enter your bio"
                                                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-gray-50 border rounded-md border-gray-300 text-gray-900 text-sm focus:ring-blue focus:border-blue dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue resize-y"
+                                                            onChange={(event) =>
+                                                                changeBio(
+                                                                    event.target
+                                                                        .value
+                                                                )
+                                                            }
                                                         />
                                                     </div>
                                                 </div>
