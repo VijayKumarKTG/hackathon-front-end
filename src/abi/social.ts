@@ -145,3 +145,189 @@ export const get_total_counts = [
     type: 'function',
   },
 ];
+
+export const post_comment_abi = [
+  {
+    inputs: [
+      {
+        internalType: 'uint8',
+        name: '_postType',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint256',
+        name: '_postId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'string',
+        name: '_uri',
+        type: 'string',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_secret',
+        type: 'bytes32',
+      },
+    ],
+    name: 'postComment',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+];
+
+export const vote_question_abi = [
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_qid',
+        type: 'uint256',
+      },
+      {
+        internalType: 'int8',
+        name: '_vote',
+        type: 'int8',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_secret',
+        type: 'bytes32',
+      },
+    ],
+    name: 'voteQuestion',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+];
+
+export const is_user_voted_q_abi = [
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    name: 's_userVotedQuestion',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+];
+
+export const is_user_voted_a_abi = [
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    name: 's_userVotedAnswer',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+];
+
+export const post_answer_abi = [
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_qid',
+        type: 'uint256',
+      },
+      {
+        internalType: 'string',
+        name: '_uri',
+        type: 'string',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_secret',
+        type: 'bytes32',
+      },
+    ],
+    name: 'postAnswer',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+];
+
+export const get_comment_by_id = [
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_id',
+        type: 'uint256',
+      },
+    ],
+    name: 'getCommentById',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'id',
+            type: 'uint256',
+          },
+          {
+            internalType: 'enum Stack3.PostType',
+            name: 'parentPostType',
+            type: 'uint8',
+          },
+          {
+            internalType: 'uint256',
+            name: 'parentPostId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'address',
+            name: 'author',
+            type: 'address',
+          },
+          {
+            internalType: 'string',
+            name: 'uri',
+            type: 'string',
+          },
+        ],
+        internalType: 'struct Stack3.Comment',
+        name: '',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+];
