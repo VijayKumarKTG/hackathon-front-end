@@ -1,26 +1,134 @@
-import QuestionCardLarge from "../cards/questionLarge";
+import { Address, useAccount, useContractRead, useNetwork } from "wagmi";
+import Skeleton from "react-loading-skeleton";
+
+import "react-loading-skeleton/dist/skeleton.css";
 import NFTCard from "../cards/nftcard";
+import { get_user_by_address_abi } from "@/abi/user";
 
 const Achievements = () => {
-    return (
+    /**
+     * @get hooks from wagmi
+     */
+    const { isConnected, address } = useAccount();
+    const { chain } = useNetwork();
+
+    /**
+     * @config to read user data with address
+     */
+    const { data, error, isError, isFetching } = useContractRead({
+        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+        abi: get_user_by_address_abi,
+        functionName: "getUserByAddress",
+        chainId: chain?.id,
+        args: [address],
+        onError(error: Error) {
+            console.log(error.message);
+        },
+    });
+
+    return isFetching ? (
         <div className="bg-gray-100 rounded-xl p-6 lg:p-10 text-white">
             <div className="mb-12">
-                <h2 className="m-0 mb-6 text-[28px]">Badges</h2>
+                <h2 className="m-0 mb-6 text-[28px]">
+                    <Skeleton
+                        baseColor="#22294d"
+                        highlightColor="#313a67"
+                        height="42px"
+                        width="300px"
+                    />
+                </h2>
                 <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                </div>
+            </div>
+            <div className="mb-12">
+                <h2 className="m-0 mb-6 text-[28px] flex flex-col lg:flex-row gap-y-10">
+                    <Skeleton
+                        baseColor="#22294d"
+                        highlightColor="#313a67"
+                        height="42px"
+                        width="300px"
+                    />
+                </h2>
+                <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                </div>
+            </div>
+            <div className="">
+                <h2 className="m-0 mb-6 text-[28px] flex flex-col lg:flex-row gap-y-10">
+                    <Skeleton
+                        baseColor="#22294d"
+                        highlightColor="#313a67"
+                        height="42px"
+                        width="300px"
+                    />
+                </h2>
+                <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                </div>
+            </div>
+        </div>
+    ) : (
+        <div className="bg-gray-100 rounded-xl p-6 lg:p-10 text-white">
+            <div className="mb-12">
+                <h2 className="m-0 mb-6 text-[28px]">Badges Collected</h2>
+                <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
+                    </div>
+                    <div className="m-0 mb-3">
+                        <NFTCard isFetching={isFetching} />
                     </div>
                 </div>
             </div>
@@ -31,19 +139,19 @@ const Achievements = () => {
                 </h2>
                 <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                 </div>
             </div>
@@ -54,19 +162,19 @@ const Achievements = () => {
                 </h2>
                 <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                     <div className="m-0 mb-3">
-                        <NFTCard />
+                        <NFTCard isFetching={isFetching} />
                     </div>
                 </div>
             </div>

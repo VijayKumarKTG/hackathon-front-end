@@ -11,7 +11,9 @@ import {
   useNetwork,
   useQuery,
 } from 'wagmi';
+import Skeleton from 'react-loading-skeleton';
 
+import 'react-loading-skeleton/dist/skeleton.css';
 import Stats from '@/components/stats';
 import Achievements from '@/components/achievement';
 import Setting from '@/components/setting';
@@ -237,20 +239,376 @@ const Profile = () => {
     }
   }, [answers_data, changeAnswers]);
 
-  /**
-   * @returns component based on fetch state
-   */
-  if (isUserLoading || isProfileLoading) {
-    return <div>Loading...</div>;
-  }
+  return isFetching ? (
+    <div className='relative w-full flex flex-col items-center bg-darkblue'>
+      {/* {isFetching && (
+                <LoadingModal
+                    loadingTitle="Fetching Smart Contract"
+                    loadingMessage=""
+                />
+            )} */}
+      <div className='w-full h-40 z-1'>
+        <Skeleton
+          baseColor='#1A203B'
+          highlightColor='#242c4f'
+          // height="54px"
+          width='100%'
+          height='100%'
+        />
+      </div>
+      <div className='absolute top-[120px] lg:top-20 left-0 right-0 flex items-end justify-between px-4 lg:px-8 w-full lg:w-9/12 mx-auto'>
+        <div className='w-20 h-20 lg:w-36 lg:h-36 rounded-full overflow-hidden'>
+          <Skeleton
+            baseColor='#242c52'
+            highlightColor='#2b355f'
+            // height="54px"
+            width='100%'
+            height='100%'
+            borderRadius={500}
+          />
+        </div>
+        <ul className='list-none flex flex-row gap-x-4 m-0 p-0'>
+          <li>
+            <Skeleton
+              baseColor='#1A203B'
+              highlightColor='#242c4f'
+              // height="54px"
+              width='36px'
+              height='36px'
+              borderRadius={500}
+            />
+          </li>
+          <li>
+            <Skeleton
+              baseColor='#1A203B'
+              highlightColor='#242c4f'
+              // height="54px"
+              width='36px'
+              height='36px'
+              borderRadius={500}
+            />
+          </li>
 
-  if (isUserError || isProfileError) {
-    return <div>Something went wrong</div>;
-  }
+          <li>
+            <Skeleton
+              baseColor='#1A203B'
+              highlightColor='#242c4f'
+              // height="54px"
+              width='36px'
+              height='36px'
+              borderRadius={500}
+            />
+          </li>
+          <li>
+            <Skeleton
+              baseColor='#1A203B'
+              highlightColor='#242c4f'
+              // height="54px"
+              width='36px'
+              height='36px'
+              borderRadius={500}
+            />
+          </li>
+          <li>
+            <Skeleton
+              baseColor='#1A203B'
+              highlightColor='#242c4f'
+              // height="54px"
+              width='36px'
+              height='36px'
+              borderRadius={500}
+            />
+          </li>
+        </ul>
+      </div>
+      <div className='mt-20 px-6 lg:px-8 pb-14 w-full lg:w-9/12'>
+        <div className='flex flex-col justify-center items-start lg:w-1/3'>
+          <div className='flex flex-col items-start w-full'>
+            <h1 className='m-0 mb-2 text-lg lg:text-[2rem] text-white w-full'>
+              <Skeleton
+                baseColor='#1A203B'
+                highlightColor='#242c4f'
+                height='100%'
+                width='200px'
+              />
+            </h1>
+          </div>
+          <p className='m-0 mb-2 text-sm lg:text-lg text-gray-200  w-full'>
+            <Skeleton
+              baseColor='#1A203B'
+              highlightColor='#242c4f'
+              height='100%'
+              width='100%'
+            />
+          </p>
+          <p className='m-0 mb-10 text-base lg:text-lg text-gray-50 w-full'>
+            <Skeleton
+              baseColor='#1A203B'
+              highlightColor='#242c4f'
+              height='100%'
+              width='100%'
+            />
+          </p>
+        </div>
+        <ul className='m-0 mb-10 p-0 flex items-center gap-x-8 list-none overflow-auto w-full'>
+          <li className='p-0 m-0'>
+            <div className={``}>
+              <Skeleton
+                baseColor='#1A203B'
+                highlightColor='#242c4f'
+                height='52px'
+                width='120px'
+                borderRadius={500}
+              />
+            </div>
+          </li>
+          <li className='p-0 m-0'>
+            <div className={``}>
+              <Skeleton
+                baseColor='#1A203B'
+                highlightColor='#242c4f'
+                height='52px'
+                width='200px'
+                borderRadius={500}
+              />
+            </div>
+          </li>
+          <li className='p-0 m-0'>
+            <div className={``}>
+              <Skeleton
+                baseColor='#1A203B'
+                highlightColor='#242c4f'
+                height='52px'
+                width='150px'
+                borderRadius={500}
+              />
+            </div>
+          </li>
+        </ul>
+        {active === 'Stats' ? (
+          <Stats />
+        ) : active === 'Achievements' ? (
+          <Achievements />
+        ) : active === 'Setting' ? (
+          <Setting />
+        ) : null}
+      </div>
+    </div>
+  ) : (
+    <div className='relative w-full flex flex-col items-center bg-darkblue'>
+      {/* {isFetching && (
+                <LoadingModal
+                    loadingTitle="Fetching Smart Contract"
+                    loadingMessage=""
+                />
+            )} */}
+      <div className='w-full h-40'>
+        <img
+          className='object-cover w-full h-full'
+          src={
+            user?.banner ||
+            'https://images.unsplash.com/photo-1682847842653-a881916772b3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2832&q=80'
+          }
+          alt='Banner'
+        />
+      </div>
+      <div className='absolute top-[120px] lg:top-20 left-0 right-0 flex items-end justify-between px-4 lg:px-8 w-full lg:w-9/12 mx-auto'>
+        <div className='w-20 h-20 lg:w-36 lg:h-36 rounded-full overflow-hidden border-solid border-[3px] border-silver-100'>
+          <img
+            className='object-cover w-full h-full'
+            src={
+              user?.profile ||
+              'https://images.unsplash.com/photo-1542190891-2093d38760f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4MTU2NzA5NQ&ixlib=rb-4.0.3&q=80&w=1080'
+            }
+            alt='Profile picture'
+          />
+        </div>
+        <ul className='list-none flex flex-row gap-x-4 m-0 p-0'>
+          <li>
+            <a className='text-white' href={`mailto:${user?.email}`}>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='28'
+                height='28'
+                viewBox='0 0 28 28'
+                fill='none'
+                stroke={user?.email ? 'currentColor' : '#899499'}
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'>
+                <g id='style=linear'>
+                  <g id='email'>
+                    <path
+                      id='vector'
+                      d='M17 20.5H7C4 20.5 2 19 2 15.5V8.5C2 5 4 3.5 7 3.5H17C20 3.5 22 5 22 8.5V15.5C22 19 20 20.5 17 20.5Z'
+                      stroke={user?.email ? 'currentColor' : '#899499'}
+                      stroke-width='1.5'
+                      stroke-miterlimit='10'
+                      stroke-linecap='round'
+                      stroke-linejoin='round'
+                    />
+                    <path
+                      id='vector_2'
+                      d='M18.7698 7.7688L13.2228 12.0551C12.5025 12.6116 11.4973 12.6116 10.777 12.0551L5.22998 7.7688'
+                      stroke={user?.email ? 'currentColor' : '#899499'}
+                      stroke-width='1.5'
+                      stroke-linecap='round'
+                    />
+                  </g>
+                </g>
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              className='text-white'
+              target='_blank'
+              href={user?.personalWebsite}>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='24'
+                height='24'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke={user?.personalWebsite ? 'currentColor' : '#899499'}
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                className='feather feather-globe'>
+                <circle cx='12' cy='12' r='10'></circle>
+                <line x1='2' y1='12' x2='22' y2='12'></line>
+                <path d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'></path>
+              </svg>
+            </a>
+          </li>
 
-  if (!profile_contract || !user) {
-    return <div>No data found regarding user.</div>;
-  }
+          <li>
+            <a className='text-white' target='_blank' href={user?.linkedin}>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='24'
+                height='24'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke={user?.linkedin ? 'currentColor' : '#899499'}
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                className='feather feather-linkedin'>
+                <path d='M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z'></path>
+                <rect x='2' y='9' width='4' height='12'></rect>
+                <circle cx='4' cy='4' r='2'></circle>
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a className='text-white' target='_blank' href={user?.github}>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='24'
+                height='24'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke={user?.github ? 'currentColor' : '#899499'}
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                className='feather feather-github'>
+                <path d='M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22'></path>
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a className='text-white' target='_blank' href={user?.twitter}>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='24'
+                height='24'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke={user?.twitter ? 'currentColor' : '#899499'}
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                className='feather feather-twitter'>
+                <path d='M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z'></path>
+              </svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div className='mt-20 px-6 lg:px-8 pb-14 w-full lg:w-9/12'>
+        <div className='flex flex-col justify-center items-start lg:w-1/3'>
+          <div className='flex flex-col items-start'>
+            <h1 className='m-0 mb-2 text-lg lg:text-[2rem] text-white'>
+              {user?.name}
+            </h1>
+          </div>
+          <p className='m-0 mb-2 text-sm lg:text-lg text-gray-200'>
+            {address?.substring(0, 10)}...{address?.substring(30)}
+          </p>
+          <p className='m-0 mb-10 text-base lg:text-lg text-gray-50'>
+            {user?.bio}
+          </p>
+        </div>
+        <ul className='m-0 mb-10 p-0 flex items-center gap-x-8 list-none overflow-auto w-full'>
+          <li className='p-0 m-0'>
+            <button
+              onClick={() => set_active('Stats')}
+              className={`cursor-pointer bg-transparent flex items-center gap-x-1 py-3 px-6 rounded-full ${
+                active === 'Stats' ? 'text-darkblue bg-white' : 'text-white'
+              }`}>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                strokeWidth={1.5}
+                stroke='currentColor'
+                className='w-6 h-6'>
+                <path
+                  fill='#000000'
+                  d='M9 17a1 1 0 102 0H9zm2-14a1 1 0 10-2 0h2zM3 17a1 1 0 102 0H3zm2-7a1 1 0 00-2 0h2zm10 7a1 1 0 102 0h-2zm2-10a1 1 0 10-2 0h2zm-6 10V3H9v14h2zm-6 0v-7H3v7h2zm12 0V7h-2v10h2z'
+                />
+              </svg>
+              <span
+                className={`${
+                  active === 'Stats' ? 'font-semibold' : 'font-medium'
+                } text-lg`}>
+                Stats
+              </span>
+            </button>
+          </li>
+          <li className='p-0 m-0'>
+            <button
+              onClick={() => set_active('Achievements')}
+              className={`cursor-pointer bg-transparent flex items-center gap-x-2 py-3 px-6 rounded-full ${
+                active === 'Achievements'
+                  ? 'text-darkblue bg-white'
+                  : 'text-white'
+              }`}>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                strokeWidth='1.5'
+                stroke='currentColor'
+                className='w-6 h-6'>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  d='M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z'
+                />
+              </svg>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
+
+  // if (!profile_contract || !user) {
+  //   return <div>No data found regarding user.</div>;
+  // }
 
   // console.log(user);
 
@@ -513,7 +871,7 @@ const Profile = () => {
           </li>
         </ul>
         {active === 'Stats' ? (
-          <Stats questions={questions} answers={answers} />
+          <Stats />
         ) : active === 'Achievements' ? (
           <Achievements />
         ) : active === 'Setting' ? (
