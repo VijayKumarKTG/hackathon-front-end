@@ -4,7 +4,9 @@ import React, { useEffect } from "react";
 import { NextPage } from "next";
 import { useAccount, useConnect } from "wagmi";
 import { useRouter } from "next/navigation";
+import Skeleton from "react-loading-skeleton";
 
+import "react-loading-skeleton/dist/skeleton.css";
 import { wallets } from "@/constants/wallets";
 import ErrorModal from "@/components/modals/error";
 import SuccessModal from "@/components/modals/success";

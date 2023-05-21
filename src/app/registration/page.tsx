@@ -11,7 +11,9 @@ import {
     useNetwork,
     usePrepareContractWrite,
 } from "wagmi";
+import Skeleton from "react-loading-skeleton";
 
+import "react-loading-skeleton/dist/skeleton.css";
 import { get_user_by_address_abi, register_user_abi } from "@/abi/user";
 import {
     getPreviewImage,
@@ -20,6 +22,7 @@ import {
 } from "@/utils";
 import { Address } from "@/types";
 import LoadingModal from "@/components/modals/loader";
+import Image from "./subcomponents/image";
 
 type State = {
     profile: File | null;
@@ -80,25 +83,24 @@ const Registration = () => {
     const { chain } = useNetwork();
     const router = useRouter();
 
-    const { config: register_user_config, isFetching } =
-        usePrepareContractWrite({
-            address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-            abi: register_user_abi,
-            functionName: "registerUser",
-            chainId: chain?.id,
-            args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
-            onError(error) {
-                console.log(error);
+    const { config: register_user_config } = usePrepareContractWrite({
+        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+        abi: register_user_abi,
+        functionName: "registerUser",
+        chainId: chain?.id,
+        args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
+        onError(error) {
+            console.log(error);
 
-                if (
-                    error.message.includes(
-                        `reason="execution reverted: Stack3: User already registered"`
-                    )
-                ) {
-                    router.push("/profile");
-                }
-            },
-        });
+            if (
+                error.message.includes(
+                    `reason="execution reverted: Stack3: User already registered"`
+                )
+            ) {
+                router.push("/profile");
+            }
+        },
+    });
 
     const { write: register_user } = useContractWrite({
         ...register_user_config,
@@ -112,7 +114,7 @@ const Registration = () => {
         },
     });
 
-    const { data, error, isError } = useContractRead({
+    const { data, error, isError, isFetching } = useContractRead({
         address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
         abi: get_user_by_address_abi,
         functionName: "getUserByAddress",
@@ -164,26 +166,153 @@ const Registration = () => {
             router.push("/profile");
         }
     };
-
-    return (
+    return isFetching ? (
         <div className="bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48">
-            {isFetching && (
+            <div className="w-full mb-14 lg:basis-1/2 max-w-[430px]">
+                <h1 className="text-[30px] text-center lg:text-left lg:text-40 text-white m-0 max-h-[134vw]">
+                    {<Skeleton baseColor="#1A203B" highlightColor="#242c4f" />}
+                </h1>
+                <h1 className="text-[30px] text-center lg:text-left lg:text-40 text-white m-0 max-h-[134vw] mb-10 dev1024:mb-0">
+                    {<Skeleton baseColor="#1A203B" highlightColor="#242c4f" />}
+                </h1>
+                <h1 className="text-[30px] text-center lg:text-left lg:text-40 text-white m-0 mb-10 hidden dev1024:block">
+                    {<Skeleton baseColor="#1A203B" highlightColor="#242c4f" />}
+                </h1>
+                <div className="w-full h-[350px] dev350:h-[400px] dev400:h-[470px] dev450:h-[550px] dev500:h-[580px]">
+                    <Skeleton
+                        baseColor="#1A203B"
+                        highlightColor="#242c4f"
+                        height="100%"
+                        width="100%"
+                        borderRadius={24}
+                    />
+                </div>
+            </div>
+            <form
+                onSubmit={onSubmit}
+                className="w-full flex flex-col gap-y-8 gap-4 lg:basis-1/2">
+                <div className="flex flex-row gap-x-8 w-full">
+                    <div className="flex flex-col gap-y-2">
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                        />
+                        <div className="relative w-20 h-20 border-none overflow-hidden rounded-lg dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue dark:focus:border-blue flex items-center justify-center">
+                            <Skeleton
+                                baseColor="#1A203B"
+                                highlightColor="#242c4f"
+                                width="80px"
+                                height="80px"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-y-2 w-full box-border">
+                        <div>
+                            <Skeleton
+                                baseColor="#1A203B"
+                                highlightColor="#242c4f"
+                                width={"60px"}
+                            />
+                        </div>
+                        <div className="block relative box-border w-full h-20 border-none overflow-hidden rounded-lg">
+                            <Skeleton
+                                baseColor="#1A203B"
+                                highlightColor="#242c4f"
+                                height="100%"
+                                containerClassName="max-container"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="col-span-6 sm:col-span-4">
+                    <div>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            width={"60px"}
+                        />
+                    </div>
+                    <div className="w-full mt-1">
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            height={"40px"}
+                        />
+                    </div>
+                </div>
+
+                <div className="col-span-6 sm:col-span-4">
+                    <div>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            width={"100px"}
+                        />
+                    </div>
+                    <div className="w-full mt-1">
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            height={"40px"}
+                        />
+                    </div>
+                </div>
+
+                <div className="col-span-6 sm:col-span-4">
+                    <div>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            width={"30px"}
+                        />
+                    </div>
+                    <div className="w-full mt-1">
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            height={"100px"}
+                        />
+                    </div>
+                </div>
+
+                <div className="rounded-full">
+                    <Skeleton
+                        baseColor="#1A203B"
+                        highlightColor="#242c4f"
+                        height={"55px"}
+                        borderRadius={"500px"}
+                    />
+                </div>
+            </form>
+        </div>
+    ) : (
+        <div className="bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48">
+            {/* {isFetching && (
                 <LoadingModal
                     loadingTitle="Fetching Smart Contract"
                     loadingMessage=""
                 />
-            )}
+            )} */}
             <div className="w-full mb-14 lg:basis-1/2 max-w-[430px]">
                 <h1 className="text-[30px] text-center lg:text-left lg:text-40 text-white m-0 mb-10">
-                    Register now and be
-                    <br className="hidden lg:block" /> a part of Web3 dApp
-                    <br className="hidden lg:block" /> community 🚀
+                    {(
+                        <>
+                            Register now and be
+                            <br className="hidden lg:block" /> a part of Web3
+                            dApp
+                            <br className="hidden lg:block" /> community 🚀
+                        </>
+                    ) || <Skeleton />}
                 </h1>
-                <img
-                    className="w-full object-contain mix-blend-luminosity"
-                    alt="Login Image"
-                    src="/registeration-img.png"
-                />
+                <div className="w-full aspect-[4/3]">
+                    <img
+                        className="w-full object-contain mix-blend-luminosity"
+                        alt="Login Image"
+                        src="/registeration-img.png"
+                    />
+                </div>
             </div>
             <form
                 onSubmit={onSubmit}

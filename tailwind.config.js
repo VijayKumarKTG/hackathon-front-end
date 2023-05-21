@@ -41,6 +41,13 @@ module.exports = {
                 xl: "20px",
                 24: "24px",
             },
+            screens: {
+                dev500: "500px",
+                dev450: "450px",
+                dev400: "400px",
+                dev350: "350px",
+                dev1024: "1024px",
+            },
 
             mixBlendMode: {
                 luminosity: "luminosity",
