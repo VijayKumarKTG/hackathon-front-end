@@ -331,3 +331,114 @@ export const get_comment_by_id = [
     type: 'function',
   },
 ];
+
+export const get_answer_by_id_abi = [
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_id',
+        type: 'uint256',
+      },
+    ],
+    name: 'getAnswerById',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'bool',
+            name: 'isBestAnswer',
+            type: 'bool',
+          },
+          {
+            internalType: 'uint256',
+            name: 'id',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'qid',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'upvotes',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'downvotes',
+            type: 'uint256',
+          },
+          {
+            internalType: 'address',
+            name: 'author',
+            type: 'address',
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'comments',
+            type: 'uint256[]',
+          },
+          {
+            internalType: 'string',
+            name: 'uri',
+            type: 'string',
+          },
+        ],
+        internalType: 'struct Stack3.Answer',
+        name: '',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+];
+
+export const vote_answer_abi = [
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_aid',
+        type: 'uint256',
+      },
+      {
+        internalType: 'int8',
+        name: '_vote',
+        type: 'int8',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_secret',
+        type: 'bytes32',
+      },
+    ],
+    name: 'voteAnswer',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+];
+
+export const choose_best_answer_abi = [
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_aid',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_secret',
+        type: 'bytes32',
+      },
+    ],
+    name: 'chooseBestAnswer',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+];

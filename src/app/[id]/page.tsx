@@ -5,6 +5,7 @@
 import { useEffect, useRef } from 'react';
 import {
   useContractRead,
+  useContractReads,
   useContractWrite,
   usePrepareContractWrite,
   useQuery,
@@ -24,9 +25,15 @@ import RelatedQuestions from '@/components/relatedQuestions';
 import TrendingTags from '@/components/trendingTags';
 import TagChip from '@/components/tagChip';
 import ContentCard from '@/components/cards/content';
-import { get_all_questions_by_id, post_answer_abi } from '@/abi/social';
-import { Address, Question } from '@/types';
+import {
+  get_all_questions_by_id,
+  get_answer_by_id_abi,
+  post_answer_abi,
+} from '@/abi/social';
+import { Address, Answer, Question } from '@/types';
 import { uploadFileToPinata, uploadJSONToPinata } from '@/utils';
+import AnswerContentCard from '@/components/cards/answer';
+import { BigNumber } from 'ethers';
 
 type State = {
   answer: string;
@@ -90,8 +97,30 @@ const Question = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     if (question) {
       fetch_metadata();
+      refetchAnswers();
     }
   }, [question]);
+
+  const contract = {
+    address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+    abi: get_answer_by_id_abi,
+    functionName: 'getAnswerById',
+  };
+
+  const {
+    data: answers,
+    isLoading: isAnswersLoading,
+    isError: isAnswersError,
+    refetch: refetchAnswers,
+  } = useContractReads({
+    contracts: qn?.answers?.map((id: BigNumber) => ({
+      ...contract,
+      args: [id.toNumber()],
+    })) as any,
+    enabled: false,
+  });
+
+  let answers_list: Answer[] = answers as Answer[];
 
   const { config: post_answer_config } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
@@ -137,7 +166,7 @@ const Question = ({ params }: { params: { id: string } }) => {
     isAnswering.current = true;
   };
 
-  if (isQuestionLoading || isMetadataLoading) {
+  if (isQuestionLoading || isAnswersLoading || isMetadataLoading) {
     return (
       <Wrapper>
         <div>Loading...</div>
@@ -145,7 +174,7 @@ const Question = ({ params }: { params: { id: string } }) => {
     );
   }
 
-  if (isQuestionError || isMetadataError) {
+  if (isQuestionError || isAnswersError || isMetadataError) {
     return (
       <Wrapper>
         <div>Something went wrong!</div>
@@ -204,16 +233,32 @@ const Question = ({ params }: { params: { id: string } }) => {
           {qn?.answers?.length} Answers
         </div>
 
+        <div className='flex flex-col'>
+          {answers_list &&
+            answers_list?.map((answer: Answer) => (
+              <div key={answer?.id?.toNumber()} className='m-0 mb-12'>
+                <AnswerContentCard
+                  voteCount={answer?.upvotes?.sub(answer?.downvotes).toNumber()}
+                  uri={answer?.uri}
+                  comments={answer?.comments}
+                  authorAddress={answer?.author}
+                  postId={answer?.id?.toNumber()}
+                  isBestAnswer={answer?.isBestAnswer}
+                  questionAuthor={qn.author}
+                  isBestAnswerChosen={qn.bestAnswerChosen}
+                />
+              </div>
+            ))}
+        </div>
+
         <div className='h-[max-content] mt-16'>
-          <label
-            htmlFor='details'
-            className='text-white text-base leading-5 block mb-[14px]'>
-            Write your answer below*{' '}
-            <span className='text-gray-200'>
-              (Please explain it in a clear and detailed way so that there is no
-              confusion. Please use Markdown.)
-            </span>
-          </label>
+          <h2 className='text-white leading-5 block mb-[14px]'>
+            Please write your answer below
+          </h2>
+          <p className='text-gray-200'>
+            (Please explain it in a clear and detailed way so that there is no
+            confusion. Please use Markdown.)
+          </p>
           <MdEditor
             id='details'
             name='details'
