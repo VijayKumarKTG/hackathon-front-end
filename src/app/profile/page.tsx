@@ -11,7 +11,9 @@ import {
     useNetwork,
     useQuery,
 } from "wagmi";
+import Skeleton from "react-loading-skeleton";
 
+import "react-loading-skeleton/dist/skeleton.css";
 import Stats from "@/components/stats";
 import Achievements from "@/components/achievement";
 import Setting from "@/components/setting";
@@ -295,14 +297,173 @@ const Profile = () => {
 
     console.log(user);
 
-    return (
+    return isFetching ? (
         <div className="relative w-full flex flex-col items-center bg-darkblue">
-            {isFetching && (
+            {/* {isFetching && (
                 <LoadingModal
                     loadingTitle="Fetching Smart Contract"
                     loadingMessage=""
                 />
-            )}
+            )} */}
+            <div className="w-full h-40 z-1">
+                <Skeleton
+                    baseColor="#1A203B"
+                    highlightColor="#242c4f"
+                    // height="54px"
+                    width="100%"
+                    height="100%"
+                />
+            </div>
+            <div className="absolute top-[120px] lg:top-20 left-0 right-0 flex items-end justify-between px-4 lg:px-8 w-full lg:w-9/12 mx-auto">
+                <div className="w-20 h-20 lg:w-36 lg:h-36 rounded-full overflow-hidden">
+                    <Skeleton
+                        baseColor="#242c52"
+                        highlightColor="#2b355f"
+                        // height="54px"
+                        width="100%"
+                        height="100%"
+                        borderRadius={500}
+                    />
+                </div>
+                <ul className="list-none flex flex-row gap-x-4 m-0 p-0">
+                    <li>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            // height="54px"
+                            width="36px"
+                            height="36px"
+                            borderRadius={500}
+                        />
+                    </li>
+                    <li>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            // height="54px"
+                            width="36px"
+                            height="36px"
+                            borderRadius={500}
+                        />
+                    </li>
+
+                    <li>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            // height="54px"
+                            width="36px"
+                            height="36px"
+                            borderRadius={500}
+                        />
+                    </li>
+                    <li>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            // height="54px"
+                            width="36px"
+                            height="36px"
+                            borderRadius={500}
+                        />
+                    </li>
+                    <li>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            // height="54px"
+                            width="36px"
+                            height="36px"
+                            borderRadius={500}
+                        />
+                    </li>
+                </ul>
+            </div>
+            <div className="mt-20 px-6 lg:px-8 pb-14 w-full lg:w-9/12">
+                <div className="flex flex-col justify-center items-start lg:w-1/3">
+                    <div className="flex flex-col items-start w-full">
+                        <h1 className="m-0 mb-2 text-lg lg:text-[2rem] text-white w-full">
+                            <Skeleton
+                                baseColor="#1A203B"
+                                highlightColor="#242c4f"
+                                height="100%"
+                                width="200px"
+                            />
+                        </h1>
+                    </div>
+                    <p className="m-0 mb-2 text-sm lg:text-lg text-gray-200  w-full">
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            height="100%"
+                            width="100%"
+                        />
+                    </p>
+                    <p className="m-0 mb-10 text-base lg:text-lg text-gray-50 w-full">
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            height="100%"
+                            width="100%"
+                        />
+                    </p>
+                </div>
+                <ul className="m-0 mb-10 p-0 flex items-center gap-x-8 list-none overflow-auto w-full">
+                    <li className="p-0 m-0">
+                        <div className={``}>
+                            <Skeleton
+                                baseColor="#1A203B"
+                                highlightColor="#242c4f"
+                                height="52px"
+                                width="120px"
+                                borderRadius={500}
+                            />
+                        </div>
+                    </li>
+                    <li className="p-0 m-0">
+                        <div className={``}>
+                            <Skeleton
+                                baseColor="#1A203B"
+                                highlightColor="#242c4f"
+                                height="52px"
+                                width="200px"
+                                borderRadius={500}
+                            />
+                        </div>
+                    </li>
+                    <li className="p-0 m-0">
+                        <div className={``}>
+                            <Skeleton
+                                baseColor="#1A203B"
+                                highlightColor="#242c4f"
+                                height="52px"
+                                width="150px"
+                                borderRadius={500}
+                            />
+                        </div>
+                    </li>
+                </ul>
+                {active === "Stats" ? (
+                    <Stats
+                        isFetching={isFetching}
+                        questions={questions}
+                        answers={answers}
+                    />
+                ) : active === "Achievements" ? (
+                    <Achievements />
+                ) : active === "Setting" ? (
+                    <Setting />
+                ) : null}
+            </div>
+        </div>
+    ) : (
+        <div className="relative w-full flex flex-col items-center bg-darkblue">
+            {/* {isFetching && (
+                <LoadingModal
+                    loadingTitle="Fetching Smart Contract"
+                    loadingMessage=""
+                />
+            )} */}
             <div className="w-full h-40">
                 <img
                     className="object-cover w-full h-full"
@@ -474,9 +635,6 @@ const Profile = () => {
                     <div className="flex flex-col items-start">
                         <h1 className="m-0 mb-2 text-lg lg:text-[2rem] text-white">
                             {user?.name}
-                        </h1>
-                        <h1 className="m-0 mb-2 text-blue font-normal text-base lg:text-[1.5rem]">
-                            {user?.email}
                         </h1>
                     </div>
                     <p className="m-0 mb-2 text-sm lg:text-lg text-gray-200">
