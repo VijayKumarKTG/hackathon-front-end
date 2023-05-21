@@ -166,6 +166,7 @@ const Registration = () => {
             router.push("/profile");
         }
     };
+
     return isFetching ? (
         <div className="bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48">
             <div className="w-full mb-14 lg:basis-1/2 max-w-[430px]">
@@ -188,9 +189,7 @@ const Registration = () => {
                     />
                 </div>
             </div>
-            <form
-                onSubmit={onSubmit}
-                className="w-full flex flex-col gap-y-8 gap-4 lg:basis-1/2">
+            <form className="w-full flex flex-col gap-y-8 gap-4 lg:basis-1/2">
                 <div className="flex flex-row gap-x-8 w-full">
                     <div className="flex flex-col gap-y-2">
                         <Skeleton
@@ -289,7 +288,7 @@ const Registration = () => {
         </div>
     ) : (
         <div className="bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48">
-            {/* {isFetching && (
+            {/* {load && (
                 <LoadingModal
                     loadingTitle="Fetching Smart Contract"
                     loadingMessage=""
@@ -297,14 +296,9 @@ const Registration = () => {
             )} */}
             <div className="w-full mb-14 lg:basis-1/2 max-w-[430px]">
                 <h1 className="text-[30px] text-center lg:text-left lg:text-40 text-white m-0 mb-10">
-                    {(
-                        <>
-                            Register now and be
-                            <br className="hidden lg:block" /> a part of Web3
-                            dApp
-                            <br className="hidden lg:block" /> community 🚀
-                        </>
-                    ) || <Skeleton />}
+                    Register now and be
+                    <br className="hidden lg:block" /> a part of Web3 dApp
+                    <br className="hidden lg:block" /> community 🚀
                 </h1>
                 <div className="w-full aspect-[4/3]">
                     <img

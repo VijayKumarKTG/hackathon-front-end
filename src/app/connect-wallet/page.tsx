@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import { useAccount, useConnect } from "wagmi";
 import { useRouter } from "next/navigation";
@@ -17,13 +17,68 @@ const Login: NextPage = () => {
     const { isConnected } = useAccount();
     const router = useRouter();
 
+    const [isFakeLoading, setIsFakeLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setIsFakeLoading(false);
+        }, 700);
+    }, []);
+
     useEffect(() => {
         if (isConnected) {
             router.push("/registration");
         }
     }, [isConnected]);
 
-    return (
+    return isFakeLoading ? (
+        <div className="bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48">
+            <div className="w-full mb-14 lg:basis-1/2 max-w-[430px]">
+                <h1 className="text-[30px] text-center lg:text-left lg:text-40 text-white m-0 max-h-[134vw]">
+                    {<Skeleton baseColor="#1A203B" highlightColor="#242c4f" />}
+                </h1>
+                <h1 className="text-[30px] text-center lg:text-left lg:text-40 text-white m-0 max-h-[134vw] mb-10 dev1024:mb-0">
+                    {<Skeleton baseColor="#1A203B" highlightColor="#242c4f" />}
+                </h1>
+                <h1 className="text-[30px] text-center lg:text-left lg:text-40 text-white m-0 mb-10 hidden dev1024:block">
+                    {<Skeleton baseColor="#1A203B" highlightColor="#242c4f" />}
+                </h1>
+                <div className="w-full h-[350px] dev350:h-[400px] dev400:h-[470px] dev450:h-[550px] dev500:h-[580px]">
+                    <Skeleton
+                        baseColor="#1A203B"
+                        highlightColor="#242c4f"
+                        height="100%"
+                        width="100%"
+                        borderRadius={24}
+                    />
+                </div>
+            </div>
+            <div className="flex flex-col gap-4 lg:basis-1/2 max-w-[390px]">
+                <div className="text-white text-lg lg:text-[24px] text-center font-normal">
+                    <Skeleton
+                        baseColor="#1A203B"
+                        highlightColor="#242c4f"
+                        // height="32px"
+                        width="100%"
+                    />
+                </div>
+
+                {connectors.map((connector) => (
+                    <div
+                        key={connector.id}
+                        className={`cursor-pointer border-none rounded-full w-full`}>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            height="54px"
+                            width="100%"
+                            borderRadius={500}
+                        />
+                    </div>
+                ))}
+            </div>
+        </div>
+    ) : (
         <div className="bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48">
             <div className="w-full mb-14 lg:basis-1/2 max-w-[430px]">
                 <h1 className="text-[30px] text-center lg:text-left lg:text-40 text-white m-0 mb-10 ">
