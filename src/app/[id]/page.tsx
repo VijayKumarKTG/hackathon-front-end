@@ -24,7 +24,7 @@ import './editor.css';
 import RelatedQuestions from '@/components/relatedQuestions';
 import TrendingTags from '@/components/trendingTags';
 import TagChip from '@/components/tagChip';
-import ContentCard from '@/components/cards/content';
+import QuestionContentCard from '@/components/cards/question';
 import {
   get_all_questions_by_id,
   get_answer_by_id_abi,
@@ -219,13 +219,12 @@ const Question = ({ params }: { params: { id: string } }) => {
         </div>
 
         <div className='m-0 mb-12'>
-          <ContentCard
+          <QuestionContentCard
             voteCount={qn?.upvotes.sub(qn?.downvotes).toNumber()}
             content={metadata?.data?.question}
             comments={qn?.comments}
             authorAddress={qn?.author}
             postId={qn?.id.toNumber()}
-            type={'Question'}
           />
         </div>
 

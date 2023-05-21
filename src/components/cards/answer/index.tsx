@@ -159,7 +159,7 @@ const AnswerContentCard = (props: Props) => {
     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
     abi: post_comment_abi,
     functionName: 'postComment',
-    args: [0, props.postId, commentUrl, process.env.NEXT_PUBLIC_HASH_SECRET],
+    args: [1, props.postId, commentUrl, process.env.NEXT_PUBLIC_HASH_SECRET],
   });
 
   const { write: post_comment } = useContractWrite({
@@ -430,7 +430,7 @@ const Wrapper = ({
   isBestAnswer: boolean;
 }) => {
   const { address } = useAccount();
-
+  console.log(author === address, isBestAnswer, isBestAnswerChosen);
   return (
     <div className='rounded-xl bg-gray-500 px-4 py-6 xl:p-8 flex flex-row items-start gap-x-4 w-full'>
       <div className='flex flex-col items-center gap-y-2 justify-center text-silver-100'>
@@ -467,9 +467,26 @@ const Wrapper = ({
             />
           </svg>
         </button>
-        {(author === address || isBestAnswer || !isBestAnswerChosen) && (
+        {isBestAnswerChosen ? (
+          isBestAnswer ? (
+            <button className='border-none bg-transparent w-[max-content] h-[max-content] flex m-0 p-0 text-white'>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                strokeWidth={1.5}
+                stroke='currentColor'
+                className='w-8 h-8'>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  d='M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z'
+                />
+              </svg>
+            </button>
+          ) : null
+        ) : author === address ? (
           <button
-            disabled={author !== address}
             onClick={() => chooseBestAnswer?.()}
             className='border-none bg-transparent w-[max-content] h-[max-content] flex m-0 p-0 cursor-pointer text-silver-100 hover:text-white'>
             <svg
@@ -486,7 +503,7 @@ const Wrapper = ({
               />
             </svg>
           </button>
-        )}
+        ) : null}
       </div>
       <div className='w-full'>
         <div>

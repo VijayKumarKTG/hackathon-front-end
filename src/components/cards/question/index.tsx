@@ -71,10 +71,9 @@ interface Props {
   comments: any[];
   authorAddress: Address;
   postId: number;
-  type: Type;
 }
 
-const ContentCard = (props: Props) => {
+const QuestionContentCard = (props: Props) => {
   const { chain } = useNetwork();
   const { address } = useAccount();
 
@@ -123,11 +122,7 @@ const ContentCard = (props: Props) => {
 
   useEffect(() => {
     fetch_user();
-    if (props.type === 'Question') {
-      fetch_is_q_voted();
-    } else {
-      fetch_is_a_voted();
-    }
+    fetch_is_q_voted();
   }, []);
 
   useEffect(() => {
@@ -242,20 +237,6 @@ const ContentCard = (props: Props) => {
 
   // =================================================
 
-  /**
-   * Check if user have voted on this answer
-   */
-  const { data: isAVoted, refetch: fetch_is_a_voted } = useContractRead({
-    address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-    abi: is_user_voted_a_abi,
-    functionName: 's_userVotedAnswer',
-    args: [address, props.postId],
-    enabled: false,
-  });
-  /**
-   * User answer vote check end here
-   */
-
   const contract = {
     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
     abi: get_comment_by_id,
@@ -278,7 +259,7 @@ const ContentCard = (props: Props) => {
   if (isUserLoading || isProfileLoading || isCommentsLoading) {
     return (
       <Wrapper
-        haveVoted={(isQVoted as boolean) || (isAVoted as boolean)}
+        haveVoted={isQVoted as boolean}
         vote={onVote}
         content={props.content}
         voteCount={props.voteCount}>
@@ -290,7 +271,7 @@ const ContentCard = (props: Props) => {
   if (isUserError || isProfileError || isCommentsError) {
     return (
       <Wrapper
-        haveVoted={(isQVoted as boolean) || (isAVoted as boolean)}
+        haveVoted={isQVoted as boolean}
         vote={onVote}
         content={props.content}
         voteCount={props.voteCount}>
@@ -302,7 +283,7 @@ const ContentCard = (props: Props) => {
   if (!author || !user) {
     return (
       <Wrapper
-        haveVoted={(isQVoted as boolean) || (isAVoted as boolean)}
+        haveVoted={isQVoted as boolean}
         vote={onVote}
         content={props.content}
         voteCount={props.voteCount}>
@@ -313,7 +294,7 @@ const ContentCard = (props: Props) => {
 
   return (
     <Wrapper
-      haveVoted={(isQVoted as boolean) || (isAVoted as boolean)}
+      haveVoted={isQVoted as boolean}
       vote={onVote}
       content={props.content}
       voteCount={props.voteCount}>
@@ -366,7 +347,7 @@ const ContentCard = (props: Props) => {
   );
 };
 
-export default ContentCard;
+export default QuestionContentCard;
 
 const Wrapper = ({
   content,
