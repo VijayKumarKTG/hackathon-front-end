@@ -302,6 +302,7 @@ const AnswerContentCard = (props: Props) => {
   ) {
     return (
       <Wrapper
+        postId={props.postId}
         author={props.questionAuthor}
         haveVoted={isAVoted as boolean}
         vote={onVote}
@@ -318,6 +319,7 @@ const AnswerContentCard = (props: Props) => {
   if (isAnswerError || isUserError || isProfileError || isCommentsError) {
     return (
       <Wrapper
+        postId={props.postId}
         author={props.questionAuthor}
         haveVoted={isAVoted as boolean}
         vote={onVote}
@@ -334,6 +336,7 @@ const AnswerContentCard = (props: Props) => {
   if (!author || !user) {
     return (
       <Wrapper
+        postId={props.postId}
         author={props.questionAuthor}
         haveVoted={isAVoted as boolean}
         vote={onVote}
@@ -349,6 +352,7 @@ const AnswerContentCard = (props: Props) => {
 
   return (
     <Wrapper
+      postId={props.postId}
       haveVoted={isAVoted as boolean}
       vote={onVote}
       content={answer_details?.answer}
@@ -418,6 +422,7 @@ const Wrapper = ({
   isBestAnswerChosen,
   isBestAnswer,
   chooseBestAnswer,
+  postId,
 }: {
   children: JSX.Element;
   content: string;
@@ -428,11 +433,14 @@ const Wrapper = ({
   author: Address;
   isBestAnswerChosen: boolean;
   isBestAnswer: boolean;
+  postId: number;
 }) => {
   const { address } = useAccount();
-  console.log(author === address, isBestAnswer, isBestAnswerChosen);
+
   return (
-    <div className='rounded-xl bg-gray-500 px-4 py-6 xl:p-8 flex flex-row items-start gap-x-4 w-full'>
+    <div
+      id={postId.toString()}
+      className='rounded-xl bg-gray-500 px-4 py-6 xl:p-8 flex flex-row items-start gap-x-4 w-full'>
       <div className='flex flex-col items-center gap-y-2 justify-center text-silver-100'>
         <button
           disabled={haveVoted}

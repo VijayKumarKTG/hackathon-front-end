@@ -46,7 +46,7 @@ export const get_all_questions_by_user_address = [
   },
 ];
 
-export const get_all_questions_by_id = [
+export const get_question_by_id_abi = [
   {
     inputs: [
       {

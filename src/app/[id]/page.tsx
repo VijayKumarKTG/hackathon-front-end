@@ -26,7 +26,7 @@ import TrendingTags from '@/components/trendingTags';
 import TagChip from '@/components/tagChip';
 import QuestionContentCard from '@/components/cards/question';
 import {
-  get_all_questions_by_id,
+  get_question_by_id_abi,
   get_answer_by_id_abi,
   post_answer_abi,
 } from '@/abi/social';
@@ -71,7 +71,7 @@ const Question = ({ params }: { params: { id: string } }) => {
     refetch: fetch_question,
   } = useContractRead({
     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-    abi: get_all_questions_by_id,
+    abi: get_question_by_id_abi,
     functionName: 'getQuestionById',
     args: [params?.id],
     enabled: false,

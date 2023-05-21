@@ -9,7 +9,7 @@ import { BigNumber } from 'ethers';
 import RelatedQuestions from '@/components/relatedQuestions';
 import TrendingTags from '@/components/trendingTags';
 import QuestionCardLarge from '@/components/cards/questionLarge';
-import { get_all_questions_by_id, get_total_counts } from '@/abi/social';
+import { get_question_by_id_abi, get_total_counts } from '@/abi/social';
 import { Address, Question } from '@/types';
 import usePaginationStore from '@/store/pagination';
 
@@ -20,7 +20,6 @@ const Questions: NextPage = () => {
     pageSize,
     totalPages,
     items,
-    setCurrentPage,
     setTotalItems,
     setTotalPages,
     setItems,
@@ -78,7 +77,7 @@ const Questions: NextPage = () => {
 
   const contract = {
     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-    abi: get_all_questions_by_id,
+    abi: get_question_by_id_abi,
     functionName: 'getQuestionById',
   };
 
