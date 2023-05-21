@@ -20,17 +20,17 @@ const Stats = ({ questions, answers, isFetching }: StatsProps) => {
                     <Skeleton
                         baseColor="#22294d"
                         highlightColor="#313a67"
-                        height="42px"
+                        height="48px"
                         width="300px"
                     />
                 </h2>
             </div>
             <div className="mb-12">
-                <h2 className="m-0 mb-6 text-[28px] flex flex-col lg:flex-row gap-y-10">
+                <h2 className="m-0 mb-6 text-[28px]">
                     <Skeleton
                         baseColor="#22294d"
                         highlightColor="#313a67"
-                        height="100%"
+                        height="48px"
                         width="300px"
                     />
                 </h2>
@@ -57,11 +57,11 @@ const Stats = ({ questions, answers, isFetching }: StatsProps) => {
                 )}
             </div>
             <div className="">
-                <h2 className="m-0 mb-6 text-[28px] flex flex-col lg:flex-row gap-y-10">
+                <h2 className="m-0 mb-6 text-[28px]">
                     <Skeleton
                         baseColor="#22294d"
                         highlightColor="#313a67"
-                        height="100%"
+                        height="48px"
                         width="300px"
                     />
                 </h2>
