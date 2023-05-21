@@ -19,6 +19,9 @@ import {
     usePrepareContractWrite,
 } from "wagmi";
 import { create } from "zustand";
+import Skeleton from "react-loading-skeleton";
+
+import "react-loading-skeleton/dist/skeleton.css";
 import ErrorModal from "../modals/error";
 import SuccessModal from "../modals/success";
 import LoadingModal from "../modals/loader";
@@ -174,12 +177,10 @@ const Setting = () => {
         },
     });
 
-    console.log(set_user_uri);
-
     /**
      * @config to read user data with address
      */
-    const { data, error, isError } = useContractRead({
+    const { data, error, isError, isFetching } = useContractRead({
         address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
         abi: get_user_by_address_abi,
         functionName: "getUserByAddress",
@@ -463,7 +464,278 @@ const Setting = () => {
         }
     };
 
-    return (
+    return isFetching ? (
+        <div className="bg-gray-100 rounded-xl p-6 lg:p-10 text-white">
+            <div className="mb-12">
+                <h2 className="m-0 mb-6 text-[28px]">
+                    <Skeleton
+                        baseColor="#22294d"
+                        highlightColor="#313a67"
+                        height="42px"
+                        width="370px"
+                    />
+                </h2>
+                <>
+                    <div>
+                        <div className="md:grid md:grid-cols-3 md:gap-6">
+                            <div className="md:col-span-1">
+                                <div className="px-4 sm:px-0">
+                                    <h3 className="text-lg font-medium leading-6 text-white">
+                                        <Skeleton
+                                            baseColor="#22294d"
+                                            highlightColor="#313a67"
+                                            width={60}
+                                        />
+                                    </h3>
+                                    <p className="mt-[-0.85rem] text-sm text-[#9CA3AF]">
+                                        <Skeleton
+                                            baseColor="#22294d"
+                                            highlightColor="#313a67"
+                                            // width={60}
+                                            count={3}
+                                        />
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="mt-5 md:col-span-2 md:mt-0">
+                                <form>
+                                    <div className="shadow sm:overflow-hidden sm:rounded-md">
+                                        <div className="space-y-6 bg-gray-500 px-4 py-5 sm:p-6">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-50">
+                                                    <Skeleton
+                                                        baseColor="#22294d"
+                                                        highlightColor="#313a67"
+                                                        width={90}
+                                                    />
+                                                </label>
+                                                <div
+                                                    className={`mt-1 justify-center rounded-md border-[#6B7280]`}>
+                                                    <Skeleton
+                                                        baseColor="#22294d"
+                                                        highlightColor="#313a67"
+                                                        height={170}
+                                                    />
+                                                    <div className="space-y-1 text-center"></div>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-50">
+                                                    <Skeleton
+                                                        baseColor="#22294d"
+                                                        highlightColor="#313a67"
+                                                        width={90}
+                                                    />
+                                                </label>
+                                                <div
+                                                    className={`mt-1 justify-center rounded-md border-[#6B7280]`}>
+                                                    <Skeleton
+                                                        baseColor="#22294d"
+                                                        highlightColor="#313a67"
+                                                        height={170}
+                                                    />
+                                                    <div className="space-y-1 text-center"></div>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-3 gap-6 w-full">
+                                                <div className="col-span-3 sm:col-span-2 w-full">
+                                                    <label className="block text-sm font-medium text-gray-50">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            width={125}
+                                                        />
+                                                    </label>
+                                                    <div className="mt-1 rounded-md shadow-sm w-full">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            height={40}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-3 gap-6">
+                                                <div className="col-span-3 sm:col-span-2">
+                                                    <label className="block text-sm font-medium text-gray-50">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            width={60}
+                                                        />
+                                                    </label>
+                                                    <div className="mt-1 rounded-md shadow-sm w-full">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            height={40}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-3 gap-6">
+                                                <div className="col-span-3 sm:col-span-2">
+                                                    <label className="block text-sm font-medium text-gray-50">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            width={50}
+                                                        />
+                                                    </label>
+                                                    <div className="mt-1 rounded-md shadow-sm w-full">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            height={40}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-3 gap-6">
+                                                <div className="col-span-3 sm:col-span-2">
+                                                    <label className="block text-sm font-medium text-gray-50">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            width={50}
+                                                        />
+                                                    </label>
+                                                    <div className="mt-1 rounded-md shadow-sm w-full">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            height={40}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="justify-center items-start bg-gray-500 px-6 pb-4">
+                                            <div className="cursor-pointer border-none items-center justify-center rounded-full w-52">
+                                                <Skeleton
+                                                    baseColor="#22294d"
+                                                    highlightColor="#313a67"
+                                                    height={40}
+                                                    borderRadius={500}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="hidden sm:block" aria-hidden="true">
+                        <div className="py-5">
+                            <div className="border-t border-gray-200" />
+                        </div>
+                    </div>
+
+                    <div className="mt-10 sm:mt-0">
+                        <div className="md:grid md:grid-cols-3 md:gap-6">
+                            <div className="md:col-span-1">
+                                <div className="px-4 sm:px-0">
+                                    <h3 className="text-lg font-medium leading-6 text-white">
+                                        <Skeleton
+                                            baseColor="#22294d"
+                                            highlightColor="#313a67"
+                                            width={60}
+                                        />
+                                    </h3>
+                                    <p className="mt-[-0.85rem] text-sm text-[#9CA3AF]">
+                                        <Skeleton
+                                            baseColor="#22294d"
+                                            highlightColor="#313a67"
+                                            // width={60}
+                                            count={1}
+                                        />
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="mt-5 md:col-span-2 md:mt-0">
+                                <form>
+                                    <div className="overflow-hidden shadow sm:rounded-md">
+                                        <div className="bg-gray-500 px-4 py-5 sm:p-6">
+                                            <div className="grid grid-cols-6 gap-6">
+                                                <div className="col-span-6 sm:col-span-4">
+                                                    <label className="block text-sm font-medium text-gray-50">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            width={40}
+                                                        />
+                                                    </label>
+                                                    <div className="mt-1 rounded-md shadow-sm w-full">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            height={40}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="col-span-6 sm:col-span-4">
+                                                    <label className="block text-sm font-medium text-gray-50">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            width={100}
+                                                        />
+                                                    </label>
+                                                    <div className="mt-1 rounded-md shadow-sm w-full">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            height={40}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="col-span-6 sm:col-span-4">
+                                                    <label className="block text-sm font-medium text-gray-50">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            width={30}
+                                                        />
+                                                    </label>
+                                                    <div className="mt-1 rounded-md shadow-sm w-full">
+                                                        <Skeleton
+                                                            baseColor="#22294d"
+                                                            highlightColor="#313a67"
+                                                            height={120}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="justify-center items-start bg-gray-500 px-6 pb-4">
+                                            <div className="cursor-pointer border-none items-center justify-center rounded-full w-40">
+                                                <Skeleton
+                                                    baseColor="#22294d"
+                                                    highlightColor="#313a67"
+                                                    height={40}
+                                                    borderRadius={500}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            </div>
+        </div>
+    ) : (
         <div className="bg-gray-100 rounded-xl p-6 lg:p-10 text-white">
             {loadingTitle && (
                 <LoadingModal
