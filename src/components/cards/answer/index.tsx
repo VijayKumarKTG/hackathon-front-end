@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import {
   useAccount,
@@ -37,26 +37,21 @@ enum VoteType {
 }
 
 type State = {
-  isCommentActive: boolean;
   newComment: string;
   commentUrl: string;
   voteType: VoteType;
 };
 
 type Actions = {
-  toggleCommentActive: (isCommentActive: boolean) => void;
   changeComment: (newComment: string) => void;
   changeCommentUrl: (commentUrl: string) => void;
   changeVoteType: (voteType: VoteType) => void;
 };
 
 const useCountStore = create<State & Actions>((set) => ({
-  isCommentActive: false,
   newComment: '',
   commentUrl: '',
   voteType: VoteType.Null,
-  toggleCommentActive: (isCommentActive: boolean) =>
-    set((state: State) => ({ ...state, isCommentActive })),
   changeComment: (newComment: string) =>
     set((state: State) => ({ ...state, newComment })),
   changeCommentUrl: (commentUrl: string) =>
@@ -80,9 +75,9 @@ const AnswerContentCard = (props: Props) => {
   const { chain } = useNetwork();
   const { address } = useAccount();
 
+  const [isCommentActive, toggleCommentActive] = useState<boolean>(false);
+
   const {
-    isCommentActive,
-    toggleCommentActive,
     newComment,
     changeComment,
     commentUrl,

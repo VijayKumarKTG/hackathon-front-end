@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   useAccount,
   useContractRead,
@@ -13,38 +13,19 @@ import { Address, Answer } from '@/types';
 import { get_answer_by_id_abi } from '@/abi/social';
 import AnswerCardLarge from '../cards/answerLarge';
 
-const Answers = () => {
+const Answers = ({ data }: { data: BigNumber[] }) => {
   const { chain } = useNetwork();
   const { address } = useAccount();
 
-  const {
-    currentPage,
-    totalItems,
-    pageSize,
-    totalPages,
-    items,
-    setTotalItems,
-    setTotalPages,
-    setItems,
-  } = usePaginationStore();
+  const [currentPage] = useState<number>(1);
+  const [totalItems, setTotalItems] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [items, setItems] = useState<BigNumber[]>([]);
 
-  const { data, isLoading, isError, refetch } = useContractRead({
-    address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-    abi: get_answers_by_user_address,
-    functionName: 'getAnswersByUserAddress',
-    chainId: chain?.id,
-    args: [address],
-    enabled: false,
-  });
-
-  const ids = data as BigNumber[];
+  const { pageSize } = usePaginationStore();
 
   useEffect(() => {
-    refetch();
-  }, []);
-
-  useEffect(() => {
-    if (data && !isLoading && !isError) {
+    if (data) {
       let count: any = data as BigNumber[];
       count = count.length;
 
@@ -54,10 +35,9 @@ const Answers = () => {
   }, [data]);
 
   useEffect(() => {
-    if (totalItems > 0) {
+    if (totalItems > 0 && currentPage > 0) {
       let startIndex = 0;
       let endIndex = 0;
-      const items_list: number[] = [];
 
       if (totalPages === 1) {
         startIndex = 0;
@@ -67,11 +47,9 @@ const Answers = () => {
         endIndex = startIndex + 10;
       }
 
-      for (let i = endIndex; i > startIndex; i--) {
-        items_list.push(i);
-      }
+      let temp = [...data];
 
-      setItems(items_list);
+      setItems(temp.reverse().slice(startIndex, endIndex));
     }
   }, [totalItems, currentPage]);
 
@@ -87,7 +65,10 @@ const Answers = () => {
     isError: isAnswersError,
     refetch: refetchAnswers,
   } = useContractReads({
-    contracts: items?.map((id: number) => ({ ...contract, args: [id] })) as any,
+    contracts: items?.map((id: BigNumber) => ({
+      ...contract,
+      args: [id],
+    })) as any,
     enabled: false,
   });
 
@@ -99,17 +80,17 @@ const Answers = () => {
     }
   }, [items]);
 
-  if (isLoading || isAnswersLoading) {
+  if (isAnswersLoading) {
     return (
-      <Wrapper total={ids?.length}>
+      <Wrapper total={data?.length}>
         <div>Loading...</div>
       </Wrapper>
     );
   }
 
-  if (isError || isAnswersError) {
+  if (isAnswersError) {
     return (
-      <Wrapper total={ids?.length}>
+      <Wrapper total={data?.length}>
         <div>Something went wrong.</div>
       </Wrapper>
     );
@@ -117,14 +98,14 @@ const Answers = () => {
 
   if (items.length === 0 || questions_list?.length === 0) {
     return (
-      <Wrapper total={ids?.length}>
+      <Wrapper total={data?.length}>
         <div>No questions to show.</div>
       </Wrapper>
     );
   }
 
   return (
-    <Wrapper total={ids?.length}>
+    <Wrapper total={data?.length}>
       <div>
         {questions_list?.map((question: Answer) => (
           <div className='m-0 mb-3' key={question?.id.toString()}>

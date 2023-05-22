@@ -8,7 +8,6 @@ import { BigNumber } from 'ethers';
 import Skeleton from 'react-loading-skeleton';
 
 import 'react-loading-skeleton/dist/skeleton.css';
-import RelatedQuestions from '@/components/relatedQuestions';
 import TrendingTags from '@/components/trendingTags';
 import QuestionCardLarge from '@/components/cards/questionLarge';
 import { get_question_by_id_abi, get_total_counts } from '@/abi/social';
@@ -190,7 +189,6 @@ const Wrapper = ({
       <div className='grid grid-cols-12 gap-x-6 items-start justify-start'>
         <div className='hidden lg:flex col-span-3 flex-col gap-y-6'>
           <TrendingTags />
-          <RelatedQuestions />
         </div>
         <div className='col-span-12 lg:col-span-9 rounded-3xl bg-gray-100 p-9'>
           <div className='flex flex-col md:flex-row gap-y-6 items-center justify-between text-[32px] text-white mb-16 md:mb-7'>
@@ -221,7 +219,6 @@ const Wrapper = ({
       <div className='grid grid-cols-12 gap-x-6 items-start justify-start'>
         <div className='hidden lg:flex col-span-3 flex-col gap-y-6'>
           <TrendingTags />
-          <RelatedQuestions />
         </div>
         <div className='col-span-12 lg:col-span-9 rounded-3xl bg-gray-100 p-9'>
           <div className='flex flex-col md:flex-row gap-y-6 items-center justify-between text-[32px] text-white mb-16 md:mb-7'>

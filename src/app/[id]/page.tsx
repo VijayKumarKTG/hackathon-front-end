@@ -21,7 +21,6 @@ import { create } from 'zustand';
 
 import './editor.css';
 
-import RelatedQuestions from '@/components/relatedQuestions';
 import TrendingTags from '@/components/trendingTags';
 import TagChip from '@/components/tagChip';
 import QuestionContentCard from '@/components/cards/question';
@@ -296,7 +295,6 @@ const Wrapper = ({ children }: { children: JSX.Element }) => {
       <div className='grid grid-cols-12 gap-x-6 items-start justify-start'>
         <div className='hidden lg:flex col-span-3 flex-col gap-y-6'>
           <TrendingTags />
-          <RelatedQuestions />
         </div>
         <div className='col-span-12 lg:col-span-9 rounded-3xl bg-gray-100 p-6 xl:p-9'>
           {children}
