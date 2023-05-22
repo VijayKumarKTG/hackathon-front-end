@@ -5,7 +5,9 @@ import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useContractRead, useContractReads } from 'wagmi';
 import { BigNumber } from 'ethers';
+import Skeleton from 'react-loading-skeleton';
 
+import 'react-loading-skeleton/dist/skeleton.css';
 import RelatedQuestions from '@/components/relatedQuestions';
 import TrendingTags from '@/components/trendingTags';
 import QuestionCardLarge from '@/components/cards/questionLarge';
@@ -20,6 +22,7 @@ const Questions: NextPage = () => {
     pageSize,
     totalPages,
     items,
+    setCurrentPage,
     setTotalItems,
     setTotalPages,
     setItems,
@@ -30,6 +33,7 @@ const Questions: NextPage = () => {
     isLoading: isCountLoading,
     isError: isCountError,
     refetch: refetchCount,
+    isFetching,
   } = useContractRead({
     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
     abi: get_total_counts,
@@ -87,7 +91,10 @@ const Questions: NextPage = () => {
     isError: isQuestionsError,
     refetch: refetchQuestions,
   } = useContractReads({
-    contracts: items?.map((id: number) => ({ ...contract, args: [id] })) as any,
+    contracts: items?.map((id: number) => ({
+      ...contract,
+      args: [id],
+    })) as any,
     enabled: false,
   });
 
@@ -101,30 +108,59 @@ const Questions: NextPage = () => {
 
   if (isCountLoading || isQuestionsLoading) {
     return (
-      <Wrapper>
-        <div>Loading...</div>
+      <Wrapper isFetching={isFetching}>
+        <div className='text-white font-normal text-lg'>Loading...</div>
       </Wrapper>
     );
   }
 
   if (isCountError || isQuestionsError) {
     return (
-      <Wrapper>
-        <div>Something went wrong.</div>
+      <Wrapper isFetching={isFetching}>
+        <div className='text-[24px] leading-6 mb-4 font-medium text-silver-100'>
+          Something went wrong.
+        </div>
       </Wrapper>
     );
   }
 
   if (items.length === 0 || questions_list?.length === 0) {
     return (
-      <Wrapper>
-        <div>No questions to show.</div>
+      <Wrapper isFetching={isFetching}>
+        <div className='text-[24px] leading-6 mb-4 font-medium text-silver-100'>
+          No questions to show.
+        </div>
       </Wrapper>
     );
   }
 
-  return (
-    <Wrapper>
+  return isFetching ? (
+    <Wrapper isFetching={isFetching}>
+      <>
+        <div className='text-[24px] leading-6 mb-4 font-medium text-silver-100'>
+          <Skeleton
+            baseColor='#22294d'
+            highlightColor='#313a67'
+            height='26px'
+            width='150px'
+          />
+        </div>
+
+        {questions_list?.map((question: Question) => (
+          <div className='m-0 mb-3' key={question?.id.toString()}>
+            <Skeleton
+              baseColor='#22294d'
+              highlightColor='#313a67'
+              height='92px'
+              width='100%'
+              borderRadius={20}
+            />
+          </div>
+        ))}
+      </>
+    </Wrapper>
+  ) : (
+    <Wrapper isFetching={isFetching}>
       <>
         <div className='text-[24px] leading-6 mb-4 font-medium text-silver-100'>
           {totalItems} Questions
@@ -142,8 +178,45 @@ const Questions: NextPage = () => {
 
 export default Questions;
 
-const Wrapper = ({ children }: { children: JSX.Element }) => {
-  return (
+const Wrapper = ({
+  children,
+  isFetching,
+}: {
+  children: JSX.Element;
+  isFetching: boolean;
+}) => {
+  return isFetching ? (
+    <div className='bg-darkblue px-6 py-14 xl:p-[56px]'>
+      <div className='grid grid-cols-12 gap-x-6 items-start justify-start'>
+        <div className='hidden lg:flex col-span-3 flex-col gap-y-6'>
+          <TrendingTags />
+          <RelatedQuestions />
+        </div>
+        <div className='col-span-12 lg:col-span-9 rounded-3xl bg-gray-100 p-9'>
+          <div className='flex flex-col md:flex-row gap-y-6 items-center justify-between text-[32px] text-white mb-16 md:mb-7'>
+            <h1 className='text-[32px] leading-10 text-center xl:text-left m-0'>
+              <Skeleton
+                baseColor='#22294d'
+                highlightColor='#313a67'
+                height='42px'
+                width='220px'
+              />
+            </h1>
+            <Link href='/ask-question' className='w-full md:max-w-[220px]'>
+              <Skeleton
+                baseColor='#22294d'
+                highlightColor='#313a67'
+                height={60}
+                // width={220}
+                borderRadius={500}
+              />
+            </Link>
+          </div>
+          {children}
+        </div>
+      </div>
+    </div>
+  ) : (
     <div className='bg-darkblue px-6 py-14 xl:p-[56px]'>
       <div className='grid grid-cols-12 gap-x-6 items-start justify-start'>
         <div className='hidden lg:flex col-span-3 flex-col gap-y-6'>
