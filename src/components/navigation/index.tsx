@@ -66,26 +66,6 @@ const Navigation = () => {
         className={`${
           toggle ? 'flex' : 'hidden'
         } xl:flex bg-gray-100 p-6 flex-col items-center gap-y-10 lg:flex-row lg:justify-between xl:gap-x-10 xl:bg-transparent xl:p-0 xl:w-full xl:min-w-max`}>
-        <div className='w-full max-w-[390px] rounded-11xl bg-darkblue xl:bg-gray-100 text-white py-[0px] px-[24px] box-border flex gap-2 items-center justify-start'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth={1.5}
-            stroke='currentColor'
-            className='w-6 h-6 text-white'>
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'
-            />
-          </svg>
-          <input
-            className='placeholder-silver-100 border-none bg-transparent outline-none block w-full h-full py-[12px] text-white text-lg'
-            type='search'
-            placeholder='Search'
-          />
-        </div>
         <ul className='list-none flex flex-row items-center justify-center gap-[24px] text-base leading-[16px] font-medium p-0 m-0'>
           <li className='w-max'>
             <Link
