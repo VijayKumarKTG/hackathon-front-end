@@ -14,20 +14,19 @@ import {
   useQuery,
 } from 'wagmi';
 import { create } from 'zustand';
+import { BigNumber } from 'ethers';
 
 import { get_user_by_address_abi } from '@/abi/user';
 import MarkdownRenderer from '@/components/mdx/renderer';
 import AvatarLarge from '@/components/user/avatarLarge';
-import { Address, Comment, Type, UserContract, UserMetadata } from '@/types';
+import { Address, Comment, UserContract, UserMetadata } from '@/types';
 import {
   get_comment_by_id,
-  is_user_voted_a_abi,
   is_user_voted_q_abi,
   post_comment_abi,
   vote_question_abi,
 } from '@/abi/social';
 import { uploadJSONToPinata } from '@/utils';
-import { BigNumber } from 'ethers';
 import CommentCard from '../comment';
 
 enum VoteType {

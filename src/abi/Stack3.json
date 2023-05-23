@@ -515,6 +515,25 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "_tid",
+        "type": "uint256"
+      }
+    ],
+    "name": "getQuestionsByTag",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "_user",
         "type": "address"
@@ -763,30 +782,6 @@
         "type": "uint256"
       }
     ],
-    "name": "s_userAnswerTagCounts",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
     "name": "s_userQuestionTagCounts",
     "outputs": [
       {
@@ -814,9 +809,9 @@
     "name": "s_userVotedAnswer",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "int8",
         "name": "",
-        "type": "bool"
+        "type": "int8"
       }
     ],
     "stateMutability": "view",
@@ -838,9 +833,9 @@
     "name": "s_userVotedQuestion",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "int8",
         "name": "",
-        "type": "bool"
+        "type": "int8"
       }
     ],
     "stateMutability": "view",
