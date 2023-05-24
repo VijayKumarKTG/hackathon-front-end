@@ -62,6 +62,7 @@ const Profile = () => {
   } = useProfileStore((state) => state);
 
   const [active, set_active] = useState<string>('Stats');
+  const [toggleBio, set_toggle_bio] = useState<boolean>(false);
   const { address } = useAccount();
   const { chain } = useNetwork();
 
@@ -102,7 +103,7 @@ const Profile = () => {
     changeAddress(address as string);
   }, [address, user, changeAddress, changeUser]);
 
-  return isFetching ? (
+  return isUserLoading ? (
     <div className='relative w-full flex flex-col items-center bg-darkblue'>
       <div className='w-full h-40 z-1'>
         <Skeleton
@@ -391,7 +392,18 @@ const Profile = () => {
             {address?.substring(0, 10)}...{address?.substring(30)}
           </p>
           <p className='m-0 mb-10 text-base lg:text-lg text-gray-50'>
-            {user?.bio}
+            {user?.bio.length > 150 ? (
+              <>
+                {toggleBio ? user?.bio : user?.bio.substring(0, 150)}...{' '}
+                <button
+                  onClick={() => set_toggle_bio((prev) => !prev)}
+                  className='border-none bg-transparent font-semibold text-silver-100 cursor-pointer'>
+                  {toggleBio ? 'See less' : 'See more'}
+                </button>
+              </>
+            ) : (
+              user?.bio
+            )}
           </p>
         </div>
         <ul className='m-0 mb-10 p-0 flex items-center gap-x-8 list-none overflow-auto w-full'>

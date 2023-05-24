@@ -220,9 +220,9 @@ export const is_user_voted_q_abi = [
     name: 's_userVotedQuestion',
     outputs: [
       {
-        internalType: 'bool',
+        internalType: 'int8',
         name: '',
-        type: 'bool',
+        type: 'int8',
       },
     ],
     stateMutability: 'view',
@@ -247,9 +247,9 @@ export const is_user_voted_a_abi = [
     name: 's_userVotedAnswer',
     outputs: [
       {
-        internalType: 'bool',
+        internalType: 'int8',
         name: '',
-        type: 'bool',
+        type: 'int8',
       },
     ],
     stateMutability: 'view',
