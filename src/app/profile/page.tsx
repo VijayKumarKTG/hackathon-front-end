@@ -19,6 +19,7 @@ import Setting from "@/components/setting";
 import { get_user_by_address_abi } from "@/abi/user";
 import { UserContract, UserMetadata } from "@/types";
 import { create } from "zustand";
+import { useRouter } from "next/navigation";
 
 type State = {
     user: any;
@@ -65,8 +66,11 @@ const Profile = () => {
     const [toggleBio, set_toggle_bio] = useState<boolean>(false);
     const [fakeProfileDelay, setFakeProfileDelay] = useState<boolean>(true);
 
-    const { address } = useAccount();
+    const { address, isConnected, isDisconnected } = useAccount();
     const { chain } = useNetwork();
+    const router = useRouter();
+
+    console.log(isDisconnected);
 
     const {
         data: user_data,
@@ -113,6 +117,12 @@ const Profile = () => {
             }, 1000);
         }
     }, [isProfileFetching]);
+
+    useEffect(() => {
+        if (!isConnected || isDisconnected) {
+            router.push("/connect-wallet");
+        }
+    }, [isConnected, isDisconnected]);
 
     return fakeProfileDelay ? (
         <div className="relative w-full flex flex-col items-center bg-darkblue">
@@ -261,10 +271,7 @@ const Profile = () => {
             <div className="w-full h-40">
                 <img
                     className="object-cover w-full h-full"
-                    src={
-                        user?.banner ||
-                        "https://images.unsplash.com/photo-1682847842653-a881916772b3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2832&q=80"
-                    }
+                    src={user?.banner || "dummy-banner.png"}
                     alt="Banner"
                 />
             </div>
@@ -272,10 +279,7 @@ const Profile = () => {
                 <div className="w-20 h-20 lg:w-36 lg:h-36 rounded-full overflow-hidden border-solid border-[3px] border-silver-100">
                     <img
                         className="object-cover w-full h-full"
-                        src={
-                            user?.profile ||
-                            "https://images.unsplash.com/photo-1542190891-2093d38760f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4MTU2NzA5NQ&ixlib=rb-4.0.3&q=80&w=1080"
-                        }
+                        src={user?.profile || "dummy-profile.jpg"}
                         alt="Profile picture"
                     />
                 </div>

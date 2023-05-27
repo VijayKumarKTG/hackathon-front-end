@@ -27,7 +27,9 @@ import SuccessModal from "@/components/modals/success";
 
 type State = {
     profile: File | null;
+    profileUrl: string;
     banner: File | null;
+    bannerUrl: string;
     name: string;
     email: string;
     bio: string;
@@ -36,7 +38,9 @@ type State = {
 
 type Actions = {
     changeProfile: (profile: File | null) => void;
+    changeProfileUrl: (url: string) => void;
     changeBanner: (banner: File | null) => void;
+    changeBannerUrl: (url: string) => void;
     changeName: (name: string) => void;
     changeEmail: (email: string) => void;
     changeBio: (bio: string) => void;
@@ -45,15 +49,21 @@ type Actions = {
 
 const useCountStore = create<State & Actions>((set) => ({
     profile: null,
+    profileUrl: "",
     banner: null,
+    bannerUrl: "",
     name: "",
     email: "",
     bio: "",
     url: "",
     changeProfile: (profile: File | null) =>
         set((state: State) => ({ ...state, profile })),
+    changeProfileUrl: (profileUrl: string) =>
+        set((state: State) => ({ ...state, profileUrl })),
     changeBanner: (banner: File | null) =>
         set((state: State) => ({ ...state, banner })),
+    changeBannerUrl: (bannerUrl: string) =>
+        set((state: State) => ({ ...state, bannerUrl })),
     changeName: (name: string) => set((state: State) => ({ ...state, name })),
     changeEmail: (email: string) =>
         set((state: State) => ({ ...state, email })),
@@ -64,14 +74,18 @@ const useCountStore = create<State & Actions>((set) => ({
 const Registration = () => {
     const {
         profile,
+        profileUrl,
         banner,
+        bannerUrl,
         name,
         email,
         bio,
         url,
         // functions
         changeProfile,
+        changeProfileUrl,
         changeBanner,
+        changeBannerUrl,
         changeName,
         changeEmail,
         changeBio,
@@ -172,20 +186,63 @@ const Registration = () => {
         checkIfSubmitting.current = false;
     }
 
+    const handleProfileUpload = async (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        try {
+            setLoadingTitle("Uploading profile image");
+            const file = event.target.files?.[0];
+            if (file) {
+                changeProfile(file as File);
+                const profile_url = await uploadFileToPinata(file);
+                changeProfileUrl(profile_url);
+                setSuccessTitle("Uploaded profile image");
+            }
+            setLoadingTitle("");
+        } catch (error) {
+            console.log(error);
+            await setSuccessTitle("");
+            await setSuccessMessage("");
+            await setLoadingTitle("");
+            await setLoadingMessage("");
+            await setErrorTitle("Failed to upload profile image");
+        }
+    };
+
+    const handleBannerUpload = async (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        try {
+            setLoadingTitle("Uploading banner image");
+            const file = event.target.files?.[0];
+            if (file) {
+                changeBanner(file as File);
+                const banner_url = await uploadFileToPinata(file);
+                changeBannerUrl(banner_url);
+                setSuccessTitle("Uploaded banner image");
+            }
+            setLoadingTitle("");
+        } catch (error) {
+            console.log(error);
+            await setSuccessTitle("");
+            await setSuccessMessage("");
+            await setLoadingTitle("");
+            await setLoadingMessage("");
+            await setErrorTitle("Failed to upload banner image");
+        }
+    };
+
     const onSubmit = async (event: FormEvent) => {
         event.preventDefault();
 
-        const profile_url = await uploadFileToPinata(profile);
-        const banner_url = await uploadFileToPinata(banner);
-
         const new_user = {
-            profile: profile_url,
-            banner: banner_url,
+            profile: profileUrl,
+            banner: bannerUrl,
             personalWebsite: "",
             linkedin: "",
             github: "",
             twitter: "",
-            name: "",
+            name,
             email,
             bio,
         };
@@ -253,13 +310,7 @@ const Registration = () => {
                                 id="profile"
                                 name="profile"
                                 placeholder="Enter your profile"
-                                onChange={(event) =>
-                                    changeProfile(
-                                        event.target.files
-                                            ? event.target.files[0]
-                                            : null
-                                    )
-                                }
+                                onChange={(event) => handleProfileUpload(event)}
                             />
                             {profile ? (
                                 <img
@@ -299,13 +350,7 @@ const Registration = () => {
                                 id="banner"
                                 name="banner"
                                 placeholder="Enter your banner"
-                                onChange={(event) =>
-                                    changeBanner(
-                                        event.target.files
-                                            ? event.target.files[0]
-                                            : null
-                                    )
-                                }
+                                onChange={(event) => handleBannerUpload(event)}
                             />
                             {banner ? (
                                 <img
