@@ -256,6 +256,7 @@ const AnswerContentCard = (props: Props) => {
                 setSuccessMessage("");
                 changeVoteType(VoteType.Null);
                 await props.refetchAnswers();
+                await fetch_is_a_voted();
             },
         });
 
@@ -307,6 +308,7 @@ const AnswerContentCard = (props: Props) => {
     /**
      * User answer vote check end here
      */
+    console.log(isAVoted);
 
     const contract = {
         address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
@@ -422,7 +424,7 @@ const AnswerContentCard = (props: Props) => {
                 isBestAnswerChosen={props.isBestAnswerChosen}
                 chooseBestAnswer={choose_best_answer}
                 voteCount={props.voteCount}>
-                <div>No data found redarding author.</div>
+                <div>No data found regarding author.</div>
             </Wrapper>
         );
     }

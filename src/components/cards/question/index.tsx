@@ -133,13 +133,13 @@ const QuestionContentCard = (props: Props) => {
     useEffect(() => {
         fetch_user();
         fetch_is_q_voted();
-    }, []);
+    }, [fetch_user]);
 
     useEffect(() => {
         if (user) {
             fetch_metadata();
         }
-    }, [user]);
+    }, [fetch_metadata, user]);
 
     /**
      * Commenting on this question
@@ -179,7 +179,9 @@ const QuestionContentCard = (props: Props) => {
                 setSuccessMessage("");
                 changeCommentUrl("");
                 toggleCommentActive(false);
-                fetchComments();
+                setTimeout(async () => {
+                    await fetchComments();
+                }, 1000);
             },
         });
 
@@ -244,6 +246,7 @@ const QuestionContentCard = (props: Props) => {
                 setSuccessMessage("");
                 changeVoteType(VoteType.Null);
                 await props.fetch_question();
+                await fetch_is_q_voted();
             },
         });
 
