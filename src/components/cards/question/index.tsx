@@ -385,7 +385,7 @@ const QuestionContentCard = (props: Props) => {
         }
     }, [isCommentsLoading, isProfileLoading, isUserLoading]);
 
-    console.log(isQVoted);
+    console.log({ metadata });
 
     return (
         <>

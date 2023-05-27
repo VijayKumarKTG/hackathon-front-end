@@ -1,7 +1,7 @@
 /* eslint-disable react/no-children-prop */
 "use client";
 
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -9,13 +9,26 @@ import { materialOceanic } from "react-syntax-highlighter/dist/esm/styles/prism"
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import { create } from "zustand";
-import { useContractWrite, usePrepareContractWrite } from "wagmi";
+import {
+    useAccount,
+    useContractRead,
+    useContractWrite,
+    useNetwork,
+    usePrepareContractWrite,
+    useQuery,
+} from "wagmi";
 
 import "./editor.css";
 
 import { uploadFileToPinata, uploadJSONToPinata } from "@/utils";
 import { post_question_abi } from "@/abi/social";
-import { Address } from "@/types";
+import { Address, UserContract, UserMetadata } from "@/types";
+import LoadingModal from "@/components/modals/loader";
+import ErrorModal from "@/components/modals/error";
+import SuccessModal from "@/components/modals/success";
+import { get_user_by_address_abi } from "@/abi/user";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 enum TagsEnum {
     "Javascript",
@@ -85,6 +98,17 @@ const AskQuestion = () => {
         changeUrl,
     } = useCountStore((state) => state);
 
+    const { address, isConnected, isDisconnected } = useAccount();
+    const { chain } = useNetwork();
+    const router = useRouter();
+
+    const [errorTitle, setErrorTitle] = useState<string>("");
+    const [errorMessage, setErrorMessage] = useState<string>("");
+    const [successTitle, setSuccessTitle] = useState<string>("");
+    const [successMessage, setSuccessMessage] = useState<string>("");
+    const [loadingTitle, setLoadingTitle] = useState<string>("");
+    const [loadingMessage, setLoadingMessage] = useState<string>("");
+
     /**
      * Tags state
      */
@@ -100,17 +124,71 @@ const AskQuestion = () => {
         args: [[1, 2, 3], url, process.env.NEXT_PUBLIC_HASH_SECRET],
     });
 
-    const { write: post_question } = useContractWrite({
-        ...post_question_config,
-        onError(error) {
-            console.log(error);
-        },
-        async onSuccess(data) {
-            await data.wait();
-            alert("Question Posted Successfully!");
-            changeUrl("");
+    const {
+        data: user_data,
+        isLoading: isUserLoading,
+        isError: isUserError,
+        isFetching: isUserFetching,
+    } = useContractRead({
+        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+        abi: get_user_by_address_abi,
+        functionName: "getUserByAddress",
+        chainId: chain?.id,
+        args: [address],
+        onError(error: Error) {
+            console.log(error.message);
         },
     });
+
+    const profile_contract = user_data as UserContract;
+
+    const {
+        data: profile,
+        isError: isProfileError,
+        isLoading: isProfileLoading,
+        isFetching: isProfileFetching,
+    } = useQuery(["user-profile", address], () =>
+        axios.get(profile_contract?.uri)
+    );
+
+    const user = profile?.data as UserMetadata;
+
+    const { write: post_question, isLoading: isQuestionPosting } =
+        useContractWrite({
+            ...post_question_config,
+            onError(error) {
+                setErrorTitle(error.message);
+                setErrorMessage("");
+                setLoadingTitle("");
+                setLoadingMessage("");
+                setSuccessTitle("");
+                setSuccessMessage("");
+            },
+            async onSuccess(data) {
+                await data.wait();
+                setErrorTitle("");
+                setErrorMessage("");
+                setLoadingTitle("");
+                setLoadingMessage("");
+                setSuccessTitle("Question Posted Successfully!");
+                setSuccessMessage("");
+                setTimeout(() => {
+                    router.push("/questions");
+                }, 2000);
+                changeUrl("");
+            },
+        });
+
+    useEffect(() => {
+        if (isQuestionPosting) {
+            setErrorTitle("");
+            setErrorMessage("");
+            setLoadingTitle("Posting question...");
+            setLoadingMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
+        }
+    }, [isQuestionPosting]);
 
     if (url && post_question && checkIfSubmitting.current) {
         post_question?.();
@@ -168,128 +246,157 @@ const AskQuestion = () => {
         setTagsState(updatedTags);
     };
 
+    console.log(user);
+
     return (
-        <div className="bg-darkblue py-14 px-2 md:px-20 xl:px-36">
-            <form
-                onSubmit={onSubmit}
-                className="bg-gray-100 py-11 px-4 md:px-9 rounded-3xl">
-                <h1 className="text-bold text-[32px] leading-10 text-white m-0 mb-10">
-                    Ask a Question
-                </h1>
+        <>
+            {loadingTitle && (
+                <LoadingModal
+                    loadingTitle={loadingTitle}
+                    loadingMessage={loadingMessage}
+                />
+            )}
+            {errorTitle && (
+                <ErrorModal
+                    errorTitle={errorTitle}
+                    errorMessage={errorMessage}
+                    needErrorButtonRight={true}
+                    errorButtonRightText="Close"
+                />
+            )}
+            {successTitle && (
+                <SuccessModal
+                    successTitle={successTitle}
+                    successMessage={successMessage}
+                    needSuccessButtonRight={true}
+                    successButtonRightText="Done"
+                />
+            )}
+            <div className="bg-darkblue py-14 px-2 md:px-20 xl:px-36">
+                <form
+                    onSubmit={onSubmit}
+                    className="bg-gray-100 py-11 px-4 md:px-9 rounded-3xl">
+                    <h1 className="text-bold text-[32px] leading-10 text-white m-0 mb-10">
+                        Ask a Question
+                    </h1>
 
-                <div className="flex flex-col mb-8">
-                    <label
-                        htmlFor="title"
-                        className="text-white text-base leading-5 block mb-[14px]">
-                        Title*{" "}
-                        <span className="text-gray-200">
-                            (Must be relevant to topic)
-                        </span>
-                    </label>
-                    <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        required
-                        aria-required
-                        placeholder="Enter your question title in a single statement"
-                        className="block bg-gray-500 rounded-sm px-6 py-4 text-lg text-white"
-                        onChange={(event) => changeTitle(event.target.value)}
-                    />
-                </div>
-
-                <div className="h-[max-content] mb-8">
-                    <label
-                        htmlFor="details"
-                        className="text-white text-base leading-5 block mb-[14px]">
-                        Details of your problem*{" "}
-                        <span className="text-gray-200">
-                            (Please explain it in a clear and detailed way so
-                            that there is no confusion)
-                        </span>
-                    </label>
-                    <MdEditor
-                        id="details"
-                        name="details"
-                        aria-required
-                        className="h-[300px] border-none bg-darkblue rounded-sm"
-                        shortcuts={true}
-                        renderHTML={renderHTML}
-                        onChange={handleQuestionChange}
-                        onImageUpload={handleImageUpload}
-                    />
-                </div>
-
-                <div className="h-[max-content] mb-8">
-                    <label
-                        htmlFor="solutions"
-                        className="text-white text-base leading-5 block mb-[14px]">
-                        Any solutions which you may have encountered with{" "}
-                        <span className="text-gray-200">(Optional)</span>
-                    </label>
-                    <MdEditor
-                        id="solutions"
-                        name="solutions"
-                        aria-required
-                        className="h-[300px] border-none bg-darkblue rounded-sm"
-                        shortcuts={true}
-                        renderHTML={renderHTML}
-                        onChange={handleSolutionChange}
-                        onImageUpload={handleImageUpload}
-                    />
-                </div>
-
-                <div className="flex flex-col mb-8">
-                    <label
-                        htmlFor="tags"
-                        className="text-white text-md leading-5 block mb-[14px]">
-                        Add question tags*{" "}
-                        <span className="text-gray-200">
-                            (Type your tags and hit Enter,{" "}
-                            {tagsState.length < 8 ? (
-                                <span className="text-yellow-400">
-                                    {8 - tagsState.length + " remaining"}
-                                </span>
-                            ) : (
-                                <span className="text-yellow-400">
-                                    Max limit reached
-                                </span>
-                            )}
-                            )
-                        </span>
-                    </label>
-                    <div className="flex flex-col ">
+                    <div className="flex flex-col mb-8">
+                        <label
+                            htmlFor="title"
+                            className="text-white text-base leading-5 block mb-[14px]">
+                            Title*{" "}
+                            <span className="text-gray-200">
+                                (Must be relevant to topic)
+                            </span>
+                        </label>
                         <input
-                            id="tags"
-                            name="tags"
                             type="text"
-                            placeholder="Type your tags and hit Enter"
-                            className="block bg-gray-500 rounded-sm px-6 py-4 text-lg text-white w-full"
-                            value={inputValue}
-                            onChange={handleInputChange}
-                            onKeyDown={handleInputKeyDown}
+                            id="title"
+                            name="title"
+                            required
+                            aria-required
+                            placeholder="Enter your question title in a single statement"
+                            className="block bg-gray-500 rounded-sm px-6 py-4 text-lg text-white"
+                            onChange={(event) =>
+                                changeTitle(event.target.value)
+                            }
                         />
-                        {tagsState?.length > 0 && (
-                            <div className="block bg-gray-500 rounded-sm px-6 py-4 text-lg text-white w-full">
-                                {tagsState.map((tag, index) => (
-                                    <span
-                                        key={index}
-                                        className="inline-block bg-[#1A2561] text-white rounded-sm px-3 py-2 text-md mr-2 mb-2">
-                                        <button
-                                            type="button"
-                                            className="mr-2 bg-transparent border-none outline-none"
-                                            onClick={() => removeTag(index)}>
-                                            <span className="text-[#929292] text-lg">
-                                                &#x2715;
-                                            </span>
-                                        </button>
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
                     </div>
-                    {/* <input
+
+                    <div className="h-[max-content] mb-8">
+                        <label
+                            htmlFor="details"
+                            className="text-white text-base leading-5 block mb-[14px]">
+                            Details of your problem*{" "}
+                            <span className="text-gray-200">
+                                (Please explain it in a clear and detailed way
+                                so that there is no confusion)
+                            </span>
+                        </label>
+                        <MdEditor
+                            id="details"
+                            name="details"
+                            aria-required
+                            className="h-[300px] border-none bg-darkblue rounded-sm"
+                            shortcuts={true}
+                            renderHTML={renderHTML}
+                            onChange={handleQuestionChange}
+                            onImageUpload={handleImageUpload}
+                        />
+                    </div>
+
+                    <div className="h-[max-content] mb-8">
+                        <label
+                            htmlFor="solutions"
+                            className="text-white text-base leading-5 block mb-[14px]">
+                            Any solutions which you may have encountered with{" "}
+                            <span className="text-gray-200">(Optional)</span>
+                        </label>
+                        <MdEditor
+                            id="solutions"
+                            name="solutions"
+                            aria-required
+                            className="h-[300px] border-none bg-darkblue rounded-sm"
+                            shortcuts={true}
+                            renderHTML={renderHTML}
+                            onChange={handleSolutionChange}
+                            onImageUpload={handleImageUpload}
+                        />
+                    </div>
+
+                    <div className="flex flex-col mb-8">
+                        <label
+                            htmlFor="tags"
+                            className="text-white text-md leading-5 block mb-[14px]">
+                            Add question tags*{" "}
+                            <span className="text-gray-200">
+                                (Type your tags and hit Enter,{" "}
+                                {tagsState.length < 8 ? (
+                                    <span className="text-yellow-400">
+                                        {8 - tagsState.length + " remaining"}
+                                    </span>
+                                ) : (
+                                    <span className="text-yellow-400">
+                                        Max limit reached
+                                    </span>
+                                )}
+                                )
+                            </span>
+                        </label>
+                        <div className="flex flex-col ">
+                            <input
+                                id="tags"
+                                name="tags"
+                                type="text"
+                                placeholder="Type your tags and hit Enter"
+                                className="block bg-gray-500 rounded-sm px-6 py-4 text-lg text-white w-full"
+                                value={inputValue}
+                                onChange={handleInputChange}
+                                onKeyDown={handleInputKeyDown}
+                            />
+                            {tagsState?.length > 0 && (
+                                <div className="block bg-gray-500 rounded-sm px-6 py-4 text-lg text-white w-full">
+                                    {tagsState.map((tag, index) => (
+                                        <span
+                                            key={index}
+                                            className="inline-block bg-[#1A2561] text-white rounded-sm px-3 py-2 text-md mr-2 mb-2">
+                                            <button
+                                                type="button"
+                                                className="mr-2 bg-transparent border-none outline-none"
+                                                onClick={() =>
+                                                    removeTag(index)
+                                                }>
+                                                <span className="text-[#929292] text-lg">
+                                                    &#x2715;
+                                                </span>
+                                            </button>
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        {/* <input
                         type="text"
                         id="tags"
                         name="tags"
@@ -299,77 +406,78 @@ const AskQuestion = () => {
                         className="block bg-gray-500 rounded-sm px-6 py-4 text-lg text-white"
                         onChange={(event) => changeTags(event.target.value)}
                     /> */}
-                </div>
+                    </div>
 
-                <div className="mb-8">
-                    <h2 className="text-white">Community Guidlinies</h2>
-                    <ul className="text-silver-200">
-                        <li>
-                            Be respectful and considerate: Treat others with
-                            respect and kindness, even if you disagree with
-                            their views or opinions.
-                        </li>
+                    <div className="mb-8">
+                        <h2 className="text-white">Community Guidlinies</h2>
+                        <ul className="text-silver-200">
+                            <li>
+                                Be respectful and considerate: Treat others with
+                                respect and kindness, even if you disagree with
+                                their views or opinions.
+                            </li>
 
-                        <li>
-                            Stay on topic: Make sure your questions and answers
-                            are relevant to the platform and specific to the
-                            topic you&#39;re discussing.
-                        </li>
+                            <li>
+                                Stay on topic: Make sure your questions and
+                                answers are relevant to the platform and
+                                specific to the topic you&#39;re discussing.
+                            </li>
 
-                        <li>
-                            Use clear and concise language: Use clear and
-                            easy-to-understand language when asking or answering
-                            questions.
-                        </li>
+                            <li>
+                                Use clear and concise language: Use clear and
+                                easy-to-understand language when asking or
+                                answering questions.
+                            </li>
 
-                        <li>
-                            Provide helpful and informative answers: When
-                            answering questions, make sure your response is
-                            helpful and provides useful information to the
-                            person asking the question.
-                        </li>
+                            <li>
+                                Provide helpful and informative answers: When
+                                answering questions, make sure your response is
+                                helpful and provides useful information to the
+                                person asking the question.
+                            </li>
 
-                        <li>
-                            Avoid spamming or self-promotion: Do not use the
-                            platform to promote yourself or your own
-                            products/services.
-                        </li>
+                            <li>
+                                Avoid spamming or self-promotion: Do not use the
+                                platform to promote yourself or your own
+                                products/services.
+                            </li>
 
-                        <li>
-                            Keep it professional: Avoid using inappropriate
-                            language, jokes or comments that could be deemed
-                            offensive or unprofessional.
-                        </li>
+                            <li>
+                                Keep it professional: Avoid using inappropriate
+                                language, jokes or comments that could be deemed
+                                offensive or unprofessional.
+                            </li>
 
-                        <li>
-                            Be open to feedback: Be open to constructive
-                            criticism and feedback from others, and use it to
-                            improve your contributions.
-                        </li>
+                            <li>
+                                Be open to feedback: Be open to constructive
+                                criticism and feedback from others, and use it
+                                to improve your contributions.
+                            </li>
 
-                        <li>
-                            Follow community rules and policies: Make sure to
-                            read and follow the platform&#39;s rules and
-                            policies, as well as any specific guidelines for
-                            individual communities or topics.
-                        </li>
-                    </ul>
-                </div>
+                            <li>
+                                Follow community rules and policies: Make sure
+                                to read and follow the platform&#39;s rules and
+                                policies, as well as any specific guidelines for
+                                individual communities or topics.
+                            </li>
+                        </ul>
+                    </div>
 
-                <button
-                    type="submit"
-                    disabled={
-                        title === "" ||
-                        question === "" ||
-                        tagsState.length === 0
-                    }
-                    className="w-full min-[400px]:w-max cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center">
-                    <b className="text-[16px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold">
-                        Post Question
-                    </b>
-                </button>
-            </form>
-        </div>
+                    <button
+                        type="submit"
+                        disabled={
+                            title === "" ||
+                            question === "" ||
+                            tagsState.length === 0
+                        }
+                        className="w-full min-[400px]:w-max cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center">
+                        <b className="text-[16px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold">
+                            Post Question
+                        </b>
+                    </button>
+                </form>
+            </div>
+        </>
     );
 };
 
