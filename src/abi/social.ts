@@ -442,3 +442,25 @@ export const choose_best_answer_abi = [
     type: 'function',
   },
 ];
+
+export const get_all_questions_by_tag_abi = [
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_tid',
+        type: 'uint256',
+      },
+    ],
+    name: 'getQuestionsByTag',
+    outputs: [
+      {
+        internalType: 'uint256[]',
+        name: '',
+        type: 'uint256[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+];

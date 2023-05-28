@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-
 import { useEffect } from 'react';
 import type { NextPage } from 'next';
 import Link from 'next/link';
@@ -11,11 +10,15 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import TrendingTags from '@/components/trendingTags';
 import QuestionCardLarge from '@/components/cards/questionLarge';
-import { get_question_by_id_abi, get_total_counts } from '@/abi/social';
+import {
+  get_all_questions_by_tag_abi,
+  get_question_by_id_abi,
+} from '@/abi/social';
 import { Address, Question } from '@/types';
 import usePaginationStore from '@/store/pagination';
+import { TAGS } from '@/constants/wallets';
 
-const Questions: NextPage = () => {
+const Tag = ({ params }: { params: { id: number } }) => {
   const {
     currentPage,
     totalItems,
@@ -29,39 +32,40 @@ const Questions: NextPage = () => {
   } = usePaginationStore();
 
   const {
-    data: totalCounts,
-    isLoading: isCountLoading,
-    isError: isCountError,
-    refetch: refetchCount,
+    data: ids,
+    isLoading: isLoading,
+    isError: isError,
+    refetch: refetch,
     isFetching,
   } = useContractRead({
     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-    abi: get_total_counts,
-    functionName: 'getTotalCounts',
+    abi: get_all_questions_by_tag_abi,
+    functionName: 'getQuestionsByTag',
+    args: [params.id],
     enabled: false,
   });
 
   useEffect(() => {
-    refetchCount();
+    refetch();
   }, []);
 
   useEffect(() => {
-    if (totalCounts && !isCountLoading && !isCountError) {
-      const count_list: BigNumber[] = totalCounts as BigNumber[];
-      const temp_count = count_list[1].toNumber();
+    if (!isLoading && !isError && ids) {
+      const count_list: BigNumber[] = ids as BigNumber[];
+      const temp_count = count_list.length;
 
       setTotalItems(temp_count);
       setTotalPages(
         temp_count < pageSize ? 1 : Math.ceil(temp_count / pageSize)
       );
     }
-  }, [totalCounts]);
+  }, [ids, isError, isLoading, pageSize, setTotalItems, setTotalPages]);
 
   useEffect(() => {
     if (totalItems > 0) {
+      const temp_ids = ids as BigNumber[];
       let startIndex = 0;
       let endIndex = 0;
-      const items_list: number[] = [];
 
       if (totalPages === 1) {
         startIndex = 0;
@@ -71,13 +75,9 @@ const Questions: NextPage = () => {
         endIndex = startIndex + 10;
       }
 
-      for (let i = endIndex; i > startIndex; i--) {
-        items_list.push(i);
-      }
-
-      setItems(items_list);
+      setItems(temp_ids?.slice(startIndex, endIndex));
     }
-  }, [totalItems, currentPage]);
+  }, [totalItems, currentPage, ids, totalPages, setItems]);
 
   const contract = {
     address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
@@ -100,15 +100,17 @@ const Questions: NextPage = () => {
 
   let questions_list: Question[] = questions as Question[];
 
+  console.log(ids, questions);
+
   useEffect(() => {
-    if (items.length > 0) {
+    if (items?.length > 0) {
       refetchQuestions();
     }
   }, [items]);
 
-  if (isCountLoading || isQuestionsLoading) {
+  if (isLoading || isQuestionsLoading) {
     return (
-      <Wrapper isFetching={isFetching}>
+      <Wrapper id={params.id} isFetching={isFetching}>
         <div className='text-[20px] leading-6 mb-4 font-normal text-silver-100'>
           Loading...
         </div>
@@ -116,9 +118,9 @@ const Questions: NextPage = () => {
     );
   }
 
-  if (isCountError || isQuestionsError) {
+  if (isError || isQuestionsError) {
     return (
-      <Wrapper isFetching={isFetching}>
+      <Wrapper id={params.id} isFetching={isFetching}>
         <div className='text-[20px] leading-6 mb-4 font-normal text-silver-100'>
           Something went wrong.
         </div>
@@ -126,15 +128,15 @@ const Questions: NextPage = () => {
     );
   }
 
-  if (items.length === 0 || questions_list?.length === 0) {
+  if (items?.length === 0 || questions_list?.length === 0) {
     return isFetching ? (
-      <Wrapper isFetching={isFetching}>
+      <Wrapper id={params.id} isFetching={isFetching}>
         <div className='text-[20px] leading-6 mb-4 font-normal text-silver-100'>
           <Skeleton baseColor='#22294d' highlightColor='#313a67' width={250} />
         </div>
       </Wrapper>
     ) : (
-      <Wrapper isFetching={isFetching}>
+      <Wrapper id={params.id} isFetching={isFetching}>
         <div className='text-[20px] leading-6 mb-4 font-normal text-silver-100'>
           No questions to show.
         </div>
@@ -143,7 +145,7 @@ const Questions: NextPage = () => {
   }
 
   return isFetching ? (
-    <Wrapper isFetching={isFetching}>
+    <Wrapper id={params.id} isFetching={isFetching}>
       <>
         <div className='text-[24px] leading-6 mb-4 font-medium text-silver-100'>
           <Skeleton
@@ -168,7 +170,7 @@ const Questions: NextPage = () => {
       </>
     </Wrapper>
   ) : (
-    <Wrapper isFetching={isFetching}>
+    <Wrapper id={params.id} isFetching={isFetching}>
       <>
         <div className='text-[24px] leading-6 mb-4 font-medium text-silver-100'>
           {totalItems} Questions
@@ -184,14 +186,16 @@ const Questions: NextPage = () => {
   );
 };
 
-export default Questions;
+export default Tag;
 
 const Wrapper = ({
   children,
   isFetching,
+  id,
 }: {
   children: JSX.Element;
   isFetching: boolean;
+  id: number;
 }) => {
   return isFetching ? (
     <div className='bg-darkblue px-6 py-14 xl:p-[56px]'>
@@ -232,7 +236,7 @@ const Wrapper = ({
         <div className='col-span-12 lg:col-span-9 rounded-3xl bg-gray-100 p-9'>
           <div className='flex flex-col md:flex-row gap-y-6 items-center justify-between text-[32px] text-white mb-16 md:mb-7'>
             <h1 className='text-[32px] leading-10 text-center xl:text-left m-0'>
-              All Questions
+              {TAGS[id]}
             </h1>
             <Link
               href='/ask-question'

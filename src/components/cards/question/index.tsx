@@ -73,6 +73,7 @@ interface Props {
   comments: any[];
   authorAddress: Address;
   postId: number;
+  fetch_question: any;
 }
 
 const QuestionContentCard = (props: Props) => {
@@ -132,13 +133,13 @@ const QuestionContentCard = (props: Props) => {
   useEffect(() => {
     fetch_user();
     fetch_is_q_voted();
-  }, []);
+  }, [fetch_user]);
 
   useEffect(() => {
     if (user) {
       fetch_metadata();
     }
-  }, [user]);
+  }, [fetch_metadata, user]);
 
   /**
    * Commenting on this question
@@ -173,8 +174,8 @@ const QuestionContentCard = (props: Props) => {
         setSuccessMessage('');
         changeCommentUrl('');
         toggleCommentActive(false);
-        setTimeout(() => {
-          window.location.reload();
+        setTimeout(async () => {
+          await fetchComments();
         }, 1000);
       },
     }
@@ -240,9 +241,8 @@ const QuestionContentCard = (props: Props) => {
         );
         setSuccessMessage('');
         changeVoteType(VoteType.Null);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        await props.fetch_question();
+        await fetch_is_q_voted();
       },
     });
 
@@ -317,6 +317,7 @@ const QuestionContentCard = (props: Props) => {
     data: comments,
     isLoading: isCommentsLoading,
     isError: isCommentsError,
+    refetch: fetchComments,
   } = useContractReads({
     contracts: props.comments?.map((comment: BigNumber) => ({
       ...contract,
@@ -382,8 +383,6 @@ const QuestionContentCard = (props: Props) => {
       setSuccessMessage('');
     }
   }, [isCommentsLoading, isProfileLoading, isUserLoading]);
-
-  console.log(isQVoted);
 
   return (
     <>

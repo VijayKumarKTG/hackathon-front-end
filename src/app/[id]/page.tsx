@@ -18,9 +18,8 @@ import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { create } from 'zustand';
-import LoadingModal from '@/components/modals/loader';
-import ErrorModal from '@/components/modals/error';
-import SuccessModal from '@/components/modals/success';
+import moment from 'moment';
+import { BigNumber } from 'ethers';
 
 import './editor.css';
 
@@ -35,7 +34,9 @@ import {
 import { Address, Answer, Question } from '@/types';
 import { uploadFileToPinata, uploadJSONToPinata } from '@/utils';
 import AnswerContentCard from '@/components/cards/answer';
-import { BigNumber } from 'ethers';
+import LoadingModal from '@/components/modals/loader';
+import ErrorModal from '@/components/modals/error';
+import SuccessModal from '@/components/modals/success';
 
 type State = {
   answer: string;
@@ -73,6 +74,7 @@ const Question = ({ params }: { params: { id: string } }) => {
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [loadingTitle, setLoadingTitle] = useState<string>('');
   const [loadingMessage, setLoadingMessage] = useState<string>('');
+  const [tagsMetadata, setTagsMetadata] = useState<any[]>([]);
 
   const {
     data: question,
@@ -100,12 +102,28 @@ const Question = ({ params }: { params: { id: string } }) => {
     { enabled: false }
   );
 
+  const loadQnMetadata = async (tags: BigNumber[]) => {
+    try {
+      const response = await Promise.all(
+        tags.map((tag: BigNumber) =>
+          axios.get(
+            `${process.env.NEXT_PUBLIC_TAGS_IPFS_LINK}${tag.toString()}.json`
+          )
+        )
+      );
+      setTagsMetadata(response.map((item): any => item.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetch_question();
   }, []);
 
   useEffect(() => {
     if (question) {
+      loadQnMetadata(qn.tags);
       fetch_metadata();
       refetchAnswers();
     }
@@ -157,11 +175,9 @@ const Question = ({ params }: { params: { id: string } }) => {
       setLoadingMessage('');
       setSuccessTitle('Answer Posted Successfully!');
       setSuccessMessage('');
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
       changeUrl('');
       changeAnswer('');
+      await refetchAnswers();
     },
   });
 
@@ -225,6 +241,8 @@ const Question = ({ params }: { params: { id: string } }) => {
     );
   }
 
+  console.log(metadata);
+
   return (
     <Wrapper>
       <>
@@ -256,22 +274,18 @@ const Question = ({ params }: { params: { id: string } }) => {
           </h1>
           <div className='flex flex-row items-center justify-start gap-4 text-xs text-silver-100 mb-2'>
             <div>
-              <span>{`Asked `}</span>
-              <span className='font-semibold text-silver-200'>Today</span>
-            </div>
-            <div>
-              <span>{`Modified `}</span>
-              <span className='font-semibold text-silver-200'>Today</span>
-            </div>
-            <div>
-              <span>{`Viewed `}</span>
-              <span className='font-semibold text-silver-200'>6 Times</span>
+              <span>{`Asked On `}</span>
+              <span className='font-semibold text-silver-200'>
+                {moment(metadata?.data?.createdAt).format('MM-DD-YYYY')}
+              </span>
             </div>
           </div>
           <div className='flex flex-row items-center justify-start gap-2 mb-8'>
-            <TagChip title='JavaScript' />
-            <TagChip title='NFT' />
-            <TagChip title='Web3' />
+            {tagsMetadata &&
+              tagsMetadata.length > 0 &&
+              tagsMetadata.map((tag: any) => (
+                <TagChip key={tag.name} title={tag.name} />
+              ))}
           </div>
         </div>
 
@@ -282,6 +296,7 @@ const Question = ({ params }: { params: { id: string } }) => {
             comments={qn?.comments}
             authorAddress={qn?.author}
             postId={qn?.id.toNumber()}
+            fetch_question={fetch_question}
           />
         </div>
 
@@ -302,6 +317,7 @@ const Question = ({ params }: { params: { id: string } }) => {
                   isBestAnswer={answer?.isBestAnswer}
                   questionAuthor={qn.author}
                   isBestAnswerChosen={qn.bestAnswerChosen}
+                  refetchAnswers={refetchAnswers}
                 />
               </div>
             ))}

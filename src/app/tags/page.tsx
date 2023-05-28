@@ -2,39 +2,55 @@
 'use client';
 
 import type { NextPage } from 'next';
+import axios from 'axios';
+import { useEffect } from 'react';
 import Link from 'next/link';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
-import { Address, useAccount, useContractRead, useNetwork } from 'wagmi';
+import { useQuery } from 'wagmi';
 import Skeleton from 'react-loading-skeleton';
 
 import 'react-loading-skeleton/dist/skeleton.css';
 import TrendingTags from '@/components/trendingTags';
-import QuestionCardLarge from '@/components/cards/questionLarge';
 import TagCardLarge from '@/components/cards/tagLarge';
-import Pagination from '@/components/pagination';
-import { get_user_by_address_abi } from '@/abi/user';
+
+const tags = [
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+];
 
 const Tags: NextPage = () => {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const loadQnMetadata = async (tags: number[]) => {
+    try {
+      const response = await Promise.all(
+        tags.map((tag: number) =>
+          axios.get(
+            `${process.env.NEXT_PUBLIC_TAGS_IPFS_LINK}${tag.toString()}.json`
+          )
+        )
+      );
+      return response.map((item): any => item.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  const {
-    data: user_data,
-    isLoading: isUserLoading,
-    isError: isUserError,
-    isFetching,
-  } = useContractRead({
-    address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-    abi: get_user_by_address_abi,
-    functionName: 'getUserByAddress',
-    chainId: chain?.id,
-    args: [address],
-    onError(error: Error) {
-      console.log(error.message);
-    },
+  const { data, isLoading, isError, refetch } = useQuery(
+    ['load-all-tags-metadata'],
+    () => loadQnMetadata(tags),
+    { enabled: false }
+  );
+
+  useEffect(() => {
+    refetch();
   });
 
-  return isFetching ? (
+  if (isError) {
+    return (
+      <div className='text-white'>
+        Something went wrong. Not able to load the tags.
+      </div>
+    );
+  }
+
+  return isLoading ? (
     <div className='bg-darkblue px-6 py-14 xl:p-[56px]'>
       <div className='grid grid-cols-12 gap-x-6 items-start justify-start'>
         <div className='hidden lg:flex col-span-3 flex-col gap-y-6'>
@@ -305,212 +321,20 @@ const Tags: NextPage = () => {
           </div>
 
           <div className='text-[24px] leading-6 mb-4 font-medium text-silver-100'>
-            1922 Tags
+            {tags.length} Tags
           </div>
 
           <div className='grid grid-cols-1 min-[500px]:grid-cols-2 md:grid-cols-3 lg:md-grid-cols-4 gap-4 items-stretch'>
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for  for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for  for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for  for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for  for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for  for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-
-            <div>
-              <TagCardLarge
-                name='JavaScript'
-                description="Javascript I wrote isn't working for for my html [closed]"
-                qCount={23}
-                aCount={23}
-                usersCount={23}
-              />
-            </div>
-          </div>
-          <div className='flex justify-center'>
-            <Pagination currentPage={1} totalPages={192} />
+            {data?.map((item: any) => (
+              <div key={item.id}>
+                <TagCardLarge
+                  name={item.name}
+                  description={item.description}
+                  icon={item.icon}
+                  id={item.id}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </div>

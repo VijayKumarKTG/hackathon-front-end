@@ -9,6 +9,7 @@ interface Props {
 }
 
 const AvatarLarge = (props: Props) => {
+  console.log({ props });
   return (
     <Link
       href={`/user/${props.id}`}
@@ -18,7 +19,7 @@ const AvatarLarge = (props: Props) => {
         alt='profile'
         width={35}
         height={35}
-        className='rounded-md'
+        className='object-cover rounded-md'
       />
       <div className='text-white font-semibold'>{props.name}</div>
     </Link>
