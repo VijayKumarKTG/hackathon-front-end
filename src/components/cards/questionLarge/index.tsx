@@ -6,10 +6,12 @@ import { useQuery } from "wagmi";
 const QuestionCardLarge = (question: Question) => {
     const { id, downvotes, upvotes, uri } = question;
 
-    const { data, isError, isLoading } = useQuery(
+    const { data, isError, error, isLoading } = useQuery(
         ["get-question-metadata", id?.toString()],
         () => axios.get(uri)
     );
+
+    console.log(uri);
 
     if (isLoading) {
         return (
