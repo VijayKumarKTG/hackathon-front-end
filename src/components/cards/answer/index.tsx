@@ -476,6 +476,7 @@ const AnswerContentCard = (props: Props) => {
                             image={metadata?.profile}
                             name={metadata?.name}
                             id={author?.id?.toString()}
+                            address={author?.userAddress as string}
                         />
                     </div>
                     {isCommentActive && (
