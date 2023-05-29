@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useContractRead, useContractReads } from "wagmi";
@@ -30,6 +30,8 @@ const Tag = ({ params }: { params: { id: number } }) => {
         setTotalPages,
         setItems,
     } = usePaginationStore();
+
+    const [totalCount, setTotalCount] = useState(0);
 
     const {
         data: ids,
@@ -133,6 +135,38 @@ const Tag = ({ params }: { params: { id: number } }) => {
         }
     }, [totalItems, currentPage]);
 
+    useEffect(() => {
+        const parseTotalItemsWithParams = async (questions: Question[]) => {
+            const totalCount = questions?.reduce(
+                (count: number, question: Question) => {
+                    const isNumberIncluded = question?.tags.some(
+                        (obj) =>
+                            parseInt(obj._hex, 16) ===
+                            parseInt(params?.id as any)
+                    );
+
+                    if (isNumberIncluded) {
+                        count += 1;
+                    }
+
+                    return count;
+                },
+                0
+            );
+
+            return totalCount;
+        };
+
+        const fetchTotalCount = async () => {
+            const totalCount = await parseTotalItemsWithParams(
+                questions as Question[]
+            );
+            setTotalCount(totalCount);
+        };
+
+        fetchTotalCount();
+    }, [params?.id, questions]);
+
     if (isLoading || isQuestionsLoading) {
         return (
             <Wrapper id={params.id} isFetching={isFetching}>
@@ -202,14 +236,26 @@ const Tag = ({ params }: { params: { id: number } }) => {
         <Wrapper id={params.id} isFetching={isFetching}>
             <>
                 <div className="text-[24px] leading-6 mb-4 font-medium text-silver-100">
-                    {totalItems} Questions
+                    {totalCount} {totalCount === 1 ? "Question" : "Questions"}
                 </div>
 
-                {questions_list?.map((question: Question) => (
-                    <div className="m-0 mb-3" key={question?.id.toString()}>
-                        <QuestionCardLarge {...question} />
-                    </div>
-                ))}
+                {questions_list?.map((question: Question) => {
+                    const isNumberIncluded = question?.tags.some(
+                        (obj) =>
+                            parseInt(obj._hex, 16) ==
+                            parseInt(params?.id as any)
+                    );
+
+                    return (
+                        isNumberIncluded && (
+                            <div
+                                className="m-0 mb-3"
+                                key={question?.id.toString()}>
+                                <QuestionCardLarge {...question} />
+                            </div>
+                        )
+                    );
+                })}
             </>
         </Wrapper>
     );

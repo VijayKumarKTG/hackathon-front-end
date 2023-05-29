@@ -108,6 +108,8 @@ const Questions: NextPage = () => {
         }
     }, [items]);
 
+    console.log(questions_list);
+
     if (isCountLoading || isQuestionsLoading) {
         return (
             <Wrapper isFetching={isFetching}>

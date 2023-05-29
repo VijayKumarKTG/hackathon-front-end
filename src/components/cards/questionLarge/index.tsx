@@ -11,8 +11,6 @@ const QuestionCardLarge = (question: Question) => {
         () => axios.get(uri)
     );
 
-    console.log(uri);
-
     if (isLoading) {
         return (
             <Wrapper
