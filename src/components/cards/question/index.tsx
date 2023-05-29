@@ -171,6 +171,7 @@ const QuestionContentCard = (props: Props) => {
             },
             async onSuccess(data) {
                 await data.wait();
+                await fetchComments();
                 setErrorTitle("");
                 setErrorMessage("");
                 setLoadingTitle("");
@@ -179,9 +180,6 @@ const QuestionContentCard = (props: Props) => {
                 setSuccessMessage("");
                 changeCommentUrl("");
                 toggleCommentActive(false);
-                setTimeout(async () => {
-                    await fetchComments();
-                }, 1000);
             },
         });
 

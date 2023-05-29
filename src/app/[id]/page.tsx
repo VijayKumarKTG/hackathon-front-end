@@ -224,7 +224,7 @@ const Question = ({ params }: { params: { id: string } }) => {
     if (isQuestionLoading || isAnswersLoading || isMetadataLoading) {
         return (
             <Wrapper>
-                <div>Loading...</div>
+                <div className="text-[20px] text-silver-100">Loading...</div>
             </Wrapper>
         );
     }
@@ -232,7 +232,9 @@ const Question = ({ params }: { params: { id: string } }) => {
     if (isQuestionError || isAnswersError || isMetadataError) {
         return (
             <Wrapper>
-                <div>Something went wrong!</div>
+                <div className="text-[20px] text-silver-100">
+                    Something went wrong!
+                </div>
             </Wrapper>
         );
     }
@@ -240,12 +242,12 @@ const Question = ({ params }: { params: { id: string } }) => {
     if (!question || !metadata) {
         return (
             <Wrapper>
-                <div>Found no question with {params?.id}! </div>
+                <div className="text-[20px] text-silver-100">
+                    Found no question with {params?.id}!{" "}
+                </div>
             </Wrapper>
         );
     }
-
-    console.log(metadata);
 
     return (
         <Wrapper>

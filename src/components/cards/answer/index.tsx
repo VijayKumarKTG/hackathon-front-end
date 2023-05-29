@@ -390,7 +390,7 @@ const AnswerContentCard = (props: Props) => {
                 isBestAnswerChosen={props.isBestAnswerChosen}
                 chooseBestAnswer={choose_best_answer}
                 voteCount={props.voteCount}>
-                <div>Loading...</div>
+                <div className="text-[20px] text-silver-100">Loading...</div>
             </Wrapper>
         );
     }
@@ -407,7 +407,9 @@ const AnswerContentCard = (props: Props) => {
                 isBestAnswerChosen={props.isBestAnswerChosen}
                 chooseBestAnswer={choose_best_answer}
                 voteCount={props.voteCount}>
-                <div>Something went wrong</div>
+                <div className="text-[20px] text-silver-100">
+                    Something went wrong
+                </div>
             </Wrapper>
         );
     }
@@ -424,7 +426,9 @@ const AnswerContentCard = (props: Props) => {
                 isBestAnswerChosen={props.isBestAnswerChosen}
                 chooseBestAnswer={choose_best_answer}
                 voteCount={props.voteCount}>
-                <div>No data found regarding author.</div>
+                <div className="text-[20px] text-silver-100">
+                    No data found regarding author.
+                </div>
             </Wrapper>
         );
     }

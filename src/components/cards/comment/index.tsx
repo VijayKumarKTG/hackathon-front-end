@@ -73,15 +73,21 @@ const CommentCard = (comment: Comment) => {
     }, [user]);
 
     if (isMetadataLoading || isUserLoading || isProfileLoading) {
-        return <div className="text-white">Loading...</div>;
+        return <div className="text-[20px] text-silver-100">Loading...</div>;
     }
 
     if (isMetadataError || isUserError || isProfileError) {
-        return <div className="text-white">Something went wrong!</div>;
+        return (
+            <div className="text-[20px] text-silver-100">
+                Something went wrong!
+            </div>
+        );
     }
 
     if (!metadata || !user || !profile || !author_metadata) {
-        return <div className="text-white">No data found!</div>;
+        return (
+            <div className="text-[20px] text-silver-100">No data found!</div>
+        );
     }
 
     return (
