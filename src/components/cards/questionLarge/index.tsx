@@ -6,7 +6,7 @@ import { useQuery } from "wagmi";
 const QuestionCardLarge = (question: Question) => {
     const { id, downvotes, upvotes, uri } = question;
 
-    const { data, isError, isLoading } = useQuery(
+    const { data, isError, error, isLoading } = useQuery(
         ["get-question-metadata", id?.toString()],
         () => axios.get(uri)
     );
@@ -16,7 +16,7 @@ const QuestionCardLarge = (question: Question) => {
             <Wrapper
                 id={id?.toString()}
                 voteCount={upvotes?.sub(downvotes).toNumber()}>
-                <div>Loading...</div>
+                <div className="text-[20px] text-silver-100">Loading...</div>
             </Wrapper>
         );
     }
@@ -26,7 +26,9 @@ const QuestionCardLarge = (question: Question) => {
             <Wrapper
                 id={id?.toString()}
                 voteCount={upvotes?.sub(downvotes).toNumber()}>
-                <div>Something went wrong!</div>
+                <div className="text-[20px] text-silver-100">
+                    Something went wrong!
+                </div>
             </Wrapper>
         );
     }
@@ -36,7 +38,9 @@ const QuestionCardLarge = (question: Question) => {
             <Wrapper
                 id={id?.toString()}
                 voteCount={upvotes?.sub(downvotes).toNumber()}>
-                <div>No data found.</div>
+                <div className="text-[20px] text-silver-100">
+                    No data found.
+                </div>
             </Wrapper>
         );
     }
