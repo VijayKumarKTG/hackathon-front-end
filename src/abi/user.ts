@@ -195,3 +195,25 @@ export const set_user_uri_abi = [
     type: 'function',
   },
 ];
+
+export const get_user_badges_abi = [
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_user',
+        type: 'address',
+      },
+    ],
+    name: 'getUserBadges',
+    outputs: [
+      {
+        internalType: 'uint256[]',
+        name: '',
+        type: 'uint256[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+];

@@ -3,28 +3,30 @@ import Skeleton from 'react-loading-skeleton';
 
 import 'react-loading-skeleton/dist/skeleton.css';
 import NFTCard from '../cards/nftcard';
-import { get_user_by_address_abi } from '@/abi/user';
+import { get_user_badges_abi } from '@/abi/user';
 
 const Achievements = () => {
   /**
    * @get hooks from wagmi
    */
-  const { isConnected, address } = useAccount();
+  const { address } = useAccount();
   const { chain } = useNetwork();
 
   /**
    * @config to read user data with address
    */
   const { data, error, isError, isFetching } = useContractRead({
-    address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-    abi: get_user_by_address_abi,
-    functionName: 'getUserByAddress',
+    address: process.env.NEXT_PUBLIC_STACK3_BADGES_ADDRESS as Address,
+    abi: get_user_badges_abi,
+    functionName: 'getUserBadges',
     chainId: chain?.id,
     args: [address],
     onError(error: Error) {
       console.log(error.message);
     },
   });
+
+  console.log(data);
 
   return isFetching ? (
     <div className='bg-gray-100 rounded-xl p-6 lg:p-10 text-white'>
