@@ -49,7 +49,7 @@ const QuestionCardLarge = (question: Question) => {
 
     return (
         <Link
-            href={`/${id?.toString()}`}
+            href={`/question/${id?.toString()}`}
             className="cursor-pointer [border:none] p-6 bg-gray-500 rounded-xl w-full gap-x-8 flex flex-row box-border items-center justify-start text-white no-underline">
             <div className="text-sm leading-5 text-silver-100">
                 {upvotes?.sub(downvotes).toString()} Votes
