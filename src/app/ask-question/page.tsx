@@ -9,6 +9,8 @@ import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { create } from 'zustand';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import {
   useAccount,
   useContractRead,
@@ -27,8 +29,6 @@ import LoadingModal from '@/components/modals/loader';
 import ErrorModal from '@/components/modals/error';
 import SuccessModal from '@/components/modals/success';
 import { get_user_by_address_abi } from '@/abi/user';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
 import TagInput from '@/components/tagInput';
 
 enum TagsEnum {
@@ -221,8 +221,6 @@ const AskQuestion = () => {
   /**
    * Tags logic
    */
-
-  console.log(user);
 
   return (
     <>

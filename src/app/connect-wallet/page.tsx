@@ -44,6 +44,7 @@ const Login: NextPage = () => {
   }, []);
 
   useEffect(() => {
+    console.log(isConnected && address && !isStatusLoading && !isStatusError)
     if (isConnected && address && !isStatusLoading && !isStatusError) {
       if (data) {
         router.push('/profile');
