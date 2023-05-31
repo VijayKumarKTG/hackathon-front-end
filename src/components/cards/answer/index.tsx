@@ -73,6 +73,7 @@ interface Props {
     isBestAnswer: boolean;
     isBestAnswerChosen: boolean;
     refetchAnswers: any;
+    refetchQuestion: any;
 }
 
 const AnswerContentCard = (props: Props) => {

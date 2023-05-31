@@ -171,7 +171,7 @@ const QuestionContentCard = (props: Props) => {
             },
             async onSuccess(data) {
                 await data.wait();
-                await fetchComments();
+                await props.fetch_question();
                 setErrorTitle("");
                 setErrorMessage("");
                 setLoadingTitle("");

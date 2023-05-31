@@ -357,6 +357,7 @@ const Question = ({ params }: { params: { id: string } }) => {
                                     questionAuthor={qn.author}
                                     isBestAnswerChosen={qn.bestAnswerChosen}
                                     refetchAnswers={refetchAnswers}
+                                    refetchQuestion={fetch_question}
                                 />
                             </div>
                         ))}
