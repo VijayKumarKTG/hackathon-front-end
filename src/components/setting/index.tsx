@@ -330,41 +330,44 @@ const Setting = () => {
         event: React.DragEvent<HTMLDivElement>
     ) => {
         try {
-            setLoadingTitle("Uploading profile image");
+            // setLoadingTitle("Uploading profile image");
             event.preventDefault();
             setIsDraggingOverProfile(false);
             const file = event.dataTransfer.files[0];
             changeProfileFile(file);
             const profile_url = await uploadFileToPinata(file);
             changeProfile(profile_url);
-            setSuccessTitle("Uploaded profile image");
-            setLoadingTitle("");
+            // setSuccessTitle("Uploaded profile image");
+            // setLoadingTitle("");
         } catch (error) {
-            await setSuccessTitle("");
-            await setSuccessMessage("");
-            await setLoadingTitle("");
-            await setLoadingMessage("");
-            await setErrorTitle("Failed to upload profile image");
+            console.log(error.message);
+            // await setSuccessTitle("");
+            // await setSuccessMessage("");
+            // await setLoadingTitle("");
+            // await setLoadingMessage("");
+            // await setErrorTitle("Failed to upload profile image");
         }
     };
 
     const handleDropBanner = async (event: React.DragEvent<HTMLDivElement>) => {
         try {
-            setLoadingTitle("Uploading banner image");
+            // setLoadingTitle("Uploading banner image");
             event.preventDefault();
             setIsDraggingOverBanner(false);
             const file = event!.dataTransfer!.files[0];
             changeBannerFile(file);
             const banner_url = await uploadFileToPinata(file);
             changeBanner(banner_url);
-            setSuccessTitle("Uploaded banner image");
-            setLoadingTitle("");
+            // setSuccessTitle("Uploaded banner image");
+            // setLoadingTitle("");
         } catch (error) {
-            await setSuccessTitle("");
-            await setSuccessMessage("");
-            await setLoadingTitle("");
-            await setLoadingMessage("");
-            await setErrorTitle("Failed to upload banner image");
+            console.log(error.message);
+
+            // await setSuccessTitle("");
+            // await setSuccessMessage("");
+            // await setLoadingTitle("");
+            // await setLoadingMessage("");
+            // await setErrorTitle("Failed to upload banner image");
         }
     };
 
@@ -372,22 +375,22 @@ const Setting = () => {
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
         try {
-            setLoadingTitle("Uploading profile image");
+            // setLoadingTitle("Uploading profile image");
             const file = event.target.files?.[0];
             if (file) {
                 changeProfileFile(file as File);
                 const profile_url = await uploadFileToPinata(file);
                 changeProfile(profile_url);
-                setSuccessTitle("Uploaded profile image");
+                // setSuccessTitle("Uploaded profile image");
             }
-            setLoadingTitle("");
+            // setLoadingTitle("");
         } catch (error) {
             console.log(error);
-            await setSuccessTitle("");
-            await setSuccessMessage("");
-            await setLoadingTitle("");
-            await setLoadingMessage("");
-            await setErrorTitle("Failed to upload profile image");
+            // await setSuccessTitle("");
+            // await setSuccessMessage("");
+            // await setLoadingTitle("");
+            // await setLoadingMessage("");
+            // await setErrorTitle("Failed to upload profile image");
         }
     };
 
@@ -395,22 +398,22 @@ const Setting = () => {
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
         try {
-            setLoadingTitle("Uploading banner image");
+            // setLoadingTitle("Uploading banner image");
             const file = event.target.files?.[0];
             if (file) {
                 changeBannerFile(file as File);
                 const banner_url = await uploadFileToPinata(file);
                 changeBanner(banner_url);
-                setSuccessTitle("Uploaded banner image");
+                // setSuccessTitle("Uploaded banner image");
             }
-            setLoadingTitle("");
+            // setLoadingTitle("");
         } catch (error) {
             console.log(error);
-            await setSuccessTitle("");
-            await setSuccessMessage("");
-            await setLoadingTitle("");
-            await setLoadingMessage("");
-            await setErrorTitle("Failed to upload banner image");
+            // await setSuccessTitle("");
+            // await setSuccessMessage("");
+            // await setLoadingTitle("");
+            // await setLoadingMessage("");
+            // await setErrorTitle("Failed to upload banner image");
         }
     };
 
