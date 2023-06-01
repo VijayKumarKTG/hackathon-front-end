@@ -168,18 +168,7 @@ const Registration = () => {
         if (!isConnected) {
             router.push("/connect-wallet");
         }
-    }, [isConnected]);
-
-    useEffect(() => {
-        if (userRegistrationInProgress) {
-            setErrorTitle("");
-            setErrorMessage("");
-            setLoadingTitle("Registration in progress...");
-            setLoadingMessage("");
-            setSuccessTitle("");
-            setSuccessMessage("");
-        }
-    }, [userRegistrationInProgress]);
+    }, [isConnected, router]);
 
     if (url && register_user && checkIfSubmitting.current) {
         register_user?.();
@@ -235,24 +224,38 @@ const Registration = () => {
     const onSubmit = async (event: FormEvent) => {
         event.preventDefault();
 
-        const new_user = {
-            profile: profileUrl,
-            banner: bannerUrl,
-            personalWebsite: "",
-            linkedin: "",
-            github: "",
-            twitter: "",
-            name,
-            email,
-            bio,
-        };
+        try {
+            setErrorTitle("");
+            setErrorMessage("");
+            setLoadingTitle("Registration in progress...");
+            setLoadingMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
 
-        const url = await uploadJSONToPinata(new_user);
-        changeUrl(url);
-        checkIfSubmitting.current = true;
+            const new_user = {
+                profile: profileUrl,
+                banner: bannerUrl,
+                personalWebsite: "",
+                linkedin: "",
+                github: "",
+                twitter: "",
+                name,
+                email,
+                bio,
+            };
+
+            const url = await uploadJSONToPinata(new_user);
+            changeUrl(url);
+            checkIfSubmitting.current = true;
+        } catch (error: any) {
+            setErrorTitle(error.message);
+            setErrorMessage("");
+            setLoadingTitle("Registration in progress...");
+            setLoadingMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
+        }
     };
-
-    console.log(loadingTitle);
 
     return (
         <div className="bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48">
