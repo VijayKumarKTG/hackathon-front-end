@@ -7,7 +7,13 @@ import { get_user_badges_abi } from "@/abi/user";
 import { BigNumber } from "ethers";
 import BadgeCard from "../cards/badgecard";
 
-const Achievements = () => {
+const Achievements = ({
+    isUserView,
+    params,
+}: {
+    isUserView: boolean;
+    params: any | null;
+}) => {
     /**
      * @get hooks from wagmi
      */
@@ -22,7 +28,7 @@ const Achievements = () => {
         abi: get_user_badges_abi,
         functionName: "getUserBadges",
         chainId: chain?.id,
-        args: [address],
+        args: [isUserView ? params?.id : address],
         onError(error: Error) {
             console.log(error.message);
         },
@@ -129,6 +135,11 @@ const Achievements = () => {
         badge.gt(0) ? achievements.push(index) : locked.push(index)
     );
 
+    console.log({
+        locked,
+        achievements,
+    });
+
     return (
         <div className="bg-gray-100 rounded-xl p-6 lg:p-10 text-white">
             <div className="mb-12">
@@ -139,12 +150,19 @@ const Achievements = () => {
                     </span>
                 </h2>
                 {achievements?.length > 0 ? (
-                    <div className="flex flex-row gap-8 items-center justify-start pb-2">
-                        {achievements.map((index: number) => (
-                            <BadgeCard key={index} id={index} />
-                        ))}
+                    <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
+                        <div className="flex flex-row gap-8 items-center justify-start pb-2">
+                            {achievements.map((index: number) => (
+                                <BadgeCard key={index} id={index} />
+                            ))}
+                        </div>
                     </div>
                 ) : (
+                    // <div className="flex flex-row gap-8 items-center justify-start pb-2">
+                    //     {achievements.map((index: number) => (
+                    //         <BadgeCard key={index} id={index} />
+                    //     ))}
+                    // </div>
                     <div className="flex flex-row gap-8 items-center justify-start text-lg">
                         No badges found
                     </div>
