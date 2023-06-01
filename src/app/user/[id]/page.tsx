@@ -70,8 +70,6 @@ const Profile = ({ params }: any) => {
     const { chain } = useNetwork();
     const router = useRouter();
 
-    console.log(params.id);
-
     const {
         data: user_data,
         isLoading: isUserLoading,
@@ -426,7 +424,8 @@ const Profile = ({ params }: any) => {
                         </h1>
                     </div>
                     <p className="m-0 mb-2 text-sm lg:text-lg text-gray-200">
-                        {address?.substring(0, 10)}...{address?.substring(30)}
+                        {params.id?.substring(0, 10)}...
+                        {params.id?.substring(30)}
                     </p>
                     <p className="m-0 mb-10 text-base lg:text-lg text-gray-50">
                         {user?.bio.length > 150 ? (
@@ -523,7 +522,7 @@ const Profile = ({ params }: any) => {
                         bestAnswerCount={profile_contract?.bestAnswerCount}
                     />
                 ) : active === "Achievements" ? (
-                    <Achievements />
+                    <Achievements isUserView={true} params={params} />
                 ) : null}
             </div>
         </div>
