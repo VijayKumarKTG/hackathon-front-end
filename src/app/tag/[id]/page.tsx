@@ -2,7 +2,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useContractRead, useContractReads } from "wagmi";
+import { useContractRead, useContractReads, useQuery } from "wagmi";
 import { BigNumber } from "ethers";
 import Skeleton from "react-loading-skeleton";
 import { create } from "zustand";
@@ -17,6 +17,7 @@ import {
 import { Address, Question } from "@/types";
 import { TAGS } from "@/constants/wallets";
 import Pagination from "@/components/pagination";
+import axios from "axios";
 
 type PaginationState = {
     currentPage: number;
@@ -49,6 +50,10 @@ const useTagQuestionsPaginationStore = create<
     setItems: (items) => set({ items }),
 }));
 
+const tags = [
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+];
+
 const Tag = ({ params }: { params: { id: number } }) => {
     const {
         currentPage,
@@ -63,6 +68,7 @@ const Tag = ({ params }: { params: { id: number } }) => {
     } = useTagQuestionsPaginationStore();
 
     const [totalCount, setTotalCount] = useState(0);
+    const [activeTag, setActiveTag] = useState(null);
 
     const {
         data: ids,
@@ -78,7 +84,34 @@ const Tag = ({ params }: { params: { id: number } }) => {
         enabled: false,
     });
 
-    console.log(ids);
+    const loadQnMetadata = async (tags: number[]) => {
+        try {
+            const response = await Promise.all(
+                tags.map((tag: number) =>
+                    axios.get(
+                        `${
+                            process.env.NEXT_PUBLIC_TAGS_IPFS_LINK
+                        }${tag.toString()}.json`
+                    )
+                )
+            );
+            return response.map((item): any => item.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const { data } = useQuery(
+        ["load-all-tags-metadata"],
+        () => loadQnMetadata(tags),
+        { enabled: false }
+    );
+
+    useEffect(() => {
+        if (data) {
+            setActiveTag(data[params.id]);
+        }
+    }, [data, params.id]);
 
     useEffect(() => {
         refetch();
@@ -182,7 +215,10 @@ const Tag = ({ params }: { params: { id: number } }) => {
 
     if (isLoading || isQuestionsLoading) {
         return (
-            <Wrapper id={params.id} isFetching={isFetching}>
+            <Wrapper
+                id={params.id}
+                isFetching={isFetching}
+                activeTag={activeTag}>
                 <div className="text-[20px] leading-6 mb-4 font-normal text-silver-100">
                     <div
                         role="status"
@@ -211,7 +247,10 @@ const Tag = ({ params }: { params: { id: number } }) => {
 
     if (isError || isQuestionsError) {
         return (
-            <Wrapper id={params.id} isFetching={isFetching}>
+            <Wrapper
+                id={params.id}
+                isFetching={isFetching}
+                activeTag={activeTag}>
                 <div className="text-[20px] leading-6 mb-4 font-normal text-silver-100">
                     Something went wrong.
                 </div>
@@ -221,7 +260,10 @@ const Tag = ({ params }: { params: { id: number } }) => {
 
     if (items?.length === 0 || questions_list?.length === 0) {
         return isFetching ? (
-            <Wrapper id={params.id} isFetching={isFetching}>
+            <Wrapper
+                id={params.id}
+                isFetching={isFetching}
+                activeTag={activeTag}>
                 <div className="text-[20px] leading-6 mb-4 font-normal text-silver-100">
                     <Skeleton
                         baseColor="#22294d"
@@ -231,7 +273,10 @@ const Tag = ({ params }: { params: { id: number } }) => {
                 </div>
             </Wrapper>
         ) : (
-            <Wrapper id={params.id} isFetching={isFetching}>
+            <Wrapper
+                id={params.id}
+                isFetching={isFetching}
+                activeTag={activeTag}>
                 <div className="text-[20px] leading-6 mb-4 font-normal text-silver-100">
                     No questions to show.
                 </div>
@@ -240,7 +285,7 @@ const Tag = ({ params }: { params: { id: number } }) => {
     }
 
     return isFetching ? (
-        <Wrapper id={params.id} isFetching={isFetching}>
+        <Wrapper id={params.id} isFetching={isFetching} activeTag={activeTag}>
             <>
                 <div className="text-[24px] leading-6 mb-4 font-medium text-silver-100">
                     <Skeleton
@@ -265,7 +310,7 @@ const Tag = ({ params }: { params: { id: number } }) => {
             </>
         </Wrapper>
     ) : (
-        <Wrapper id={params.id} isFetching={isFetching}>
+        <Wrapper id={params.id} isFetching={isFetching} activeTag={activeTag}>
             <>
                 <div className="text-[24px] leading-6 mb-4 font-medium text-silver-100">
                     {totalItems} {totalItems === 1 ? "Question" : "Questions"}
@@ -307,10 +352,12 @@ const Wrapper = ({
     children,
     isFetching,
     id,
+    activeTag,
 }: {
     children: JSX.Element;
     isFetching: boolean;
     id: number;
+    activeTag: any;
 }) => {
     return isFetching ? (
         <div className="bg-darkblue px-6 py-14 xl:p-[56px]">
@@ -320,14 +367,25 @@ const Wrapper = ({
                 </div>
                 <div className="col-span-12 lg:col-span-9 rounded-3xl bg-gray-100 p-9">
                     <div className="flex flex-col md:flex-row gap-y-6 items-center justify-between text-[32px] text-white mb-16 md:mb-7">
-                        <h1 className="text-[32px] leading-10 text-center xl:text-left m-0">
-                            <Skeleton
-                                baseColor="#22294d"
-                                highlightColor="#313a67"
-                                height="42px"
-                                width="220px"
-                            />
-                        </h1>
+                        <div className="flex flex-col gap-2 w-1/2">
+                            <h1 className="text-[32px] leading-10 text-center xl:text-left m-0">
+                                <Skeleton
+                                    baseColor="#22294d"
+                                    highlightColor="#313a67"
+                                    height="42px"
+                                    width="220px"
+                                />
+                            </h1>
+                            <p className="hidden text-[16px] text-center xl:text-left m-0 md:flex">
+                                <Skeleton
+                                    baseColor="#22294d"
+                                    highlightColor="#313a67"
+                                    height="22px"
+                                    width="400px"
+                                    count={3}
+                                />
+                            </p>
+                        </div>
                         <Link
                             href="/ask-question"
                             className="w-full md:max-w-[220px]">
@@ -351,10 +409,15 @@ const Wrapper = ({
                     <TrendingTags />
                 </div>
                 <div className="col-span-12 lg:col-span-9 rounded-3xl bg-gray-100 p-9">
-                    <div className="flex flex-col md:flex-row gap-y-6 items-center justify-between text-[32px] text-white mb-16 md:mb-7">
-                        <h1 className="text-[32px] leading-10 text-center xl:text-left m-0">
-                            {TAGS[id]}
-                        </h1>
+                    <div className="flex flex-col md:flex-row gap-y-6 items-center justify-between text-[32px] text-white mb-16 md:mb-10">
+                        <div className="flex flex-col gap-2 md:w-1/2">
+                            <h1 className="text-[32px] leading-10 text-center xl:text-left m-0">
+                                {TAGS[id]}
+                            </h1>
+                            <p className="text-[16px] text-center xl:text-left m-0">
+                                {activeTag?.description}
+                            </p>
+                        </div>
                         <Link
                             href="/ask-question"
                             className="no-underline w-full md:w-max cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center">
