@@ -35,20 +35,20 @@ const Home: NextPage = () => {
                         </Link>
                     </div>
                 </div>
-                <picture className="mix-blend-luminosity">
+                <picture className="">
                     <source
                         className="w-full h-full object-cover"
-                        srcSet="cta.png"
+                        srcSet="hero.png"
                         media="(max-width: 1279px)"
                     />
                     <source
                         className="w-full h-full object-cover"
-                        srcSet="cta.png"
+                        srcSet="hero.png"
                         media="(min-width: 1280px)"
                     />
                     <img
                         className="w-full h-full object-cover"
-                        src="cta.png"
+                        src="hero.png"
                         alt="Desktop Image"
                     />
                 </picture>
@@ -101,7 +101,7 @@ const Home: NextPage = () => {
                             upvoting, promoting valuable contributions.
                         </p>
                     </div>
-                    <div className="relative min-h-[500px] md:col-span-2 xl:col-start-2 xl:col-end-r xl:row-start-1 xl:row-end-3 rounded-21xl bg-blue overflow-hidden">
+                    <div className="min-h-[500px] md:col-span-2 xl:col-start-2 xl:col-end-r xl:row-start-1 xl:row-end-3 rounded-21xl bg-blue overflow-hidden">
                         <div className="px-[33px] py-[44px]">
                             <h3 className="tracking-[1px] text-[26px] leading-[26px] m-0 mb-[22px] uppercase">
                                 INTERACT WITH COMMUNITY
@@ -113,9 +113,9 @@ const Home: NextPage = () => {
                             </p>
                         </div>
                         <img
-                            className="absolute top-48 sm:top-36 sm:left-[70px] object-cover mix-blend-luminosity"
+                            className="flex flex-col mx-auto top-48 sm:top-36 left-[70px] object-cover w-72 md:w-auto"
                             alt=""
-                            src="/hero.png"
+                            src="/mid.png"
                         />
                     </div>
                     <div className="rounded-21xl bg-midnightblue px-[24px] py-[48px]">
@@ -160,10 +160,10 @@ const Home: NextPage = () => {
             <div
                 id="section-2"
                 className="py-14 px-6 min-[600px]:px-[100px] md:px-[120px] flex flex-col-reverse gap-y-16 xl:flex-row xl:py-[100px]">
-                <div className="w-full rounded-24 overflow-hidden">
+                <div className="w-full rounded-24 overflow-hidden flex mx-auto ">
                     <img
-                        className="w-full h-full object-contain xl:object-cover mix-blend-luminosity"
-                        src="/cta2.png"
+                        className="mx-auto object-contain xl:object-cover max-w-[80%]"
+                        src="/cta.png"
                         alt=""
                     />
                 </div>

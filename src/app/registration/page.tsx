@@ -271,7 +271,7 @@ const Registration = () => {
                 </h1>
                 <div className="w-full aspect-[4/3]">
                     <img
-                        className="w-full object-contain mix-blend-luminosity"
+                        className="w-full max-h-[609px] object-contain"
                         alt="Login Image"
                         src="/registration.png"
                     />

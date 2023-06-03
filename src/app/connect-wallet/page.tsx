@@ -104,7 +104,7 @@ const Login: NextPage = () => {
                         explore all features
                     </h1>
                     <img
-                        className="w-full object-contain mix-blend-luminosity"
+                        className="w-full max-h-[609px] object-contain"
                         alt="Login Image"
                         src="/login.png"
                     />
