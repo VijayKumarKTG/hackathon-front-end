@@ -106,7 +106,7 @@ const Login: NextPage = () => {
                     <img
                         className="w-full object-contain mix-blend-luminosity"
                         alt="Login Image"
-                        src="/login-img.png"
+                        src="/login.png"
                     />
                 </div>
                 <div className="flex flex-col gap-4 lg:basis-1/2 max-w-[390px]">

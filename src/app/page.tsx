@@ -38,17 +38,17 @@ const Home: NextPage = () => {
                 <picture className="mix-blend-luminosity">
                     <source
                         className="w-full h-full object-cover"
-                        srcSet="hero-mobile.png"
+                        srcSet="cta.png"
                         media="(max-width: 1279px)"
                     />
                     <source
                         className="w-full h-full object-cover"
-                        srcSet="hero-bg.png"
+                        srcSet="cta.png"
                         media="(min-width: 1280px)"
                     />
                     <img
                         className="w-full h-full object-cover"
-                        src="hero-mobile.png"
+                        src="cta.png"
                         alt="Desktop Image"
                     />
                 </picture>
@@ -113,9 +113,9 @@ const Home: NextPage = () => {
                             </p>
                         </div>
                         <img
-                            className="absolute w-full h-full object-cover mix-blend-luminosity"
+                            className="absolute top-48 sm:top-36 sm:left-[70px] object-cover mix-blend-luminosity"
                             alt=""
-                            src="/section1-bg.png"
+                            src="/hero.png"
                         />
                     </div>
                     <div className="rounded-21xl bg-midnightblue px-[24px] py-[48px]">
@@ -163,7 +163,7 @@ const Home: NextPage = () => {
                 <div className="w-full rounded-24 overflow-hidden">
                     <img
                         className="w-full h-full object-contain xl:object-cover mix-blend-luminosity"
-                        src="/section2-bg.png"
+                        src="/cta2.png"
                         alt=""
                     />
                 </div>
