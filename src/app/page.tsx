@@ -10,7 +10,8 @@ const Home: NextPage = () => {
                 className="flex flex-col-reverse items-center justify-center gap-y-12 xl:flex-row item h-[max-content] px-6 min-[600px]:px-[100px] md:px-[120px] xl:px-0 py-14">
                 <div className="box-border  xl:basis-2/3 xl:pl-[120px]">
                     <h1 className="text-[46px] font-bold m-0 mb-4 text-center md:text-[52px] xl:text-left">
-                        Interact with community, <br /> earn proof of work
+                        Interact with community, <br /> earn badges and raremint
+                        NFTs
                     </h1>
                     <p className="text-base leading-[32px] m-0 mb-[42px] text-center md:w-9/12 md:mx-auto xl:mx-0 xl:text-left">
                         Get rewarded by badges based on language or general
@@ -59,8 +60,9 @@ const Home: NextPage = () => {
                     How it works?
                 </h2>
                 <p className="text-base xl:text-lg xl:leading-[32px] text-center m-0 mb-[80px] md:w-9/12 md:mx-auto">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Feugiat nulla suspendisse tortor aene.
+                    MeshNode facilitates Q&A interactions, encourages community
+                    engagement, rewards valuable contributions, and operates on
+                    a decentralized platform.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-[24px]">
                     <div className="rounded-21xl bg-midnightblue px-[24px] py-[48px]">
@@ -77,8 +79,8 @@ const Home: NextPage = () => {
                             ask and answer questions
                         </h3>
                         <p className="text-[1rem] leading-[1.63rem] flex items-center m-0">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Feugiat nulla suspendisse tortor aene.
+                            Engage with the community by asking questions and
+                            providing answers on various topics.
                         </p>
                     </div>
                     <div className="rounded-21xl bg-midnightblue px-[24px] py-[48px]">
@@ -95,8 +97,8 @@ const Home: NextPage = () => {
                             see stats and upvotes
                         </h3>
                         <p className="text-[1rem] leading-[1.63rem] flex items-center m-0">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Feugiat nulla suspendisse tortor aene.
+                            Evaluate the quality of content with statistics and
+                            upvoting, promoting valuable contributions.
                         </p>
                     </div>
                     <div className="relative min-h-[500px] md:col-span-2 xl:col-start-2 xl:col-end-r xl:row-start-1 xl:row-end-3 rounded-21xl bg-blue overflow-hidden">
@@ -105,9 +107,9 @@ const Home: NextPage = () => {
                                 INTERACT WITH COMMUNITY
                             </h3>
                             <p className="text-[16px] leading-[26px] flex items-center m-0">
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit. In amet, morbi non at sed
-                                neque.
+                                Engage in discussions, leave comments, and
+                                collaborate with others to solve complex
+                                questions.
                             </p>
                         </div>
                         <img
@@ -130,8 +132,9 @@ const Home: NextPage = () => {
                             get rewards
                         </h3>
                         <p className="text-[1rem] leading-[1.63rem] flex items-center m-0">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Feugiat nulla suspendisse tortor aene.
+                            Earn incentives and rewards for valuable
+                            contributions that enhance the community's knowledge
+                            base.
                         </p>
                     </div>
                     <div className="rounded-21xl bg-midnightblue px-[24px] py-[48px]">
@@ -148,8 +151,8 @@ const Home: NextPage = () => {
                             all decentralised
                         </h3>
                         <p className="text-[1rem] leading-[1.63rem] flex items-center m-0">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Feugiat nulla suspendisse tortor aene.
+                            Operates on a decentralized infrastructure, ensuring
+                            transparency, security, and user control over data.
                         </p>
                     </div>
                 </div>
@@ -166,7 +169,7 @@ const Home: NextPage = () => {
                 </div>
                 <div className="flex flex-col justify-center xl:px-[100px]">
                     <h2 className="text-[36px] md:text-[42px] font-bold m-0 mb-[20px]">
-                        Earn daily rewards based on your interactions
+                        Earn rewards based on your interactions
                     </h2>
                     <p className="text-base xl:text-lg xl:leading-[32px] m-0 mb-[42px]">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -184,7 +187,7 @@ const Home: NextPage = () => {
                                 </div>
                             </div>
                             <p className="relative text-lg leading-[32px] m-0">
-                                Ask and answer unique questions
+                                Ask, answer, vote and comment on questions
                             </p>
                         </div>
                         <div className="flex flex-row items-center justify-start gap-[1.06rem]">
@@ -198,7 +201,7 @@ const Home: NextPage = () => {
                                 </div>
                             </div>
                             <p className="relative text-lg leading-[32px] m-0">
-                                Earn rewards in each interaction
+                                Earn rewards as badges and NFTs
                             </p>
                         </div>
                         <div className="flex flex-row items-center justify-start gap-[1.06rem]">
@@ -214,7 +217,7 @@ const Home: NextPage = () => {
                                 </div>
                             </div>
                             <p className="relative text-lg leading-[32px] m-0">
-                                Instantly convert them to real ether
+                                Instantly access them from achievements tab
                             </p>
                         </div>
                     </div>

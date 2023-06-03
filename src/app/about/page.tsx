@@ -4,17 +4,22 @@ const About = () => {
         <div className="flex flex-col items-center justify-center px-6 text-white">
             <div className="py-[150px] text-center">
                 <h1 className="text-white text-[37px] m-0 mb-5 lg:text-[56px] lg:mb-8">
-                    About Web3dApp
+                    About MeshNode
                 </h1>
                 <div className="flex items-center justify-center text-white lg:w-[80%] lg:m-auto lg:text-[18px] xl:w-[60%]">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Feugiat nulla suspendisse tortor aenean dis placerat.
-                    Scelerisque imperdiet vitae dolor non aliquam. Malesuada.
+                    MeshNode is a decentralized Q&A platform where users ask,
+                    answer, and engage with the community, promoting knowledge
+                    exchange and collaboration. Valuable contributions are
+                    rewarded, incentivizing active participation and fostering
+                    insightful discussions. With its decentralized
+                    infrastructure, MeshNode ensures transparency, security, and
+                    user control, creating a vibrant ecosystem for decentralized
+                    community-based knowledge sharing.
                 </div>
             </div>
             <div className="pb-[150px]">
                 <h2 className="m-0 mb-10 text-[26px] text-center lg:text-[36px]">
-                    What drives Web3dApp?
+                    What drives MeshNode?
                 </h2>
                 <div className="grid grid-cols-1 gap-7 sm:grid-cols-2">
                     <div className="rounded-[16px] bg-dark-blue overflow-hidden flex flex-col p-8 items-start justify-start gap-6  sm:w-[300px] lg:w-[400px] xl:w-[550px]">
@@ -30,9 +35,8 @@ const About = () => {
                                 Ask and answer questions
                             </h3>
                             <p className="flex items-center m-0 text-[16px]">
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit. Et nibh urna in proin dui purus
-                                bibendum cras. Morbi cursus nunc.
+                                Engage with the community by asking questions
+                                and providing answers on various topics.
                             </p>
                         </div>
                     </div>
@@ -49,9 +53,8 @@ const About = () => {
                                 see stats and upvotes
                             </h3>
                             <p className="flex items-center m-0 text-[16px]">
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit. Et nibh urna in proin dui purus
-                                bibendum cras. Morbi cursus nunc.
+                                Evaluate the quality of content with statistics
+                                and upvoting, promoting valuable contributions.
                             </p>
                         </div>
                     </div>
@@ -68,9 +71,9 @@ const About = () => {
                                 get rewards
                             </h3>
                             <p className="flex items-center m-0 text-[16px]">
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit. Et nibh urna in proin dui purus
-                                bibendum cras. Morbi cursus nunc.
+                                Earn incentives and rewards for valuable
+                                contributions that enhance the community's
+                                knowledge base.
                             </p>
                         </div>
                     </div>
@@ -87,9 +90,9 @@ const About = () => {
                                 all decentralised
                             </h3>
                             <p className="flex items-center m-0 text-[16px]">
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit. Et nibh urna in proin dui purus
-                                bibendum cras. Morbi cursus nunc.
+                                Operates on a decentralized infrastructure,
+                                ensuring transparency, security, and user
+                                control over data.
                             </p>
                         </div>
                     </div>
@@ -100,8 +103,8 @@ const About = () => {
                     Our Team
                 </h2>
                 <p className="text-[16px] m-0 mb-10 text-center lg:text-lg lg:mb-20 lg:w-[60%] lg:mx-auto">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Parturient lorem purus justo, ultricies.
+                    A dedicated group of active learners working together to
+                    bring innovative solutions and make a positive impact
                 </p>
                 <div className="flex flex-row flex-wrap gap-[38px] items-center justify-center">
                     <div className="rounded-[16px] bg-dark-blue w-full max-w-[20.44rem] overflow-hidden flex flex-col p-[1.5rem] box-border items-start justify-start gap-[2rem]">
@@ -116,7 +119,7 @@ const About = () => {
                                     VIJAY KUMAr
                                 </b>
                                 <div className="text-[1rem] tracking-[0.8px] leading-[1.13rem] uppercase">
-                                    core team
+                                    CORE DEV
                                 </div>
                             </div>
                         </div>
@@ -133,7 +136,7 @@ const About = () => {
                                     Ayush i
                                 </b>
                                 <div className="text-[1rem] tracking-[0.8px] leading-[1.13rem] uppercase">
-                                    core team
+                                    CORE DEV
                                 </div>
                             </div>
                         </div>
@@ -150,7 +153,7 @@ const About = () => {
                                     Ayan Maiti
                                 </b>
                                 <div className="text-[1rem] tracking-[0.8px] leading-[1.13rem] uppercase">
-                                    core team
+                                    CORE DEV
                                 </div>
                             </div>
                         </div>
@@ -162,8 +165,9 @@ const About = () => {
                     You made it possible for us!
                 </h2>
                 <p className="text-[16px] m-0 mb-10 text-center lg:text-lg lg:w-[60%] lg:mx-auto">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Parturient lorem purus justo, ultricies.
+                    Thanks to their exceptional services, we were able to
+                    seamlessly integrate reliable data feeds and optimize
+                    blockchain development, empowering our project's success.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                     <div className="flex flex-row items-center justify-center rounded-[16px] bg-blue box-border border-2 border-solid border-white gap-[30px] px-8 py-4">
@@ -189,8 +193,9 @@ const About = () => {
                     Tech Stack
                 </h2>
                 <p className="text-[16px] m-0 mb-10 text-center  lg:text-lg lg:w-[50%] lg:mx-auto">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Parturient lorem purus justo, ultricies.
+                    Leveraging cutting-edge technologies and frameworks to build
+                    a robust and scalable platform that meets the evolving needs
+                    of the users.
                 </p>
                 <div className="flex flex-row flex-wrap justify-center items-center gap-4 lg:w-[70%] lg:mx-auto xl:w-[80%]">
                     <div className="flex items-center justify-center rounded-[16px] bg-blue w-20 h-20 lg:w-40 lg:h-40">

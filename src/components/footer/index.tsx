@@ -5,12 +5,15 @@ const Footer = () => {
     return (
         <footer className="bg-midnightblue flex flex-col pt-[56px] px-6 md:px-14 xl:px-[133px] pb-[32px] box-border items-start justify-start">
             <div className="w-full flex flex-col min-[600px]:flex-row gap-y-10 xl:flex-row items-center justify-between mb-[92px]">
-                <Link href="/" className="flex flex-row">
+                <Link
+                    href="/"
+                    className="flex flex-row gap-[12px] no-underline">
                     <img
-                        className="w-[154px] h-[30px]"
-                        alt=""
-                        src="/group-1.svg"
+                        className="w-8 xl:w-10"
+                        alt="w-8"
+                        src="/logo_icon.svg"
                     />
+                    <div className="text-white xl:text-lg">MeshNode</div>
                 </Link>
                 {/* <div className="flex flex-row items-center justify-end gap-[12px]">
                     <img
