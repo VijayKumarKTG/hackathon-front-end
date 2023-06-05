@@ -8,6 +8,12 @@ import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 const components = {
   // Add your custom components here
+  h1: (props: any) => <h1 className='m-0 mb-4 text-white' {...props} />,
+  h2: (props: any) => <h2 className='m-0 mb-4 text-white' {...props} />,
+  h3: (props: any) => <h3 className='m-0 mb-4 text-white' {...props} />,
+  h4: (props: any) => <h4 className='m-0 mb-4 text-white' {...props} />,
+  h5: (props: any) => <h5 className='m-0 mb-4 text-white' {...props} />,
+  h6: (props: any) => <h6 className='m-0 mb-4 text-white' {...props} />,
   p: (props: any) => (
     <p className='m-0 mb-4 text-white text-[16px] leading-6' {...props} />
   ),

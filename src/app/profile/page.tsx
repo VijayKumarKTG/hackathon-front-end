@@ -3,47 +3,34 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { create } from "zustand";
+import { useRouter } from "next/navigation";
 import {
     Address,
     useAccount,
     useContractRead,
-    useContractReads,
     useNetwork,
     useQuery,
 } from "wagmi";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 import Stats from "@/components/stats";
 import Achievements from "@/components/achievement";
 import Setting from "@/components/setting";
-import {
-    get_answers_by_user_address,
-    get_questions_by_user_address,
-    get_user_by_address_abi,
-} from "@/abi/user";
-import { Answer, Question, UserContract, UserMetadata } from "@/types";
-import { create } from "zustand";
-import { BigNumber } from "ethers";
-import { get_all_questions_by_id } from "@/abi/social";
-import LoadingModal from "@/components/modals/loader";
+import { get_user_by_address_abi } from "@/abi/user";
+import { UserContract, UserMetadata } from "@/types";
 
 type State = {
-    user: UserMetadata;
+    user: any;
     address: string;
     socials: Array<Object>;
-    questionsIds: Array<Number>;
-    questions: Array<Question>;
-    answersIds: Array<Number>;
-    answers: Array<Answer>;
 };
 
 type Actions = {
     changeUser: (user: UserMetadata) => void;
     changeAddress: (address: string) => void;
     changeSocials: (socials: Array<Object>) => void;
-    changeAnswersIds: (answersIds: Array<Number>) => void;
-    changeAnswers: (answers: Array<Answer>) => void;
-    changeQuestionsIds: (questionIds: Array<Number>) => void;
-    changeQuestions: (questions: Array<Question>) => void;
 };
 
 const useProfileStore = create<State & Actions>((set) => ({
@@ -56,10 +43,6 @@ const useProfileStore = create<State & Actions>((set) => ({
     },
     address: "",
     socials: [],
-    questionsIds: [],
-    questions: [],
-    answersIds: [],
-    answers: [],
     //functions
     changeUser: (user: UserMetadata) =>
         set((state: State) => ({ ...state, user })),
@@ -67,14 +50,6 @@ const useProfileStore = create<State & Actions>((set) => ({
         set((state: State) => ({ ...state, address })),
     changeSocials: (socials: Array<Object>) =>
         set((state: State) => ({ ...state, socials })),
-    changeAnswers: (answers: Array<Answer>) =>
-        set((state: State) => ({ ...state, answers })),
-    changeAnswersIds: (answersIds: Array<Number>) =>
-        set((state: State) => ({ ...state, answersIds })),
-    changeQuestions: (questions: Array<Question>) =>
-        set((state: State) => ({ ...state, questions })),
-    changeQuestionsIds: (questionsIds: Array<Number>) =>
-        set((state: State) => ({ ...state, questionsIds })),
 }));
 
 const Profile = () => {
@@ -82,30 +57,25 @@ const Profile = () => {
         user: state_user,
         address: state_address,
         socials,
-        questions,
-        questionsIds,
-        answers,
-        answersIds,
         changeUser,
         changeAddress,
         changeSocials,
-        changeAnswers,
-        changeQuestions,
-        changeAnswersIds,
-        changeQuestionsIds,
     } = useProfileStore((state) => state);
 
-    console.log({ answersIds });
-
     const [active, set_active] = useState<string>("Stats");
-    const { address } = useAccount();
+    const [toggleBio, set_toggle_bio] = useState<boolean>(false);
+    const [fakeProfileDelay, setFakeProfileDelay] = useState<boolean>(true);
+
+    const { address, isConnected, isDisconnected } = useAccount();
     const { chain } = useNetwork();
+    const router = useRouter();
 
     const {
         data: user_data,
         isLoading: isUserLoading,
         isError: isUserError,
-        isFetching,
+        isFetching: isUserFetching,
+        refetch: refetchUser,
     } = useContractRead({
         address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
         abi: get_user_by_address_abi,
@@ -117,43 +87,16 @@ const Profile = () => {
         },
     });
 
-    const {
-        data: user_answers_ids_data,
-        isLoading: isUserAnswersLoading,
-        isError: isUserAnswersError,
-    } = useContractRead({
-        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-        abi: get_answers_by_user_address,
-        functionName: "getAnswersByUserAddress",
-        chainId: chain?.id,
-        args: [address],
-        onError(error: Error) {
-            console.log(error.message);
-        },
-    });
-
-    const {
-        data: user_questions_ids_data,
-        isLoading: isUserQuestionsLoading,
-        isError: isUserQuestionsError,
-    } = useContractRead({
-        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-        abi: get_questions_by_user_address,
-        functionName: "getQuestionsByUserAddress",
-        chainId: chain?.id,
-        args: [address],
-        onError(error: Error) {
-            console.log(error.message);
-        },
-    });
-
     const profile_contract = user_data as UserContract;
+
+    console.log(profile_contract?.uri);
 
     const {
         data: profile,
         isError: isProfileError,
         isLoading: isProfileLoading,
-    } = useQuery(["user-profile", address], () =>
+        isFetching: isProfileFetching,
+    } = useQuery(["user-profile", address, profile_contract?.uri], () =>
         axios.get(profile_contract?.uri)
     );
 
@@ -169,147 +112,174 @@ const Profile = () => {
     }, [address, user, changeAddress, changeUser]);
 
     useEffect(() => {
-        if (
-            user_questions_ids_data &&
-            !isUserQuestionsLoading &&
-            !isUserQuestionsError
-        ) {
-            let ids_list_as_number: number[] = Array.isArray(
-                user_questions_ids_data
-            )
-                ? user_questions_ids_data.map((id: any) => Number(id._hex))
-                : [];
-
-            ids_list_as_number = ids_list_as_number
-                ?.slice(0, 3)
-                .sort((a: number, b: number) => {
-                    return b - a;
-                });
-
-            changeQuestionsIds(ids_list_as_number);
+        if (!isProfileFetching) {
+            setTimeout(() => {
+                setFakeProfileDelay(false);
+            }, 1000);
         }
-
-        if (
-            user_answers_ids_data &&
-            !isUserAnswersLoading &&
-            !isUserAnswersError
-        ) {
-            let ids_list_as_number: number[] = Array.isArray(
-                user_answers_ids_data
-            )
-                ? user_answers_ids_data.map((id: any) => Number(id._hex))
-                : [];
-
-            ids_list_as_number = ids_list_as_number
-                ?.slice(0, 3)
-                .sort((a: number, b: number) => {
-                    return b - a;
-                });
-
-            changeAnswersIds(ids_list_as_number);
-        }
-    }, [
-        user_questions_ids_data,
-        user_answers_ids_data,
-        changeQuestionsIds,
-        changeAnswersIds,
-        isUserQuestionsLoading,
-        isUserQuestionsError,
-        isUserAnswersLoading,
-        isUserAnswersError,
-    ]);
-
-    /**
-     * @method call contract, extract questions, answers from questionIds and answerIds
-     */
-    const contract = {
-        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-        abi: get_all_questions_by_id,
-        functionName: "getQuestionById",
-    };
-
-    const {
-        data: questions_data,
-        isLoading: isQuestionsLoading,
-        isError: isQuestionsError,
-        refetch: refetchQuestions,
-    } = useContractReads({
-        contracts: questionsIds?.map((questionId: any) => ({
-            ...contract,
-            args: [questionId],
-        })) as any,
-        enabled: false,
-    });
+    }, [isProfileFetching]);
 
     useEffect(() => {
-        if (questionsIds.length > 0) {
-            refetchQuestions();
+        if (!isConnected || isDisconnected) {
+            router.push("/connect-wallet");
         }
-    }, [questionsIds, refetchQuestions]);
+    }, [isConnected, isDisconnected]);
 
-    useEffect(() => {
-        if ((questions_data?.length as number) > 0) {
-            changeQuestions(questions_data as Question[]);
-        }
-    }, [changeQuestions, questions_data]);
-
-    const {
-        data: answers_data,
-        isLoading: isAnswersLoading,
-        isError: isAnswersError,
-        refetch: refetchAnswers,
-    } = useContractReads({
-        contracts: answersIds?.map((answerId: any) => ({
-            ...contract,
-            args: [answerId],
-        })) as any,
-        enabled: false,
-    });
-
-    useEffect(() => {
-        if (answersIds.length > 0) {
-            refetchAnswers();
-        }
-    }, [answersIds.length, refetchAnswers]);
-
-    useEffect(() => {
-        if ((answers_data?.length as number) > 0) {
-            changeAnswers(answers_data as Answer[]);
-        }
-    }, [answers_data, changeAnswers]);
-
-    /**
-     * @returns component based on fetch state
-     */
-    if (isUserLoading || isProfileLoading) {
-        return <div>Loading...</div>;
-    }
-
-    if (isUserError || isProfileError) {
-        return <div>Something went wrong</div>;
-    }
-
-    if (!profile_contract || !user) {
-        return <div>No data found regarding user.</div>;
-    }
-
-    console.log(user);
-
-    return (
+    return fakeProfileDelay ? (
         <div className="relative w-full flex flex-col items-center bg-darkblue">
-            {isFetching && (
-                <LoadingModal
-                    loadingTitle="Fetching Smart Contract"
-                    loadingMessage=""
+            <div className="w-full h-40 z-1">
+                <Skeleton
+                    baseColor="#1A203B"
+                    highlightColor="#242c4f"
+                    // height="54px"
+                    width="100%"
+                    height="100%"
                 />
-            )}
+            </div>
+            <div className="absolute top-[120px] lg:top-20 left-0 right-0 flex items-end justify-between px-4 lg:px-8 w-full lg:w-9/12 mx-auto">
+                <div className="w-20 h-20 lg:w-36 lg:h-36 rounded-full overflow-hidden">
+                    <Skeleton
+                        baseColor="#242c52"
+                        highlightColor="#2b355f"
+                        // height="54px"
+                        width="100%"
+                        height="100%"
+                        borderRadius={500}
+                    />
+                </div>
+                <ul className="list-none flex flex-row gap-x-4 m-0 p-0">
+                    <li>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            // height="54px"
+                            width="36px"
+                            height="36px"
+                            borderRadius={500}
+                        />
+                    </li>
+                    <li>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            // height="54px"
+                            width="36px"
+                            height="36px"
+                            borderRadius={500}
+                        />
+                    </li>
+
+                    <li>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            // height="54px"
+                            width="36px"
+                            height="36px"
+                            borderRadius={500}
+                        />
+                    </li>
+                    <li>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            // height="54px"
+                            width="36px"
+                            height="36px"
+                            borderRadius={500}
+                        />
+                    </li>
+                    <li>
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            // height="54px"
+                            width="36px"
+                            height="36px"
+                            borderRadius={500}
+                        />
+                    </li>
+                </ul>
+            </div>
+            <div className="mt-20 px-6 lg:px-8 pb-14 w-full lg:w-9/12">
+                <div className="flex flex-col justify-center items-start lg:w-1/3">
+                    <div className="flex flex-col items-start w-full">
+                        <h1 className="m-0 mb-2 text-lg lg:text-[2rem] text-white w-full">
+                            <Skeleton
+                                baseColor="#1A203B"
+                                highlightColor="#242c4f"
+                                height="100%"
+                                width="200px"
+                            />
+                        </h1>
+                    </div>
+                    <p className="m-0 mb-2 text-sm lg:text-lg text-gray-200  w-full">
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            height="100%"
+                            width="100%"
+                        />
+                    </p>
+                    <p className="m-0 mb-10 text-base lg:text-lg text-gray-50 w-full">
+                        <Skeleton
+                            baseColor="#1A203B"
+                            highlightColor="#242c4f"
+                            height="100%"
+                            width="100%"
+                        />
+                    </p>
+                </div>
+                <ul className="m-0 mb-10 p-0 flex items-center gap-x-8 list-none overflow-auto w-full">
+                    <li className="p-0 m-0">
+                        <div className={``}>
+                            <Skeleton
+                                baseColor="#1A203B"
+                                highlightColor="#242c4f"
+                                height="52px"
+                                width="120px"
+                                borderRadius={500}
+                            />
+                        </div>
+                    </li>
+                    <li className="p-0 m-0">
+                        <div className={``}>
+                            <Skeleton
+                                baseColor="#1A203B"
+                                highlightColor="#242c4f"
+                                height="52px"
+                                width="200px"
+                                borderRadius={500}
+                            />
+                        </div>
+                    </li>
+                    <li className="p-0 m-0">
+                        <div className={``}>
+                            <Skeleton
+                                baseColor="#1A203B"
+                                highlightColor="#242c4f"
+                                height="52px"
+                                width="150px"
+                                borderRadius={500}
+                            />
+                        </div>
+                    </li>
+                </ul>
+                <Skeleton
+                    baseColor="#1A203B"
+                    highlightColor="#242c4f"
+                    height="600px"
+                    width="100%"
+                    borderRadius={24}
+                />
+            </div>
+        </div>
+    ) : (
+        <div className="relative w-full flex flex-col items-center bg-darkblue">
             <div className="w-full h-40">
                 <img
                     className="object-cover w-full h-full"
-                    src={
-                        user?.banner ||
-                        "https://images.unsplash.com/photo-1682847842653-a881916772b3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2832&q=80"
-                    }
+                    src={user?.banner || "dummy-banner.png"}
                     alt="Banner"
                 />
             </div>
@@ -317,10 +287,7 @@ const Profile = () => {
                 <div className="w-20 h-20 lg:w-36 lg:h-36 rounded-full overflow-hidden border-solid border-[3px] border-silver-100">
                     <img
                         className="object-cover w-full h-full"
-                        src={
-                            user?.profile ||
-                            "https://images.unsplash.com/photo-1542190891-2093d38760f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4MTU2NzA5NQ&ixlib=rb-4.0.3&q=80&w=1080"
-                        }
+                        src={user?.profile || "profile.jpeg"}
                         alt="Profile picture"
                     />
                 </div>
@@ -351,10 +318,10 @@ const Profile = () => {
                                                     ? "currentColor"
                                                     : "#899499"
                                             }
-                                            stroke-width="1.5"
-                                            stroke-miterlimit="10"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
+                                            strokeWidth="1.5"
+                                            strokeMiterlimit="10"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
                                         />
                                         <path
                                             id="vector_2"
@@ -364,8 +331,8 @@ const Profile = () => {
                                                     ? "currentColor"
                                                     : "#899499"
                                             }
-                                            stroke-width="1.5"
-                                            stroke-linecap="round"
+                                            strokeWidth="1.5"
+                                            strokeLinecap="round"
                                         />
                                     </g>
                                 </g>
@@ -398,7 +365,6 @@ const Profile = () => {
                             </svg>
                         </a>
                     </li>
-
                     <li>
                         <a
                             className="text-white"
@@ -475,15 +441,28 @@ const Profile = () => {
                         <h1 className="m-0 mb-2 text-lg lg:text-[2rem] text-white">
                             {user?.name}
                         </h1>
-                        <h1 className="m-0 mb-2 text-blue font-normal text-base lg:text-[1.5rem]">
-                            {user?.email}
-                        </h1>
                     </div>
                     <p className="m-0 mb-2 text-sm lg:text-lg text-gray-200">
                         {address?.substring(0, 10)}...{address?.substring(30)}
                     </p>
                     <p className="m-0 mb-10 text-base lg:text-lg text-gray-50">
-                        {user?.bio}
+                        {user?.bio.length > 150 ? (
+                            <>
+                                {toggleBio
+                                    ? user?.bio
+                                    : user?.bio.substring(0, 150)}
+                                ...{" "}
+                                <button
+                                    onClick={() =>
+                                        set_toggle_bio((prev) => !prev)
+                                    }
+                                    className="border-none bg-transparent font-semibold text-silver-100 cursor-pointer">
+                                    {toggleBio ? "See less" : "See more"}
+                                </button>
+                            </>
+                        ) : (
+                            user?.bio
+                        )}
                     </p>
                 </div>
                 <ul className="m-0 mb-10 p-0 flex items-center gap-x-8 list-none overflow-auto w-full">
@@ -595,11 +574,19 @@ const Profile = () => {
                     </li>
                 </ul>
                 {active === "Stats" ? (
-                    <Stats questions={questions} answers={answers} />
+                    <Stats
+                        aUpvotes={profile_contract?.aUpvotes}
+                        answers={profile_contract?.answers}
+                        qUpvotes={profile_contract?.qUpvotes}
+                        questions={profile_contract?.questions}
+                        id={profile_contract?.id}
+                        comments={profile_contract?.comments}
+                        bestAnswerCount={profile_contract?.bestAnswerCount}
+                    />
                 ) : active === "Achievements" ? (
-                    <Achievements />
+                    <Achievements address={address as string} />
                 ) : active === "Setting" ? (
-                    <Setting />
+                    <Setting refetchUser={refetchUser} />
                 ) : null}
             </div>
         </div>

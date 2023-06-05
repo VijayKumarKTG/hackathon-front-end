@@ -2,17 +2,17 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useRef } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { create } from "zustand";
 import {
     useAccount,
-    useContractRead,
     useContractWrite,
     useNetwork,
     usePrepareContractWrite,
 } from "wagmi";
 
-import { get_user_by_address_abi, register_user_abi } from "@/abi/user";
+import "react-loading-skeleton/dist/skeleton.css";
+import { register_user_abi } from "@/abi/user";
 import {
     getPreviewImage,
     uploadFileToPinata,
@@ -20,10 +20,14 @@ import {
 } from "@/utils";
 import { Address } from "@/types";
 import LoadingModal from "@/components/modals/loader";
+import ErrorModal from "@/components/modals/error";
+import SuccessModal from "@/components/modals/success";
 
 type State = {
     profile: File | null;
+    profileUrl: string;
     banner: File | null;
+    bannerUrl: string;
     name: string;
     email: string;
     bio: string;
@@ -32,7 +36,9 @@ type State = {
 
 type Actions = {
     changeProfile: (profile: File | null) => void;
+    changeProfileUrl: (url: string) => void;
     changeBanner: (banner: File | null) => void;
+    changeBannerUrl: (url: string) => void;
     changeName: (name: string) => void;
     changeEmail: (email: string) => void;
     changeBio: (bio: string) => void;
@@ -41,15 +47,21 @@ type Actions = {
 
 const useCountStore = create<State & Actions>((set) => ({
     profile: null,
+    profileUrl: "",
     banner: null,
+    bannerUrl: "",
     name: "",
     email: "",
     bio: "",
     url: "",
     changeProfile: (profile: File | null) =>
         set((state: State) => ({ ...state, profile })),
+    changeProfileUrl: (profileUrl: string) =>
+        set((state: State) => ({ ...state, profileUrl })),
     changeBanner: (banner: File | null) =>
         set((state: State) => ({ ...state, banner })),
+    changeBannerUrl: (bannerUrl: string) =>
+        set((state: State) => ({ ...state, bannerUrl })),
     changeName: (name: string) => set((state: State) => ({ ...state, name })),
     changeEmail: (email: string) =>
         set((state: State) => ({ ...state, email })),
@@ -60,14 +72,18 @@ const useCountStore = create<State & Actions>((set) => ({
 const Registration = () => {
     const {
         profile,
+        profileUrl,
         banner,
+        bannerUrl,
         name,
         email,
         bio,
         url,
         // functions
         changeProfile,
+        changeProfileUrl,
         changeBanner,
+        changeBannerUrl,
         changeName,
         changeEmail,
         changeBio,
@@ -76,83 +92,136 @@ const Registration = () => {
 
     const checkIfSubmitting = useRef<boolean>(false);
 
-    const { isConnected, address } = useAccount();
+    const { isConnected } = useAccount();
     const { chain } = useNetwork();
     const router = useRouter();
 
-    const { config: register_user_config, isFetching } =
-        usePrepareContractWrite({
-            address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-            abi: register_user_abi,
-            functionName: "registerUser",
-            chainId: chain?.id,
-            args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
-            onError(error) {
-                console.log(error);
+    const [errorTitle, setErrorTitle] = useState<string>("");
+    const [errorMessage, setErrorMessage] = useState<string>("");
+    const [successTitle, setSuccessTitle] = useState<string>("");
+    const [successMessage, setSuccessMessage] = useState<string>("");
+    const [loadingTitle, setLoadingTitle] = useState<string>("");
+    const [loadingMessage, setLoadingMessage] = useState<string>("");
 
-                if (
-                    error.message.includes(
-                        `reason="execution reverted: Stack3: User already registered"`
-                    )
-                ) {
+    const { config: register_user_config } = usePrepareContractWrite({
+        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+        abi: register_user_abi,
+        functionName: "registerUser",
+        chainId: chain?.id,
+        args: [url, process.env.NEXT_PUBLIC_HASH_SECRET],
+        onError(error) {
+            if (
+                error.message.includes(
+                    `reason="execution reverted: Stack3: User already registered"`
+                )
+            ) {
+                setErrorTitle("User already registered");
+                setErrorMessage("");
+                setLoadingTitle("");
+                setLoadingMessage("");
+                setSuccessTitle("");
+                setSuccessMessage("");
+
+                setTimeout(() => {
                     router.push("/profile");
-                }
+                }, 2000);
+            } else {
+                setErrorTitle(error.message);
+                setErrorMessage("");
+                setLoadingTitle("");
+                setLoadingMessage("");
+                setSuccessTitle("");
+                setSuccessMessage("");
+            }
+        },
+    });
+
+    const { write: register_user, isLoading: userRegistrationInProgress } =
+        useContractWrite({
+            ...register_user_config,
+            onError(error: Error) {
+                setErrorTitle(error.message);
+                setErrorMessage("");
+                setLoadingTitle("");
+                setLoadingMessage("");
+                setSuccessTitle("");
+                setSuccessMessage("");
+            },
+            async onSuccess(data) {
+                await data.wait();
+                setErrorTitle("");
+                setErrorMessage("");
+                setLoadingTitle("");
+                setLoadingMessage("");
+                setSuccessTitle("Registration successful");
+                setSuccessMessage("");
+
+                setTimeout(() => {
+                    router.push("/profile");
+                }, 1000);
             },
         });
-
-    const { write: register_user } = useContractWrite({
-        ...register_user_config,
-        onError(error: Error) {
-            console.log(error);
-        },
-        async onSuccess(data) {
-            await data.wait();
-
-            router.push("/profile");
-        },
-    });
-
-    const { data, error, isError } = useContractRead({
-        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
-        abi: get_user_by_address_abi,
-        functionName: "getUserByAddress",
-        chainId: chain?.id,
-        args: [address],
-        onError(error: Error) {
-            console.log(error.message);
-        },
-    });
 
     useEffect(() => {
         if (!isConnected) {
             router.push("/connect-wallet");
         }
-    }, [isConnected]);
+    }, [isConnected, router]);
 
     if (url && register_user && checkIfSubmitting.current) {
         register_user?.();
         checkIfSubmitting.current = false;
     }
 
+    const handleProfileUpload = async (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        try {
+            const file = event.target.files?.[0];
+            if (file) {
+                changeProfile(file as File);
+                const profile_url = await uploadFileToPinata(file);
+                changeProfileUrl(profile_url);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleBannerUpload = async (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        try {
+            const file = event.target.files?.[0];
+            if (file) {
+                changeBanner(file as File);
+                const banner_url = await uploadFileToPinata(file);
+                changeBannerUrl(banner_url);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     const onSubmit = async (event: FormEvent) => {
         event.preventDefault();
 
-        if (
-            isError &&
-            data === undefined &&
-            error?.message.includes('"Stack3: User not registered"')
-        ) {
-            const profile_url = await uploadFileToPinata(profile);
-            const banner_url = await uploadFileToPinata(banner);
+        try {
+            setErrorTitle("");
+            setErrorMessage("");
+            setLoadingTitle("Registration in progress...");
+            setLoadingMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
 
             const new_user = {
-                profile: profile_url,
-                banner: banner_url,
+                profile: profileUrl,
+                banner: bannerUrl,
                 personalWebsite: "",
                 linkedin: "",
                 github: "",
                 twitter: "",
-                name: "",
+                name,
                 email,
                 bio,
             };
@@ -160,17 +229,38 @@ const Registration = () => {
             const url = await uploadJSONToPinata(new_user);
             changeUrl(url);
             checkIfSubmitting.current = true;
-        } else {
-            router.push("/profile");
+        } catch (error: any) {
+            setErrorTitle(error.message);
+            setErrorMessage("");
+            setLoadingTitle("Registration in progress...");
+            setLoadingMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
         }
     };
 
     return (
         <div className="bg-darkblue px-6 py-14 min-[600px]:px-[100px] md:px-[192px] lg:px-[100px] flex flex-col lg:flex-row items-center justify-center gap-x-16 rounded-24 xl:py-40 xl:px-48">
-            {isFetching && (
+            {loadingTitle && (
                 <LoadingModal
-                    loadingTitle="Fetching Smart Contract"
-                    loadingMessage=""
+                    loadingTitle={loadingTitle}
+                    loadingMessage={loadingMessage}
+                />
+            )}
+            {errorTitle && (
+                <ErrorModal
+                    errorTitle={errorTitle}
+                    errorMessage={errorMessage}
+                    needErrorButtonRight={true}
+                    errorButtonRightText="Close"
+                />
+            )}
+            {successTitle && (
+                <SuccessModal
+                    successTitle={successTitle}
+                    successMessage={successMessage}
+                    needSuccessButtonRight={true}
+                    successButtonRightText="Done"
                 />
             )}
             <div className="w-full mb-14 lg:basis-1/2 max-w-[430px]">
@@ -179,11 +269,13 @@ const Registration = () => {
                     <br className="hidden lg:block" /> a part of Web3 dApp
                     <br className="hidden lg:block" /> community 🚀
                 </h1>
-                <img
-                    className="w-full object-contain mix-blend-luminosity"
-                    alt="Login Image"
-                    src="/registeration-img.png"
-                />
+                <div className="w-full aspect-[4/3]">
+                    <img
+                        className="w-full max-h-[609px] object-contain"
+                        alt="Login Image"
+                        src="/registration.png"
+                    />
+                </div>
             </div>
             <form
                 onSubmit={onSubmit}
@@ -203,13 +295,7 @@ const Registration = () => {
                                 id="profile"
                                 name="profile"
                                 placeholder="Enter your profile"
-                                onChange={(event) =>
-                                    changeProfile(
-                                        event.target.files
-                                            ? event.target.files[0]
-                                            : null
-                                    )
-                                }
+                                onChange={(event) => handleProfileUpload(event)}
                             />
                             {profile ? (
                                 <img
@@ -249,13 +335,7 @@ const Registration = () => {
                                 id="banner"
                                 name="banner"
                                 placeholder="Enter your banner"
-                                onChange={(event) =>
-                                    changeBanner(
-                                        event.target.files
-                                            ? event.target.files[0]
-                                            : null
-                                    )
-                                }
+                                onChange={(event) => handleBannerUpload(event)}
                             />
                             {banner ? (
                                 <img
