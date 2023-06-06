@@ -294,7 +294,9 @@ const Profile = () => {
                 <ul className="list-none flex flex-row gap-x-4 m-0 p-0">
                     <li>
                         <a
-                            className="text-white"
+                            className={`text-white ${
+                                user?.email ? "" : "pointer-events-none"
+                            }`}
                             href={`mailto:${user?.email}`}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -341,7 +343,11 @@ const Profile = () => {
                     </li>
                     <li>
                         <a
-                            className="text-white"
+                            className={`text-white ${
+                                user?.personalWebsite
+                                    ? ""
+                                    : "pointer-events-none"
+                            }`}
                             target="_blank"
                             href={user?.personalWebsite}>
                             <svg
@@ -367,7 +373,9 @@ const Profile = () => {
                     </li>
                     <li>
                         <a
-                            className="text-white"
+                            className={`text-white ${
+                                user?.linkedin ? "" : "pointer-events-none"
+                            }`}
                             target="_blank"
                             href={user?.linkedin}>
                             <svg
@@ -391,7 +399,9 @@ const Profile = () => {
                     </li>
                     <li>
                         <a
-                            className="text-white"
+                            className={`text-white ${
+                                user?.github ? "" : "pointer-events-none"
+                            }`}
                             target="_blank"
                             href={user?.github}>
                             <svg
@@ -413,7 +423,9 @@ const Profile = () => {
                     </li>
                     <li>
                         <a
-                            className="text-white"
+                            className={`text-white ${
+                                user?.twitter ? "" : "pointer-events-none"
+                            }`}
                             target="_blank"
                             href={user?.twitter}>
                             <svg
