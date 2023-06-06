@@ -13,23 +13,11 @@ const Navigation = () => {
     const { disconnect } = useDisconnect();
     const pathname = usePathname();
 
-    window.addEventListener("keydown", function (e) {
-        if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) {
-            if (document.getElementById("search") !== document.activeElement) {
-                e.preventDefault();
-                console.log("Search is not in focus");
-                document.getElementById("search").focus();
-            } else {
-                console.log("Default action of CtrlF");
-                return true;
-            }
-        }
-    });
-
     return (
         <header className="py-0 px-0 lg:py-[16px] xl:px-[60px] xl:flex xl:justify-between">
             <div className="flex flex-row items-center justify-between py-4 px-6 xl:py-0 xl:px-0 xl:basis-1/3">
                 <Link
+                    prefetch={false}
                     href="/"
                     className="flex flex-row gap-x-2 items-center justify-center w-[max-content] no-underline">
                     <img
@@ -95,7 +83,7 @@ const Navigation = () => {
                             <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                stroke-width="2"
+                                strokeWidth="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                             />
                         </svg>
@@ -111,6 +99,7 @@ const Navigation = () => {
                 <ul className="list-none flex flex-row items-center justify-center gap-[24px] text-base leading-[16px] font-medium p-0 m-0">
                     <li className="w-max">
                         <Link
+                            prefetch={false}
                             href="/questions"
                             className={`text-white px-4 py-2 text-sm xl:text-lg ${
                                 pathname.includes("questions")
@@ -122,6 +111,7 @@ const Navigation = () => {
                     </li>
                     <li className="w-max">
                         <Link
+                            prefetch={false}
                             href="/tags"
                             className={`text-white px-4 py-2 text-sm xl:text-lg ${
                                 pathname.includes("tags")
@@ -133,6 +123,7 @@ const Navigation = () => {
                     </li>
                     <li className="w-max">
                         <Link
+                            prefetch={false}
                             href="/about"
                             className={`text-white px-4 py-2 text-sm xl:text-lg ${
                                 pathname.includes("about")
@@ -148,6 +139,7 @@ const Navigation = () => {
                         isConnected ? "flex" : "hidden"
                     } items-center gap-x-4`}>
                     <Link
+                        prefetch={false}
                         href="/profile"
                         className="no-underline cursor-pointer outline-none bg-white text-darkblue flex flex-row gap-x-2 box-border items-center justify-center py-[11px] px-[32px] rounded-61xl h-[max-content]">
                         <svg
@@ -188,6 +180,7 @@ const Navigation = () => {
                 </div>
                 <div className={`${!isConnected ? "flex" : "hidden"} w-max`}>
                     <Link
+                        prefetch={false}
                         href="/connect-wallet"
                         className="no-underline w-max cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center">
                         <b className="text-[16px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold">
