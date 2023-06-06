@@ -61,11 +61,11 @@ const Login: NextPage = () => {
 
     useEffect(() => {
         if (isStatusLoading) {
-            setErrorTitle("Checking user in contract, please wait...");
+            setErrorTitle("");
             setErrorMessage("");
             setSuccessTitle("");
             setSuccessMessage("");
-            setLoadingTitle("");
+            setLoadingTitle("Checking user in contract, please wait...");
             setLoadingMessage("");
         } else {
             setErrorTitle("");

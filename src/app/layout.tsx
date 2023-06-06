@@ -121,7 +121,7 @@ export default function RootLayout({
                 )}
                 <WagmiConfig client={client}>
                     <Navigation />
-                    <NextTopLoader showSpinner={false} />
+                    <NextTopLoader color="#0328ee" showSpinner={false} />
                     {children}
                     <Footer />
                 </WagmiConfig>
