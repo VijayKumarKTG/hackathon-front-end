@@ -60,6 +60,24 @@ const Login: NextPage = () => {
     }, [error]);
 
     useEffect(() => {
+        if (isStatusLoading) {
+            setErrorTitle("Checking user in contract, please wait...");
+            setErrorMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
+            setLoadingTitle("");
+            setLoadingMessage("");
+        } else {
+            setErrorTitle("");
+            setErrorMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
+            setLoadingTitle("");
+            setLoadingMessage("");
+        }
+    }, [isStatusLoading]);
+
+    useEffect(() => {
         console.log(
             isConnected && address && !isStatusLoading && !isStatusError
         );

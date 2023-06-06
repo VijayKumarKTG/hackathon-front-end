@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import NextNProgress from 'nextjs-progressbar';
 
 // import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 // import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
@@ -97,7 +96,6 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${dm_sans.className} bg-darkblue`}>
-        <NextNProgress />
         {loadingTitle && (
           <LoadingModal
             loadingTitle={loadingTitle}
