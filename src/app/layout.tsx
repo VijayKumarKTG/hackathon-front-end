@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
+import NextTopLoader from "nextjs-toploader";
 
 // import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 // import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
@@ -120,6 +121,7 @@ export default function RootLayout({
                 )}
                 <WagmiConfig client={client}>
                     <Navigation />
+                    <NextTopLoader showSpinner={false} />
                     {children}
                     <Footer />
                 </WagmiConfig>
