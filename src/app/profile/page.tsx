@@ -123,7 +123,7 @@ const Profile = () => {
         if (!isConnected || isDisconnected) {
             router.push("/connect-wallet");
         }
-    }, [isConnected, isDisconnected]);
+    }, [isConnected, isDisconnected, router]);
 
     return fakeProfileDelay ? (
         <div className="relative w-full flex flex-col items-center bg-darkblue">
