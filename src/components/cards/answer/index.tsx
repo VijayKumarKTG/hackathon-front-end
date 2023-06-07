@@ -140,8 +140,6 @@ const AnswerContentCard = (props: Props) => {
         { enabled: false }
     );
 
-    console.log(answer);
-
     const metadata = profile?.data as UserMetadata;
 
     useEffect(() => {
@@ -318,9 +316,6 @@ const AnswerContentCard = (props: Props) => {
         abi: choose_best_answer_abi,
         functionName: "chooseBestAnswer",
         args: [props.postId, process.env.NEXT_PUBLIC_HASH_SECRET],
-        onError(error) {
-            console.log(error);
-        },
     });
 
     const { write: choose_best_answer } = useContractWrite({
@@ -515,7 +510,7 @@ const AnswerContentCard = (props: Props) => {
                                 <div className="flex flex-col gap-y-3">
                                     {comments_list.map((comment: Comment) => (
                                         <CommentCard
-                                            key={comment.id.toNumber()}
+                                            key={comment?.id?.toNumber()}
                                             {...comment}
                                         />
                                     ))}

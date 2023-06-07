@@ -89,8 +89,6 @@ const Profile = () => {
 
     const profile_contract = user_data as UserContract;
 
-    console.log(profile_contract?.uri);
-
     const {
         data: profile,
         isError: isProfileError,
@@ -123,7 +121,7 @@ const Profile = () => {
         if (!isConnected || isDisconnected) {
             router.push("/connect-wallet");
         }
-    }, [isConnected, isDisconnected]);
+    }, [isConnected, isDisconnected, router]);
 
     return fakeProfileDelay ? (
         <div className="relative w-full flex flex-col items-center bg-darkblue">
@@ -294,7 +292,9 @@ const Profile = () => {
                 <ul className="list-none flex flex-row gap-x-4 m-0 p-0">
                     <li>
                         <a
-                            className="text-white"
+                            className={`text-white ${
+                                user?.email ? "" : "pointer-events-none"
+                            }`}
                             href={`mailto:${user?.email}`}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -341,7 +341,11 @@ const Profile = () => {
                     </li>
                     <li>
                         <a
-                            className="text-white"
+                            className={`text-white ${
+                                user?.personalWebsite
+                                    ? ""
+                                    : "pointer-events-none"
+                            }`}
                             target="_blank"
                             href={user?.personalWebsite}>
                             <svg
@@ -367,7 +371,9 @@ const Profile = () => {
                     </li>
                     <li>
                         <a
-                            className="text-white"
+                            className={`text-white ${
+                                user?.linkedin ? "" : "pointer-events-none"
+                            }`}
                             target="_blank"
                             href={user?.linkedin}>
                             <svg
@@ -391,7 +397,9 @@ const Profile = () => {
                     </li>
                     <li>
                         <a
-                            className="text-white"
+                            className={`text-white ${
+                                user?.github ? "" : "pointer-events-none"
+                            }`}
                             target="_blank"
                             href={user?.github}>
                             <svg
@@ -413,7 +421,9 @@ const Profile = () => {
                     </li>
                     <li>
                         <a
-                            className="text-white"
+                            className={`text-white ${
+                                user?.twitter ? "" : "pointer-events-none"
+                            }`}
                             target="_blank"
                             href={user?.twitter}>
                             <svg
@@ -488,9 +498,7 @@ const Profile = () => {
                             </svg>
                             <span
                                 className={`${
-                                    active === "Stats"
-                                        ? "font-semibold"
-                                        : "font-medium"
+                                    active === "Stats" && "font-medium"
                                 } text-lg`}>
                                 Stats
                             </span>
@@ -520,9 +528,7 @@ const Profile = () => {
 
                             <span
                                 className={`${
-                                    active === "Achievements"
-                                        ? "font-semibold"
-                                        : "font-medium"
+                                    active === "Stats" && "font-medium"
                                 } text-lg`}>
                                 Achievements
                             </span>
@@ -564,9 +570,7 @@ const Profile = () => {
                             </svg>
                             <span
                                 className={`${
-                                    active === "Setting"
-                                        ? "font-semibold"
-                                        : "font-medium"
+                                    active === "Stats" && "font-medium"
                                 } text-lg`}>
                                 Settings
                             </span>

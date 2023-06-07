@@ -66,7 +66,7 @@ const Footer = () => {
                         </div>
                     </div>
                 </div>
-                <div className="rounded-21xl bg-gray-300 overflow-hidden flex flex-col py-[44px] px-[34px] box-border items-start justify-start">
+                {/* <div className="rounded-21xl bg-gray-300 overflow-hidden flex flex-col py-[44px] px-[34px] box-border items-start justify-start">
                     <h2 className="tracking-[0.9px] text-lg leading-[25px] uppercase m-0 mb-[12px] text-white">
                         having questions?
                     </h2>
@@ -94,7 +94,36 @@ const Footer = () => {
                             placeholder="Search"
                         />
                     </div>
-                </div>
+                </div> */}
+                {/* <div className="rounded-21xl bg-gray-300 overflow-hidden flex flex-col py-[44px] px-[34px] box-border items-start justify-start">
+                    <h2 className="tracking-[0.9px] text-lg leading-[25px] uppercase m-0 mb-[12px] text-white">
+                        having questions?
+                    </h2>
+                    <p className="leading-[32px] text-lg flex items-center m-0 mb-[24px] text-white">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Mauris sed nulla integer
+                    </p>
+                    <div className="w-full rounded-11xl bg-darkblue xl:bg-gray-100 text-white py-[0px] px-[24px] box-border flex gap-2 items-center justify-start">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-6 h-6 text-white">
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                            />
+                        </svg>
+                        <input
+                            className="placeholder-silver-100 border-none bg-transparent outline-none block w-full h-full py-[12px] text-white text-lg"
+                            type="search"
+                            placeholder="Search"
+                        />
+                    </div>
+                </div> */}
             </div>
             <div className="w-full text-[16px] leading-[26px] text-center xl:text-left text-white">
                 <div className="w-full h-[1px] bg-gray-200 mb-6" />

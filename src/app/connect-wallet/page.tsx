@@ -60,9 +60,24 @@ const Login: NextPage = () => {
     }, [error]);
 
     useEffect(() => {
-        console.log(
-            isConnected && address && !isStatusLoading && !isStatusError
-        );
+        if (isStatusLoading) {
+            setErrorTitle("");
+            setErrorMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
+            setLoadingTitle("Checking user in contract, please wait...");
+            setLoadingMessage("");
+        } else {
+            setErrorTitle("");
+            setErrorMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
+            setLoadingTitle("");
+            setLoadingMessage("");
+        }
+    }, [isStatusLoading]);
+
+    useEffect(() => {
         if (isConnected && address && !isStatusLoading && !isStatusError) {
             if (data) {
                 router.push("/profile");

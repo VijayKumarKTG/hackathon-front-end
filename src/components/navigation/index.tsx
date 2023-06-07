@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { Search } from "react-feather";
 import { useAccount, useDisconnect } from "wagmi";
 
 const Navigation = () => {
@@ -14,8 +15,9 @@ const Navigation = () => {
 
     return (
         <header className="py-0 px-0 lg:py-[16px] xl:px-[60px] xl:flex xl:justify-between">
-            <div className="flex justify-between w-full py-4 px-6 xl:py-0 xl:px-0">
+            <div className="flex flex-row items-center justify-between py-4 px-6 xl:py-0 xl:px-0 xl:basis-1/3">
                 <Link
+                    prefetch={false}
                     href="/"
                     className="flex flex-row gap-x-2 items-center justify-center w-[max-content] no-underline">
                     <img
@@ -70,9 +72,34 @@ const Navigation = () => {
                 className={`${
                     toggle ? "flex" : "hidden"
                 } xl:flex bg-gray-100 p-6 flex-col items-center gap-y-10 lg:flex-row lg:justify-between xl:gap-x-10 xl:bg-transparent xl:p-0 xl:w-full xl:min-w-max`}>
+                <div className="relative flex items-center h-12 focus-within:shadow-lg bg-gray-900 xl:bg-gray-100 overflow-hidden rounded-full  w-[300px] py-[0px] px-[24px]">
+                    <div className="grid place-items-center h-full w-12 text-gray-300">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="#fff">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                strokeWidth="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                            />
+                        </svg>
+                    </div>
+
+                    <input
+                        className="flex flex-col items-center justify-center bg-gray-900 xl:bg-gray-100 peer h-full w-full outline-none text-md text-white placeholder-white pr-2 border-none focus:border-none active:border-none border-transparent focus:border-transparent focus:ring-0"
+                        type="text"
+                        id="search"
+                        placeholder="Search"
+                    />
+                </div>
                 <ul className="list-none flex flex-row items-center justify-center gap-[24px] text-base leading-[16px] font-medium p-0 m-0">
                     <li className="w-max">
                         <Link
+                            prefetch={false}
                             href="/questions"
                             className={`text-white px-4 py-2 text-sm xl:text-lg ${
                                 pathname.includes("questions")
@@ -84,6 +111,7 @@ const Navigation = () => {
                     </li>
                     <li className="w-max">
                         <Link
+                            prefetch={false}
                             href="/tags"
                             className={`text-white px-4 py-2 text-sm xl:text-lg ${
                                 pathname.includes("tags")
@@ -95,6 +123,7 @@ const Navigation = () => {
                     </li>
                     <li className="w-max">
                         <Link
+                            prefetch={false}
                             href="/about"
                             className={`text-white px-4 py-2 text-sm xl:text-lg ${
                                 pathname.includes("about")
@@ -110,6 +139,7 @@ const Navigation = () => {
                         isConnected ? "flex" : "hidden"
                     } items-center gap-x-4`}>
                     <Link
+                        prefetch={false}
                         href="/profile"
                         className="no-underline cursor-pointer outline-none bg-white text-darkblue flex flex-row gap-x-2 box-border items-center justify-center py-[11px] px-[32px] rounded-61xl h-[max-content]">
                         <svg
@@ -150,6 +180,7 @@ const Navigation = () => {
                 </div>
                 <div className={`${!isConnected ? "flex" : "hidden"} w-max`}>
                     <Link
+                        prefetch={false}
                         href="/connect-wallet"
                         className="no-underline w-max cursor-pointer outline-none [border:none] py-[20px] px-[32px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center">
                         <b className="text-[16px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold">

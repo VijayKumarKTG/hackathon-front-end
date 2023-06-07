@@ -18,8 +18,8 @@ const CommentCard = (comment: Comment) => {
     } = useQuery(
         [
             "get-question-comment-details",
-            id.toNumber(),
-            parentPostId.toNumber(),
+            id?.toNumber(),
+            parentPostId?.toNumber(),
         ],
         () => axios.get(uri),
         { enabled: false }
@@ -56,8 +56,6 @@ const CommentCard = (comment: Comment) => {
             enabled: false,
         }
     );
-
-    console.log({ comment_author });
 
     const author_metadata = profile?.data as UserMetadata;
 
