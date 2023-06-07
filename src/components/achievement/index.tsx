@@ -144,6 +144,22 @@ const Achievements = ({ address }: { address: string }) => {
         <div className="bg-gray-100 rounded-xl p-6 lg:p-10 text-white">
             <div className="mb-12">
                 <h2 className="m-0 mb-6 text-[28px]">
+                    Raremint NFTs{" "}
+                    <span className="text-silver-100 text-base">(1 NFT)</span>
+                </h2>
+                {/* <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
+                    <div className="flex flex-row gap-8 items-center justify-start pb-2">
+                        {locked.map((index: number) => (
+                            <BadgeCard key={index} id={index} locked />
+                        ))}
+                    </div>
+                </div> */}
+                <div className="flex flex-row gap-8 items-center justify-start text-[20px] text-silver-100">
+                    No NFTs owned by user
+                </div>
+            </div>
+            <div className="mb-12">
+                <h2 className="m-0 mb-6 text-[28px]">
                     Badges Collected{" "}
                     <span className="text-silver-100 text-base">
                         ({achievements.length} Badges)
@@ -183,6 +199,7 @@ const Achievements = ({ address }: { address: string }) => {
                     </div>
                 </div>
             </div>
+
             {/* <div className=''>
         <h2 className='m-0 mb-6 text-[28px] flex flex-col lg:flex-row gap-y-10'>
           Merged NFTs{' '}

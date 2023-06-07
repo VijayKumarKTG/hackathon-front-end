@@ -158,8 +158,6 @@ const Tag = ({ params }: { params: { id: number } }) => {
 
     let questions_list: Question[] = questions as Question[];
 
-    console.log(totalItems);
-
     useEffect(() => {
         if (items?.length > 0) {
             refetchQuestions();

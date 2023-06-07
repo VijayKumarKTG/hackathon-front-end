@@ -344,7 +344,6 @@ const AskQuestion = () => {
                         </label>
                         <TagInput
                             onTagsChange={(tags: number[]) => {
-                                console.log(tags);
                                 changeTags(tags);
                             }}
                             max={10}

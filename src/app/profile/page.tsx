@@ -89,8 +89,6 @@ const Profile = () => {
 
     const profile_contract = user_data as UserContract;
 
-    console.log(profile_contract?.uri);
-
     const {
         data: profile,
         isError: isProfileError,
@@ -500,9 +498,7 @@ const Profile = () => {
                             </svg>
                             <span
                                 className={`${
-                                    active === "Stats"
-                                        ? "font-semibold"
-                                        : "font-medium"
+                                    active === "Stats" && "font-medium"
                                 } text-lg`}>
                                 Stats
                             </span>
@@ -532,9 +528,7 @@ const Profile = () => {
 
                             <span
                                 className={`${
-                                    active === "Achievements"
-                                        ? "font-semibold"
-                                        : "font-medium"
+                                    active === "Stats" && "font-medium"
                                 } text-lg`}>
                                 Achievements
                             </span>
@@ -576,9 +570,7 @@ const Profile = () => {
                             </svg>
                             <span
                                 className={`${
-                                    active === "Setting"
-                                        ? "font-semibold"
-                                        : "font-medium"
+                                    active === "Stats" && "font-medium"
                                 } text-lg`}>
                                 Settings
                             </span>

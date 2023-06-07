@@ -255,18 +255,6 @@ const Setting = ({ refetchUser }: { refetchUser: () => void }) => {
   const onSubmitProfile = async (event: FormEvent) => {
     event.preventDefault();
 
-    console.log({
-      profile,
-      banner,
-      personalWebsite,
-      linkedin,
-      github,
-      twitter,
-      name,
-      email,
-      bio,
-    });
-
     try {
       setErrorTitle('');
       setErrorMessage('');

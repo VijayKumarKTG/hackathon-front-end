@@ -10,7 +10,6 @@ interface Props {
 }
 
 const AvatarLarge = (props: Props) => {
-    console.log({ props });
     return (
         <Link
             href={`/user/${props.address}`}
