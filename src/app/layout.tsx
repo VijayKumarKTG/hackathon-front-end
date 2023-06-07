@@ -5,13 +5,10 @@ import { WagmiConfig, configureChains, createClient, useNetwork } from 'wagmi';
 import { polygonMumbai } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { useEffect, useState } from 'react';
-// import { publicProvider } from 'wagmi/providers/public';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-
-// import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import NextTopLoader from 'nextjs-toploader';
 
 import './globals.css';
 import Footer from '@/components/footer';
@@ -23,15 +20,7 @@ import SuccessModal from '@/components/modals/success';
 
 const { chains, provider, webSocketProvider } = configureChains(
   [polygonMumbai],
-  [
-    // jsonRpcProvider({
-    //   rpc: () => ({
-    //     http: `http://127.0.0.1:8545/`,
-    //   }),
-    // }),
-    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY! }),
-    // publicProvider(),
-  ]
+  [alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY! })]
 );
 
 const client = createClient({
@@ -120,6 +109,7 @@ export default function RootLayout({
         )}
         <WagmiConfig client={client}>
           <Navigation />
+          <NextTopLoader color='#0328ee' showSpinner={false} />
           {children}
           <Footer />
         </WagmiConfig>

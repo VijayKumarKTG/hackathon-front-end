@@ -318,9 +318,6 @@ const AnswerContentCard = (props: Props) => {
         abi: choose_best_answer_abi,
         functionName: "chooseBestAnswer",
         args: [props.postId, process.env.NEXT_PUBLIC_HASH_SECRET],
-        onError(error) {
-            console.log(error);
-        },
     });
 
     const { write: choose_best_answer } = useContractWrite({
