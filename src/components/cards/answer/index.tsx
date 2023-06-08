@@ -140,8 +140,6 @@ const AnswerContentCard = (props: Props) => {
         { enabled: false }
     );
 
-    console.log(answer);
-
     const metadata = profile?.data as UserMetadata;
 
     useEffect(() => {
@@ -512,7 +510,7 @@ const AnswerContentCard = (props: Props) => {
                                 <div className="flex flex-col gap-y-3">
                                     {comments_list.map((comment: Comment) => (
                                         <CommentCard
-                                            key={comment.id.toNumber()}
+                                            key={comment?.id?.toNumber()}
                                             {...comment}
                                         />
                                     ))}

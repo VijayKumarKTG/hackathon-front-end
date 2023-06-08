@@ -97,7 +97,7 @@ const Question = ({ params }: { params: { id: string } }) => {
         isLoading: isMetadataLoading,
         refetch: fetch_metadata,
     } = useQuery(
-        ["get-question-metadata", params.id],
+        ["get-question-metadata", params?.id],
         () => axios.get(qn ? qn.uri : ""),
         { enabled: false }
     );

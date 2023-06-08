@@ -196,7 +196,6 @@ const QuestionContentCard = (props: Props) => {
         };
 
         const url = await uploadJSONToPinata(data);
-        console.log(url);
         changeCommentUrl(url);
         isCommenting.current = true;
     };

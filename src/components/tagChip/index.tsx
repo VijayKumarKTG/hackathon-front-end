@@ -8,8 +8,6 @@ interface Props {
 const TagChip = (props: Props) => {
     const { title, tagId } = props;
 
-    console.log({ props });
-
     return (
         <Link
             href={`/tag/${tagId}`}
