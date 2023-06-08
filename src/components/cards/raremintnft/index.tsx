@@ -1,6 +1,7 @@
 import Skeleton from "react-loading-skeleton";
 
 import "react-loading-skeleton/dist/skeleton.css";
+import "./styles.css";
 
 const RaremintNFTCard = ({
     isFetching,
@@ -22,12 +23,7 @@ const RaremintNFTCard = ({
             />
         </div>
     ) : (
-        <div
-            className="rounded-xl mb-2"
-            style={{
-                background:
-                    "linear-gradient(125.66deg, rgba(254, 202, 231, 0.21) 28.2%, rgba(113, 211, 247, 0.21) 43.45%, rgba(107, 254, 252, 0.21) 61.48%, rgba(216, 233, 213, 0.21) 79.06%, rgba(123, 178, 244, 0.21) 100%)",
-            }}>
+        <div className="rounded-xl mb-2 background-animate raremint-nft-wrapper">
             <div
                 className={`flex flex-col items-center justify-center max-h-auto max-w-[300px] lg:max-h-auto lg:max-w-[300px] rounded-xl ${
                     doesUserHaveAnyUnclaimedReward ? "" : "relative"
@@ -114,7 +110,7 @@ const RaremintNFTCard = ({
                         </div>
                     </div>
                 </div>
-                {!doesUserHaveAnyUnclaimedReward && (
+                {doesUserHaveAnyUnclaimedReward && (
                     <div className="absolute inset-0 w-full h-full bg-[#0000008c] rounded-xl flex justify-center items-center">
                         <button
                             className="no-underline w-max cursor-pointer outline-none [border:none] py-[13px] px-[20px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center"
