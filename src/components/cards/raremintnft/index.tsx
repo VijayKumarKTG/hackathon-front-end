@@ -4,10 +4,12 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 const RaremintNFTCard = ({
     isFetching,
-    isClaimed,
+    doesUserHaveAnyUnclaimedReward,
+    handleClaimReward,
 }: {
     isFetching: boolean;
-    isClaimed?: boolean;
+    doesUserHaveAnyUnclaimedReward: boolean;
+    handleClaimReward: () => void;
 }) => {
     return isFetching ? (
         <div className="mb-2 h-[350px] w-[286px]  lg:h-[377px] lg:w-[300px] rounded-xl">
@@ -28,7 +30,7 @@ const RaremintNFTCard = ({
             }}>
             <div
                 className={`flex flex-col items-center justify-center max-h-auto max-w-[300px] lg:max-h-auto lg:max-w-[300px] rounded-xl ${
-                    isClaimed ? "" : "relative"
+                    doesUserHaveAnyUnclaimedReward ? "" : "relative"
                 }`}>
                 <div className="flex w-[300px] max-h-[270px] lg:max-h-[260px] lg:w-full object-cover rounded-tr-xl rounded-tl-xl items-center">
                     <img
@@ -112,9 +114,11 @@ const RaremintNFTCard = ({
                         </div>
                     </div>
                 </div>
-                {!isClaimed && (
+                {!doesUserHaveAnyUnclaimedReward && (
                     <div className="absolute inset-0 w-full h-full bg-[#0000008c] rounded-xl flex justify-center items-center">
-                        <button className="no-underline w-max cursor-pointer outline-none [border:none] py-[13px] px-[20px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center">
+                        <button
+                            className="no-underline w-max cursor-pointer outline-none [border:none] py-[13px] px-[20px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center"
+                            onClick={handleClaimReward}>
                             <b className="text-[13px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold">
                                 Claim NFT
                             </b>

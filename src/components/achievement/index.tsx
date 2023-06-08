@@ -1,20 +1,46 @@
-import { Address, useAccount, useContractRead, useNetwork } from "wagmi";
+import {
+    Address,
+    useAccount,
+    useContractRead,
+    useContractWrite,
+    useNetwork,
+    usePrepareContractWrite,
+} from "wagmi";
 import Skeleton from "react-loading-skeleton";
 import { BigNumber } from "ethers";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import "react-loading-skeleton/dist/skeleton.css";
 import NFTCard from "../cards/nftcard";
 import RaremintNFTCard from "../cards/raremintnft";
 import { get_user_badges_abi } from "@/abi/user";
 import BadgeCard from "../cards/badgecard";
-import { user_to_rare_token_id_abi } from "@/abi/raremint";
+import {
+    check_for_unclaimed_rewards_abi,
+    claim_reward_abi,
+    user_to_rare_token_id_abi,
+} from "@/abi/raremint";
+import ErrorModal from "../modals/error";
+import SuccessModal from "../modals/success";
+import LoadingModal from "../modals/loader";
 
 const Achievements = ({ address }: { address: string }) => {
+    const [errorTitle, setErrorTitle] = useState<string>("");
+    const [errorMessage, setErrorMessage] = useState<string>("");
+    const [successTitle, setSuccessTitle] = useState<string>("");
+    const [successMessage, setSuccessMessage] = useState<string>("");
+    const [loadingTitle, setLoadingTitle] = useState<string>("");
+    const [loadingMessage, setLoadingMessage] = useState<string>("");
+
+    const [isClaimRewardProcessing, setIsClaimRewardProcessing] =
+        useState<boolean>(false);
+
     /**
      * @get hooks from wagmi
      */
     const { chain } = useNetwork();
+    const { address: userAddress } = useAccount();
+    const checkIfClaimIsClicked = useRef<boolean>(false);
 
     /**
      * @config to read user data with address
@@ -56,15 +82,115 @@ const Achievements = ({ address }: { address: string }) => {
             console.log(error);
         },
         onSuccess: async (data) => {
-            // console.log(data);
+            console.log(data);
         },
     });
 
     useEffect(() => {
         userRewardsRefetch();
-    }, [userRewardsRefetch]);
+    }, []);
 
     let rewardTokenId = userRewardsData as BigNumber;
+
+    /**
+     * @config to refetch user rewards
+     */
+    const {
+        data: userUnclaimedRewardsData,
+        isError: userUnclaimedRewardsError,
+        isLoading: userUnclaimedRewardsLoading,
+        isFetching: userUnclaimedRewardsFetching,
+        refetch: userUnclaimedRewardsRefetch,
+    } = useContractRead({
+        address: process.env.NEXT_PUBLIC_STACK3_AUTOMATION_ADDRESS as Address,
+        abi: check_for_unclaimed_rewards_abi,
+        functionName: "checkForUnclaimedRewards",
+        chainId: chain?.id,
+        args: [address],
+        enabled: false,
+        onError(error: Error) {
+            console.log(error);
+        },
+        onSuccess: async (data) => {
+            console.log(data);
+            setLoadingTitle("");
+            setLoadingMessage("");
+            setErrorTitle("");
+            setErrorMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
+        },
+    });
+
+    useEffect(() => {
+        if (userUnclaimedRewardsFetching) {
+            setLoadingTitle("Checking for unclaimed rewards...");
+            setLoadingMessage("");
+            setErrorTitle("");
+            setErrorMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
+        }
+    }, [userUnclaimedRewardsFetching]);
+
+    let doesUserHaveAnyUnclaimedReward = userUnclaimedRewardsData as boolean;
+
+    /**
+     * @config to claim user reward
+     */
+    const { config: claim_reward_config } = usePrepareContractWrite({
+        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+        abi: claim_reward_abi,
+        functionName: "claimReward",
+        chainId: chain?.id,
+        args: [address],
+        onError: (error: any) => {
+            console.log(error);
+        },
+    });
+
+    const { write: claim_reward } = useContractWrite({
+        ...claim_reward_config,
+        onError(error: Error) {
+            console.log(error);
+            setLoadingTitle("");
+            setLoadingMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
+            setErrorTitle(error.message);
+        },
+        async onSuccess(data) {
+            await data.wait();
+            setLoadingTitle("");
+            setLoadingMessage("");
+            setErrorTitle("");
+            setErrorMessage("");
+            setSuccessTitle("Claimed reward successfully");
+            await userRewardsRefetch();
+            await userUnclaimedRewardsRefetch();
+            setIsClaimRewardProcessing(false);
+            console.log(data);
+        },
+    });
+
+    useEffect(() => {
+        if (isClaimRewardProcessing) {
+            setLoadingTitle("Claiming reward...");
+            setLoadingMessage("");
+            setErrorTitle("");
+            setErrorMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
+        }
+    }, [isClaimRewardProcessing]);
+
+    async function handleClaimReward() {
+        checkIfClaimIsClicked.current = true;
+        console.log(checkIfClaimIsClicked);
+        claim_reward?.();
+        checkIfClaimIsClicked.current = false;
+        setIsClaimRewardProcessing(true);
+    }
 
     if (isLoading)
         return (
@@ -167,90 +293,120 @@ const Achievements = ({ address }: { address: string }) => {
     );
 
     console.log({
-        locked,
-        achievements,
+        rewardTokenId,
     });
 
     return (
-        <div className="bg-gray-100 rounded-xl p-6 lg:p-10 text-white">
-            <div className="mb-12">
-                <div className="flex flex-col justify-between items-center mb-6 md:flex-row">
-                    <div className="flex flex-col items-center justify-center">
-                        <h2 className="m-0 text-[28px]">
-                            Raremint NFTs{" "}
-                            <span className="text-silver-100 text-base">
-                                (1 NFT)
-                            </span>
-                        </h2>
+        <>
+            {loadingTitle && (
+                <LoadingModal
+                    loadingTitle={loadingTitle}
+                    loadingMessage={loadingMessage}
+                />
+            )}
+            {errorTitle && (
+                <ErrorModal
+                    errorTitle={errorTitle}
+                    errorMessage={errorMessage}
+                    needErrorButtonRight={true}
+                    errorButtonRightText="Close"
+                />
+            )}
+            {successTitle && (
+                <SuccessModal
+                    successTitle={successTitle}
+                    successMessage={successMessage}
+                    needSuccessButtonRight={true}
+                    successButtonRightText="Done"
+                />
+            )}
+            <div className="bg-gray-100 rounded-xl p-6 lg:p-10 text-white">
+                <div className="mb-12">
+                    <div className="flex flex-col justify-between items-center mb-6 md:flex-row">
+                        <div className="flex flex-col items-center justify-center">
+                            <h2 className="m-0 text-[28px]">
+                                Raremint NFTs{" "}
+                                <span className="text-silver-100 text-base">
+                                    (1 NFT)
+                                </span>
+                            </h2>
+                        </div>
+                        <div>
+                            <button
+                                className="no-underline w-full md:w-max cursor-pointer outline-none [border:none] py-[16px] px-[26px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center"
+                                onClick={userUnclaimedRewardsRefetch as any}>
+                                <b className="text-[14px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold">
+                                    Check for unclaimed rewards
+                                </b>
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <button className="no-underline w-full md:w-max cursor-pointer outline-none [border:none] py-[16px] px-[26px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center">
-                            <b className="text-[14px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold">
-                                Check for unclaimed rewards
-                            </b>
-                        </button>
-                    </div>
-                </div>
-                {/* <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
+                    {/* <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
                     <div className="flex flex-row gap-8 items-center justify-start pb-2">
                         {locked.map((index: number) => (
                             <BadgeCard key={index} id={index} locked />
                         ))}
                     </div>
                 </div> */}
-                {rewardTokenId.toNumber() === 1 ? (
-                    <div className="flex flex-row gap-8 items-center justify-start text-[20px] text-silver-100">
-                        No NFTs owned by user
-                    </div>
-                ) : (
-                    <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start md:overflow-x-auto">
-                        <RaremintNFTCard isFetching={false} />
-                    </div>
-                )}
-            </div>
-            <div className="mb-12">
-                <h2 className="m-0 mb-6 text-[28px]">
-                    Badges Collected{" "}
-                    <span className="text-silver-100 text-base">
-                        ({achievements.length} Badges)
-                    </span>
-                </h2>
-                {achievements?.length > 0 ? (
+                    {rewardTokenId?.toNumber() === 1 ? (
+                        <div className="flex flex-row gap-8 items-center justify-start text-[20px] text-silver-100">
+                            No NFTs owned by user
+                        </div>
+                    ) : (
+                        <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start md:overflow-x-auto">
+                            <RaremintNFTCard
+                                isFetching={false}
+                                doesUserHaveAnyUnclaimedReward={
+                                    doesUserHaveAnyUnclaimedReward
+                                }
+                                handleClaimReward={handleClaimReward}
+                            />
+                        </div>
+                    )}
+                </div>
+                <div className="mb-12">
+                    <h2 className="m-0 mb-6 text-[28px]">
+                        Badges Collected{" "}
+                        <span className="text-silver-100 text-base">
+                            ({achievements.length} Badges)
+                        </span>
+                    </h2>
+                    {achievements?.length > 0 ? (
+                        <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
+                            <div className="flex flex-row gap-8 items-center justify-start pb-2">
+                                {achievements.map((index: number) => (
+                                    <BadgeCard key={index} id={index} />
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        // <div className="flex flex-row gap-8 items-center justify-start pb-2">
+                        //     {achievements.map((index: number) => (
+                        //         <BadgeCard key={index} id={index} />
+                        //     ))}
+                        // </div>
+                        <div className="flex flex-row gap-8 items-center justify-start text-lg">
+                            No badges found
+                        </div>
+                    )}
+                </div>
+                <div className="">
+                    <h2 className="m-0 mb-6 text-[28px]">
+                        Badges Locked{" "}
+                        <span className="text-silver-100 text-base">
+                            ({locked.length} Badges)
+                        </span>
+                    </h2>
                     <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
                         <div className="flex flex-row gap-8 items-center justify-start pb-2">
-                            {achievements.map((index: number) => (
-                                <BadgeCard key={index} id={index} />
+                            {locked.map((index: number) => (
+                                <BadgeCard key={index} id={index} locked />
                             ))}
                         </div>
                     </div>
-                ) : (
-                    // <div className="flex flex-row gap-8 items-center justify-start pb-2">
-                    //     {achievements.map((index: number) => (
-                    //         <BadgeCard key={index} id={index} />
-                    //     ))}
-                    // </div>
-                    <div className="flex flex-row gap-8 items-center justify-start text-lg">
-                        No badges found
-                    </div>
-                )}
-            </div>
-            <div className="">
-                <h2 className="m-0 mb-6 text-[28px]">
-                    Badges Locked{" "}
-                    <span className="text-silver-100 text-base">
-                        ({locked.length} Badges)
-                    </span>
-                </h2>
-                <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
-                    <div className="flex flex-row gap-8 items-center justify-start pb-2">
-                        {locked.map((index: number) => (
-                            <BadgeCard key={index} id={index} locked />
-                        ))}
-                    </div>
                 </div>
-            </div>
 
-            {/* <div className=''>
+                {/* <div className=''>
         <h2 className='m-0 mb-6 text-[28px] flex flex-col lg:flex-row gap-y-10'>
           Merged NFTs{' '}
           <span className='text-silver-100 text-base'>(3 NFTs)</span>
@@ -273,7 +429,8 @@ const Achievements = ({ address }: { address: string }) => {
           </div>
         </div>
       </div> */}
-        </div>
+            </div>
+        </>
     );
 };
 
