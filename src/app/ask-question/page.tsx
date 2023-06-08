@@ -347,7 +347,6 @@ const AskQuestion = () => {
             </label>
             <TagInput
               onTagsChange={(tags: number[]) => {
-                console.log(tags);
                 changeTags(tags);
               }}
               max={10}
@@ -387,31 +386,6 @@ const AskQuestion = () => {
                 Keep it professional: Avoid using inappropriate language, jokes
                 or comments that could be deemed offensive or unprofessional.
               </li>
-
-              <div className='flex flex-col mb-8'>
-                <label
-                  htmlFor='tags'
-                  className='text-white text-md leading-5 block mb-[14px]'>
-                  Please choose question tags*{' '}
-                  <span className='text-gray-200'>
-                    (Type your tags and hit Enter,{' '}
-                    {tags.length < 10 ? (
-                      <span className='text-yellow-400'>
-                        {10 - tags.length + ' remaining'}
-                      </span>
-                    ) : (
-                      <span className='text-yellow-400'>Max limit reached</span>
-                    )}
-                    )
-                  </span>
-                </label>
-                <TagInput
-                  onTagsChange={(tags: number[]) => {
-                    changeTags(tags);
-                  }}
-                  max={10}
-                />
-              </div>
 
               <li>
                 Follow community rules and policies: Make sure to read and
