@@ -5,8 +5,10 @@ import { useEffect } from "react";
 
 import "react-loading-skeleton/dist/skeleton.css";
 import NFTCard from "../cards/nftcard";
+import RaremintNFTCard from "../cards/raremintnft";
 import { get_user_badges_abi } from "@/abi/user";
 import BadgeCard from "../cards/badgecard";
+import { user_to_rare_token_id_abi } from "@/abi/raremint";
 
 const Achievements = ({ address }: { address: string }) => {
     /**
@@ -34,6 +36,35 @@ const Achievements = ({ address }: { address: string }) => {
     useEffect(() => {
         refetch();
     }, []);
+
+    /**
+     * @config to fetch user rewards
+     */
+    const {
+        data: userRewardsData,
+        isError: userRewardsError,
+        isLoading: userRewardsLoading,
+        refetch: userRewardsRefetch,
+    } = useContractRead({
+        address: process.env.NEXT_PUBLIC_STACK3_AUTOMATION_ADDRESS as Address,
+        abi: user_to_rare_token_id_abi,
+        functionName: "s_userToRareTokenId",
+        chainId: chain?.id,
+        args: [address],
+        enabled: false,
+        onError(error: Error) {
+            console.log(error);
+        },
+        onSuccess: async (data) => {
+            // console.log(data);
+        },
+    });
+
+    useEffect(() => {
+        userRewardsRefetch();
+    }, [userRewardsRefetch]);
+
+    let rewardTokenId = userRewardsData as BigNumber;
 
     if (isLoading)
         return (
@@ -143,10 +174,23 @@ const Achievements = ({ address }: { address: string }) => {
     return (
         <div className="bg-gray-100 rounded-xl p-6 lg:p-10 text-white">
             <div className="mb-12">
-                <h2 className="m-0 mb-6 text-[28px]">
-                    Raremint NFTs{" "}
-                    <span className="text-silver-100 text-base">(1 NFT)</span>
-                </h2>
+                <div className="flex flex-col justify-between items-center mb-6 md:flex-row">
+                    <div className="flex flex-col items-center justify-center">
+                        <h2 className="m-0 text-[28px]">
+                            Raremint NFTs{" "}
+                            <span className="text-silver-100 text-base">
+                                (1 NFT)
+                            </span>
+                        </h2>
+                    </div>
+                    <div>
+                        <button className="no-underline w-full md:w-max cursor-pointer outline-none [border:none] py-[16px] px-[26px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center">
+                            <b className="text-[14px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold">
+                                Check for unclaimed rewards
+                            </b>
+                        </button>
+                    </div>
+                </div>
                 {/* <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
                     <div className="flex flex-row gap-8 items-center justify-start pb-2">
                         {locked.map((index: number) => (
@@ -154,9 +198,15 @@ const Achievements = ({ address }: { address: string }) => {
                         ))}
                     </div>
                 </div> */}
-                <div className="flex flex-row gap-8 items-center justify-start text-[20px] text-silver-100">
-                    No NFTs owned by user
-                </div>
+                {rewardTokenId.toNumber() === 1 ? (
+                    <div className="flex flex-row gap-8 items-center justify-start text-[20px] text-silver-100">
+                        No NFTs owned by user
+                    </div>
+                ) : (
+                    <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start md:overflow-x-auto">
+                        <RaremintNFTCard isFetching={false} />
+                    </div>
+                )}
             </div>
             <div className="mb-12">
                 <h2 className="m-0 mb-6 text-[28px]">

@@ -2,7 +2,7 @@ import Skeleton from "react-loading-skeleton";
 
 import "react-loading-skeleton/dist/skeleton.css";
 
-const NFTCard = ({ isFetching }) => {
+const NFTCard = ({ isFetching }: { isFetching: boolean }) => {
     return isFetching ? (
         <div className="mb-2 h-[350px] w-[286px]  lg:h-[377px] lg:w-[300px] rounded-xl">
             <Skeleton
