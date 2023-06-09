@@ -99,6 +99,7 @@ const Achievements = ({ address }: { address: string }) => {
         data: userRewardsData,
         isError: userRewardsError,
         isLoading: userRewardsLoading,
+        isFetching: userRewardsFetching,
         refetch: userRewardsRefetch,
     } = useContractRead({
         address: process.env.NEXT_PUBLIC_STACK3_AUTOMATION_ADDRESS as Address,
@@ -109,15 +110,38 @@ const Achievements = ({ address }: { address: string }) => {
         enabled: false,
         onError(error: Error) {
             console.log(error);
+            setLoadingTitle("");
+            setLoadingMessage("");
+            setErrorTitle(error.message);
+            setErrorMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
         },
         onSuccess: async (data) => {
             console.log(data);
+            setLoadingTitle("");
+            setLoadingMessage("");
+            setErrorTitle("");
+            setErrorMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
         },
     });
 
     useEffect(() => {
         userRewardsRefetch();
     }, []);
+
+    useEffect(() => {
+        if (userRewardsFetching) {
+            setLoadingTitle("Fetching user rewards...");
+            setLoadingMessage("");
+            setErrorTitle("");
+            setErrorMessage("");
+            setSuccessTitle("");
+            setSuccessMessage("");
+        }
+    }, [userRewardsFetching]);
 
     let rewardTokenId = userRewardsData as BigNumber;
 
@@ -224,7 +248,6 @@ const Achievements = ({ address }: { address: string }) => {
             setErrorMessage("");
             setSuccessTitle("Claimed reward successfully");
             await userRewardsRefetch();
-            await userUnclaimedRewardsRefetch();
             console.log(data);
         },
     });
