@@ -43,8 +43,8 @@ const useAchievementsStore = create<State & Actions>((set) => ({
         image: "",
         name: "",
     },
-    changeNftMetadata: (metadata: RaremintNFTType) =>
-        set((state: State) => ({ ...state, metadata })),
+    changeNftMetadata: (nftmetadata: RaremintNFTType) =>
+        set((state: State) => ({ ...state, nftmetadata })),
 }));
 
 const Achievements = ({ address }: { address: string }) => {
@@ -164,6 +164,8 @@ const Achievements = ({ address }: { address: string }) => {
 
     let doesUserHaveAnyUnclaimedReward = userUnclaimedRewardsData as boolean;
 
+    console.log({ userUnclaimedRewardsData });
+
     /**
      * @config to claim user reward
      */
@@ -238,7 +240,7 @@ const Achievements = ({ address }: { address: string }) => {
         }
     }, [isClaimRewardProcessing]);
 
-    console.log(claim_reward);
+    console.log(nftmetadata);
 
     async function handleClaimReward() {
         checkIfClaimIsClicked.current = true;
@@ -348,10 +350,6 @@ const Achievements = ({ address }: { address: string }) => {
         badge.gt(0) ? achievements.push(index) : locked.push(index)
     );
 
-    console.log({
-        rewardTokenId,
-    });
-
     return (
         <>
             {loadingTitle && (
@@ -383,7 +381,11 @@ const Achievements = ({ address }: { address: string }) => {
                             <h2 className="m-0 text-[28px]">
                                 Raremint NFTs{" "}
                                 <span className="text-silver-100 text-base">
-                                    (1 NFT)
+                                    (
+                                    {rewardTokenId?.toNumber() === 0
+                                        ? "0"
+                                        : "1"}{" "}
+                                    NFT)
                                 </span>
                             </h2>
                         </div>

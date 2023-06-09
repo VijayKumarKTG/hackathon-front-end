@@ -15,6 +15,13 @@ const RaremintNFTCard = ({
     handleClaimReward: () => void;
     nftmetadata: RaremintNFTType;
 }) => {
+    async function handleOpenseaLinkOpen(url: string) {
+        if (!doesUserHaveAnyUnclaimedReward) {
+            let newTab = window.open(url, "_blank");
+            newTab?.focus();
+        }
+    }
+
     return isFetching ? (
         <div className="mb-2 h-[350px] w-[286px]  lg:h-[377px] lg:w-[300px] rounded-xl">
             <Skeleton
@@ -27,15 +34,22 @@ const RaremintNFTCard = ({
         </div>
     ) : (
         <div
-            className="rounded-xl mb-2 background-animate raremint-nft-wrapper"
-            key={nftmetadata.id}>
+            onClick={() =>
+                handleOpenseaLinkOpen(
+                    `${process.env.NEXT_PUBLIC_RAREMINT_OPENSEA_BASE_URL}${process.env.NEXT_PUBLIC_STACK3_RAREMINT_ADDRESS}/${nftmetadata?.id}` as string
+                ) as any
+            }
+            className={`rounded-xl mb-2 background-animate raremint-nft-wrapper ${
+                doesUserHaveAnyUnclaimedReward ? "" : "cursor-pointer"
+            }`}
+            key={nftmetadata?.id}>
             <div
                 className={`flex flex-col items-center justify-center max-h-auto max-w-[300px] lg:max-h-auto lg:max-w-[300px] rounded-xl ${
                     doesUserHaveAnyUnclaimedReward ? "relative" : ""
                 }`}>
                 <div className="flex w-[300px] max-h-[270px] lg:max-h-[260px] lg:w-full object-cover rounded-tr-xl rounded-tl-xl items-center">
                     <img
-                        src="nft-dummy.png"
+                        src={nftmetadata?.image}
                         alt="NFT Image"
                         className="mx-auto rounded-tr-xl rounded-tl-xl object-cover w-[270px] max-h-[225px] lg:max-h-[260px] lg:w-[300px]"
                     />
