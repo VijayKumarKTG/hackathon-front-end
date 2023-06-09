@@ -202,6 +202,13 @@ const About = () => {
                         <img
                             className="w-16 h-16 lg:w-28 lg:h-28"
                             alt=""
+                            src="/chainlink-white.png"
+                        />
+                    </div>
+                    <div className="flex items-center justify-center rounded-[16px] bg-blue w-20 h-20 lg:w-40 lg:h-40">
+                        <img
+                            className="w-16 h-16 lg:w-28 lg:h-28"
+                            alt=""
                             src="/polygon-white.png"
                         />
                     </div>

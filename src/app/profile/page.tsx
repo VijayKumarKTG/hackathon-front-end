@@ -94,6 +94,7 @@ const Profile = () => {
         isError: isProfileError,
         isLoading: isProfileLoading,
         isFetching: isProfileFetching,
+        refetch: refetchProfile,
     } = useQuery(["user-profile", address, profile_contract?.uri], () =>
         axios.get(profile_contract?.uri)
     );
@@ -116,6 +117,10 @@ const Profile = () => {
             }, 1000);
         }
     }, [isProfileFetching]);
+
+    useEffect(() => {
+        refetchUser();
+    }, [user_data]);
 
     useEffect(() => {
         if (!isConnected || isDisconnected) {

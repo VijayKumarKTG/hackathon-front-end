@@ -464,3 +464,25 @@ export const get_all_questions_by_tag_abi = [
     type: 'function',
   },
 ];
+
+export const get_question_by_uri_abi = [
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_uri',
+        type: 'string',
+      },
+    ],
+    name: 'getQuestionByUri',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+];

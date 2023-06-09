@@ -273,7 +273,9 @@ const Setting = ({ refetchUser }: { refetchUser: () => void }) => {
         bio,
       };
 
-      const updated_url = await uploadJSONToPinata(updated_user);
+      const updated_url = await uploadJSONToPinata(updated_user, {
+        name: name,
+      });
       changeUrl(updated_url);
       checkIfUrlGenerated.current = true;
     } catch (error: any) {

@@ -5,14 +5,10 @@ import { WagmiConfig, configureChains, createClient, useNetwork } from "wagmi";
 import { polygonMumbai } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { useEffect, useState } from "react";
-// import { publicProvider } from 'wagmi/providers/public';
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 import NextTopLoader from "nextjs-toploader";
-
-// import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
 import "./globals.css";
 import Footer from "@/components/footer";
@@ -24,15 +20,7 @@ import SuccessModal from "@/components/modals/success";
 
 const { chains, provider, webSocketProvider } = configureChains(
     [polygonMumbai],
-    [
-        // jsonRpcProvider({
-        //   rpc: () => ({
-        //     http: `http://127.0.0.1:8545/`,
-        //   }),
-        // }),
-        alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY! }),
-        // publicProvider(),
-    ]
+    [alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY! })]
 );
 
 const client = createClient({
@@ -60,7 +48,11 @@ const client = createClient({
 
 // -------------- WAGMI CONFIG ENDS ----------------
 
-const dm_sans = DM_Sans({ weight: ["400", "500", "700"], subsets: ["latin"] });
+const dm_sans = DM_Sans({
+    weight: ["400", "500", "700"],
+    subsets: ["latin"],
+    display: "swap",
+});
 
 export default function RootLayout({
     children,

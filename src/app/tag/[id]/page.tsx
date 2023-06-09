@@ -69,6 +69,7 @@ const Tag = ({ params }: { params: { id: number } }) => {
 
     const [totalCount, setTotalCount] = useState(0);
     const [activeTag, setActiveTag] = useState(null);
+    const [filteredQuestions, setFilteredQuestions] = useState<BigNumber[]>([]);
 
     const {
         data: ids,
@@ -83,6 +84,14 @@ const Tag = ({ params }: { params: { id: number } }) => {
         args: [params.id],
         enabled: false,
     });
+
+    useEffect(() => {
+        const questionIds = ids as BigNumber[];
+        // setFilteredQuestions(questionIds)
+        setFilteredQuestions(questionIds?.filter((id) => Number(id) != 0));
+    }, [ids]);
+
+    console.log({ filteredQuestions });
 
     const loadQnMetadata = async (tags: number[]) => {
         try {
@@ -118,24 +127,39 @@ const Tag = ({ params }: { params: { id: number } }) => {
     }, []);
 
     useEffect(() => {
-        if (!isLoading && !isError && ids) {
-            const count_list: BigNumber[] = ids as BigNumber[];
+        if (!isLoading && !isError && filteredQuestions) {
+            const count_list: BigNumber[] = filteredQuestions as BigNumber[];
             const temp_count = count_list.length;
 
             setTotalItems(temp_count);
             setTotalPages(Math.ceil(temp_count / pageSize));
         }
-    }, [ids, isError, isLoading, pageSize, setTotalItems, setTotalPages]);
+    }, [
+        filteredQuestions,
+        isError,
+        isLoading,
+        pageSize,
+        setTotalItems,
+        setTotalPages,
+    ]);
 
     useEffect(() => {
         if (totalItems > 0) {
-            const temp_ids = ids as BigNumber[];
+            const temp_ids = filteredQuestions as BigNumber[];
             const start = totalItems - (currentPage - 1) * pageSize;
             const end = Math.max(start - pageSize + 1, 1);
 
+            console.log({ totalItems });
             setItems(temp_ids?.slice(start, end));
         }
-    }, [totalItems, currentPage, ids, totalPages, setItems, pageSize]);
+    }, [
+        totalItems,
+        currentPage,
+        filteredQuestions,
+        totalPages,
+        setItems,
+        pageSize,
+    ]);
 
     const contract = {
         address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
@@ -158,6 +182,8 @@ const Tag = ({ params }: { params: { id: number } }) => {
 
     let questions_list: Question[] = questions as Question[];
 
+    console.log({ items });
+
     useEffect(() => {
         if (items?.length > 0) {
             refetchQuestions();
@@ -171,7 +197,7 @@ const Tag = ({ params }: { params: { id: number } }) => {
 
             const items_list: number[] = [];
 
-            for (let i = start; i > end; i--) {
+            for (let i = start; i >= end; i--) {
                 items_list.push(i);
             }
 
