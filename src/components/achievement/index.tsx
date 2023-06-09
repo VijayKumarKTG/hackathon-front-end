@@ -252,6 +252,7 @@ const Achievements = ({ address }: { address: string }) => {
             setErrorMessage("");
             setSuccessTitle("Claimed reward successfully");
             await userRewardsRefetch();
+            await userUnclaimedRewardsRefetch();
             console.log(data);
         },
     });
@@ -437,7 +438,7 @@ const Achievements = ({ address }: { address: string }) => {
                         ))}
                     </div>
                 </div> */}
-                    {rewardTokenId?.toNumber() === 0 && nftmetadata.name ? (
+                    {rewardTokenId?.toNumber() === 0 ? (
                         <div className="flex flex-row gap-8 items-center justify-start text-[20px] text-silver-100">
                             No NFTs owned by user
                         </div>

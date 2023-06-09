@@ -472,7 +472,7 @@ const Wrapper = ({
 }) => {
     return (
         <div className="rounded-xl bg-gray-500 px-4 py-6 xl:p-8 flex flex-row items-start gap-x-4 w-full mr-0 overflow-x-scroll">
-            <div className="flex flex-col items-center gap-y-2 justify-center text-silver-100 w-full">
+            <div className="flex flex-col items-center gap-y-2 justify-center text-silver-100">
                 {haveVoted === 1 ? (
                     <button className="border-none bg-transparent w-[max-content] h-[max-content] flex m-0 p-0 text-blue">
                         <svg

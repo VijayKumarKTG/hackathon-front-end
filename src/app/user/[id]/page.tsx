@@ -96,6 +96,7 @@ const Profile = ({ params }: any) => {
         isError: isProfileError,
         isLoading: isProfileLoading,
         isFetching: isProfileFetching,
+        refetch: profileRefetch,
     } = useQuery(["user-profile", params?.id], () =>
         axios.get(profile_contract?.uri)
     );
@@ -118,6 +119,10 @@ const Profile = ({ params }: any) => {
             }, 1000);
         }
     }, [isProfileFetching]);
+
+    useEffect(() => {
+        profileRefetch();
+    }, [user_data]);
 
     return fakeProfileDelay ? (
         <div className="relative w-full flex flex-col items-center bg-darkblue">

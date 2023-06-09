@@ -197,7 +197,7 @@ const Tag = ({ params }: { params: { id: number } }) => {
 
             const items_list: number[] = [];
 
-            for (let i = start; i > end; i--) {
+            for (let i = start; i >= end; i--) {
                 items_list.push(i);
             }
 
