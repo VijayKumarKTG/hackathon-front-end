@@ -87,8 +87,11 @@ const Tag = ({ params }: { params: { id: number } }) => {
 
     useEffect(() => {
         const questionIds = ids as BigNumber[];
+        // setFilteredQuestions(questionIds)
         setFilteredQuestions(questionIds?.filter((id) => Number(id) != 0));
     }, [ids]);
+
+    console.log({ filteredQuestions });
 
     const loadQnMetadata = async (tags: number[]) => {
         try {
@@ -146,6 +149,7 @@ const Tag = ({ params }: { params: { id: number } }) => {
             const start = totalItems - (currentPage - 1) * pageSize;
             const end = Math.max(start - pageSize + 1, 1);
 
+            console.log({ totalItems });
             setItems(temp_ids?.slice(start, end));
         }
     }, [
@@ -177,6 +181,8 @@ const Tag = ({ params }: { params: { id: number } }) => {
     });
 
     let questions_list: Question[] = questions as Question[];
+
+    console.log({ items });
 
     useEffect(() => {
         if (items?.length > 0) {
@@ -230,8 +236,6 @@ const Tag = ({ params }: { params: { id: number } }) => {
 
         fetchTotalCount();
     }, [params?.id, questions]);
-
-    console.log(totalItems);
 
     if (isLoading || isQuestionsLoading) {
         return (

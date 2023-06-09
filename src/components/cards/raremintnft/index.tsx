@@ -121,7 +121,7 @@ const RaremintNFTCard = ({
                             <div className="flex flex-row w-full justify-between items-center">
                                 <div className="flex flex-row items-center justify-start gap-[4px]">
                                     <div className="flex text-[14px] font-normal text-[#8095B8]">
-                                        {nftmetadata.description}
+                                        Description
                                     </div>
                                 </div>
                             </div>
