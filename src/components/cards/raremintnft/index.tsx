@@ -9,11 +9,13 @@ const RaremintNFTCard = ({
     doesUserHaveAnyUnclaimedReward,
     handleClaimReward,
     nftmetadata,
+    isInUserRoute,
 }: {
     isFetching: boolean;
     doesUserHaveAnyUnclaimedReward: boolean;
     handleClaimReward: () => void;
     nftmetadata: RaremintNFTType;
+    isInUserRoute: boolean;
 }) => {
     async function handleOpenseaLinkOpen(url: string) {
         if (!doesUserHaveAnyUnclaimedReward) {
@@ -129,7 +131,7 @@ const RaremintNFTCard = ({
                         </div>
                     </div>
                 </div>
-                {doesUserHaveAnyUnclaimedReward && (
+                {!isInUserRoute && doesUserHaveAnyUnclaimedReward && (
                     <div className="absolute inset-0 w-full h-full bg-[#0000008c] rounded-xl flex justify-center items-center">
                         <button
                             className="no-underline w-max cursor-pointer outline-none [border:none] py-[13px] px-[20px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center"

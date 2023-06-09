@@ -133,7 +133,7 @@ const Achievements = ({ address }: { address: string }) => {
     }, []);
 
     useEffect(() => {
-        if (userRewardsFetching) {
+        if (address === userAddress && userRewardsFetching) {
             setLoadingTitle("Fetching user rewards...");
             setLoadingMessage("");
             setErrorTitle("");
@@ -174,6 +174,10 @@ const Achievements = ({ address }: { address: string }) => {
             setSuccessMessage("");
         },
     });
+
+    useEffect(() => {
+        address === userAddress && userUnclaimedRewardsRefetch();
+    }, []);
 
     useEffect(() => {
         if (userUnclaimedRewardsFetching) {
@@ -412,15 +416,19 @@ const Achievements = ({ address }: { address: string }) => {
                                 </span>
                             </h2>
                         </div>
-                        <div>
-                            <button
-                                className="no-underline w-full md:w-max cursor-pointer outline-none [border:none] py-[16px] px-[26px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center"
-                                onClick={userUnclaimedRewardsRefetch as any}>
-                                <b className="text-[14px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold">
-                                    Check for unclaimed rewards
-                                </b>
-                            </button>
-                        </div>
+                        {address === userAddress && (
+                            <div>
+                                <button
+                                    className="no-underline w-full md:w-max cursor-pointer outline-none [border:none] py-[16px] px-[26px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center"
+                                    onClick={
+                                        userUnclaimedRewardsRefetch as any
+                                    }>
+                                    <b className="text-[14px] outline-none tracking-[1.6px] leading-[16px] uppercase text-white text-center font-bold">
+                                        Check for unclaimed rewards
+                                    </b>
+                                </button>
+                            </div>
+                        )}
                     </div>
                     {/* <div className="flex flex-row gap-8 overflow-x-scroll overflow-y-hidden items-center justify-start">
                     <div className="flex flex-row gap-8 items-center justify-start pb-2">
@@ -442,6 +450,7 @@ const Achievements = ({ address }: { address: string }) => {
                                 }
                                 handleClaimReward={handleClaimReward}
                                 nftmetadata={nftmetadata}
+                                isInUserRoute={address !== userAddress}
                             />
                         </div>
                     )}
