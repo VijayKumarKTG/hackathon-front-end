@@ -139,13 +139,13 @@ const Achievements = ({ address }: { address: string }) => {
      * @config to claim user reward
      */
     const { config: claim_reward_config } = usePrepareContractWrite({
-        address: process.env.NEXT_PUBLIC_STACK3_ADDRESS as Address,
+        address: process.env.NEXT_PUBLIC_STACK3_AUTOMATION_ADDRESS as Address,
         abi: claim_reward_abi,
         functionName: "claimReward",
         chainId: chain?.id,
         args: [address],
         onError: (error: any) => {
-            console.log(error);
+            console.log(error.message);
         },
     });
 
@@ -183,6 +183,8 @@ const Achievements = ({ address }: { address: string }) => {
             setSuccessMessage("");
         }
     }, [isClaimRewardProcessing]);
+
+    console.log(claim_reward);
 
     async function handleClaimReward() {
         checkIfClaimIsClicked.current = true;
