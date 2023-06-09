@@ -2,15 +2,18 @@ import Skeleton from "react-loading-skeleton";
 
 import "react-loading-skeleton/dist/skeleton.css";
 import "./styles.css";
+import { RaremintNFTType } from "@/types/raremint";
 
 const RaremintNFTCard = ({
     isFetching,
     doesUserHaveAnyUnclaimedReward,
     handleClaimReward,
+    nftmetadata,
 }: {
     isFetching: boolean;
     doesUserHaveAnyUnclaimedReward: boolean;
     handleClaimReward: () => void;
+    nftmetadata: RaremintNFTType;
 }) => {
     return isFetching ? (
         <div className="mb-2 h-[350px] w-[286px]  lg:h-[377px] lg:w-[300px] rounded-xl">
@@ -23,10 +26,12 @@ const RaremintNFTCard = ({
             />
         </div>
     ) : (
-        <div className="rounded-xl mb-2 background-animate raremint-nft-wrapper">
+        <div
+            className="rounded-xl mb-2 background-animate raremint-nft-wrapper"
+            key={nftmetadata.id}>
             <div
                 className={`flex flex-col items-center justify-center max-h-auto max-w-[300px] lg:max-h-auto lg:max-w-[300px] rounded-xl ${
-                    doesUserHaveAnyUnclaimedReward ? "" : "relative"
+                    doesUserHaveAnyUnclaimedReward ? "relative" : ""
                 }`}>
                 <div className="flex w-[300px] max-h-[270px] lg:max-h-[260px] lg:w-full object-cover rounded-tr-xl rounded-tl-xl items-center">
                     <img
@@ -41,7 +46,7 @@ const RaremintNFTCard = ({
                             <div className="flex flex-row w-full justify-between items-center">
                                 <div className="flex flex-row items-center justify-start gap-[4px]">
                                     <div className="flex text-[14px] font-normal text-[#8095B8]">
-                                        MeshNode Raremint NFT
+                                        {nftmetadata.collection}
                                     </div>
                                     <div className="flex">
                                         <svg
@@ -92,7 +97,7 @@ const RaremintNFTCard = ({
                                 </div>
                             </div>
                             <div className="flex font-medium text-[24px] text-white">
-                                Suri
+                                {nftmetadata.name}
                             </div>
                         </div>
                         <div className="flex flex-col border-[1px] border-solid border-[#171F41]"></div>
@@ -100,17 +105,17 @@ const RaremintNFTCard = ({
                             <div className="flex flex-row w-full justify-between items-center">
                                 <div className="flex flex-row items-center justify-start gap-[4px]">
                                     <div className="flex text-[14px] font-normal text-[#8095B8]">
-                                        Description
+                                        {nftmetadata.description}
                                     </div>
                                 </div>
                             </div>
                             <div className="flex font-normal text-[13px] text-white">
-                                Heaven and Earth are mysterious and yellow...
+                                {nftmetadata.description}
                             </div>
                         </div>
                     </div>
                 </div>
-                {!doesUserHaveAnyUnclaimedReward && (
+                {doesUserHaveAnyUnclaimedReward && (
                     <div className="absolute inset-0 w-full h-full bg-[#0000008c] rounded-xl flex justify-center items-center">
                         <button
                             className="no-underline w-max cursor-pointer outline-none [border:none] py-[13px] px-[20px] bg-blue rounded-61xl flex flex-row box-border items-center justify-center"

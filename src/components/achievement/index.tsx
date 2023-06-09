@@ -9,6 +9,8 @@ import {
 import Skeleton from "react-loading-skeleton";
 import { BigNumber } from "ethers";
 import { useEffect, useRef, useState } from "react";
+import axios from "axios";
+import { create } from "zustand";
 
 import "react-loading-skeleton/dist/skeleton.css";
 import NFTCard from "../cards/nftcard";
@@ -23,8 +25,35 @@ import {
 import ErrorModal from "../modals/error";
 import SuccessModal from "../modals/success";
 import LoadingModal from "../modals/loader";
+import { RaremintNFTType } from "@/types/raremint";
+
+type State = {
+    nftmetadata: RaremintNFTType;
+};
+
+type Actions = {
+    changeNftMetadata: (metadata: RaremintNFTType) => void;
+};
+
+const useAchievementsStore = create<State & Actions>((set) => ({
+    nftmetadata: {
+        id: 0,
+        collection: "",
+        description: "",
+        image: "",
+        name: "",
+    },
+    changeNftMetadata: (metadata: RaremintNFTType) =>
+        set((state: State) => ({ ...state, metadata })),
+}));
 
 const Achievements = ({ address }: { address: string }) => {
+    const {
+        nftmetadata,
+        // functions
+        changeNftMetadata,
+    } = useAchievementsStore((state) => state);
+
     const [errorTitle, setErrorTitle] = useState<string>("");
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [successTitle, setSuccessTitle] = useState<string>("");
@@ -138,6 +167,30 @@ const Achievements = ({ address }: { address: string }) => {
     /**
      * @config to claim user reward
      */
+    const loadNFTMetadata = async (tokenId: number) => {
+        try {
+            const response = await axios.get(
+                `${
+                    process.env.NEXT_PUBLIC_RAREMINT_NFTS_IPFS_LINK
+                }${tokenId.toString()}.json`
+            );
+            console.log(response.data);
+            changeNftMetadata(response.data);
+            // setTagsMetadata(response.map((item): any => item.data));
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        if (rewardTokenId?.toNumber() != 0) {
+            loadNFTMetadata(rewardTokenId?.toNumber());
+        }
+    }, [rewardTokenId]);
+
+    /**
+     * @config to claim user reward
+     */
     const { config: claim_reward_config } = usePrepareContractWrite({
         address: process.env.NEXT_PUBLIC_STACK3_AUTOMATION_ADDRESS as Address,
         abi: claim_reward_abi,
@@ -158,9 +211,11 @@ const Achievements = ({ address }: { address: string }) => {
             setSuccessTitle("");
             setSuccessMessage("");
             setErrorTitle(error.message);
+            setIsClaimRewardProcessing(false);
         },
         async onSuccess(data) {
             await data.wait();
+            setIsClaimRewardProcessing(false);
             setLoadingTitle("");
             setLoadingMessage("");
             setErrorTitle("");
@@ -168,7 +223,6 @@ const Achievements = ({ address }: { address: string }) => {
             setSuccessTitle("Claimed reward successfully");
             await userRewardsRefetch();
             await userUnclaimedRewardsRefetch();
-            setIsClaimRewardProcessing(false);
             console.log(data);
         },
     });
@@ -350,7 +404,7 @@ const Achievements = ({ address }: { address: string }) => {
                         ))}
                     </div>
                 </div> */}
-                    {rewardTokenId?.toNumber() === 1 ? (
+                    {rewardTokenId?.toNumber() === 0 && nftmetadata.name ? (
                         <div className="flex flex-row gap-8 items-center justify-start text-[20px] text-silver-100">
                             No NFTs owned by user
                         </div>
@@ -362,6 +416,7 @@ const Achievements = ({ address }: { address: string }) => {
                                     doesUserHaveAnyUnclaimedReward
                                 }
                                 handleClaimReward={handleClaimReward}
+                                nftmetadata={nftmetadata}
                             />
                         </div>
                     )}
