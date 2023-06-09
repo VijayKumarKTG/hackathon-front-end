@@ -1,12 +1,6 @@
 .raremint-nft-wrapper {
-    background: linear-gradient(
-        125.66deg,
-        rgba(254, 202, 231, 0.25) 28.2%,
-        rgba(113, 211, 247, 0.25) 43.45%,
-        rgba(107, 254, 252, 0.25) 61.48%,
-        rgba(216, 233, 213, 0.25) 79.06%,
-        rgba(123, 178, 244, 0.25) 100%
-    );
+    background-image: linear-gradient(to top right, #0f0c29, #302b63, #24243e);
+    border: 1px solid #4d4d4d;
     /* border-radius: 12px; */
     background-size: 400% 400%;
     animation: gradient 5s ease infinite;
