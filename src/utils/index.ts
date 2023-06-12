@@ -73,8 +73,7 @@ const pinJSONToIPFS = async (JSONBody: any, metadata: any) => {
     url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',
     headers: {
       'Content-Type': 'application/json',
-      Authorization:
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI0NDExYTc2YS01ZmI1LTQ3YzQtOTIzYS05ZGZkMzI1MTExZmEiLCJlbWFpbCI6InZpamF5a3VtYXJkZXZrdGdAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImI2Njg5NWU3N2M2NmI2YWU1ZmVmIiwic2NvcGVkS2V5U2VjcmV0IjoiMTQzOTQyMmE4NDg5OWQ3NzIxZDI5MjgwMTgyZjQ2ZjViN2M0NjJhNzdhZDg2YWZiOWRjZGEyYWFhZmQ5NGYzYSIsImlhdCI6MTY4NTk4MDg2OH0.wdC0QN5ZYJEtfdIanc3fFOTJxqTfYZoATTU4U6aBLmM',
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JSON_JWT}`,
     },
     data: data,
   };
